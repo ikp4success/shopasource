@@ -1,0 +1,34 @@
+.Search {
+    width: 55%;
+    margin:0 auto;
+    padding-top: 250px;
+    padding-bottom: 100%;
+}
+
+.About {
+    width: 55%;
+    margin:0 auto;
+    padding-top: 250px;
+    padding-bottom: 100%;
+}
+
+.btn-search{
+	     color: #fff;
+    background-color: #02B875;
+    border-color: #02B875;
+}
+
+.results{
+	padding-top: 80px;
+	padding-bottom: 100%;
+}
+
+.portfolio-item{
+	 padding-bottom: 32px;
+}
+
+.ResultSearch{
+	width: 55%;
+    margin:0 auto;
+    padding-top: 100px;
+}
