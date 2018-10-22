@@ -1,2 +1,6 @@
 Flask==1.0.2
 Scrapy==1.5.1
+django
+gunicorn
+django-heroku
+flask_sqlalchemy
