@@ -7,12 +7,12 @@ from utilities.results_factory import get_results
 import os
 
 app = Flask(__name__, template_folder='web_content')
-app.secret_key = os.environ["SECRET_KEY"]
+# app.secret_key = os.environ["SECRET_KEY"]
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
 db = SQLAlchemy(app)
 
 
-class ShoppedData(db.model):
+class ShoppedData(db.Model):
     searched_keyword = db.Column(db.String(200), primary_key=True)
     image_url = db.Column(db.String(1999))
     shop_name = db.Column(db.String(50))

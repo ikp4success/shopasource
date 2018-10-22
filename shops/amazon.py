@@ -11,6 +11,7 @@ class Amazon(scrapy.Spider):
     shop_url = _amazonurl
 
     def start_request(self):
+        import pdb; pdb.set_trace()
         yield get_request(self.shop_url, self.parse_data)
 
     def parse_data(self):
