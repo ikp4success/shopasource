@@ -2,13 +2,15 @@ from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
 from utilities.results_factory import get_results
+
 # from twilio.twiml.messaging_response import MessagingResponse
 # from utilities.DefaultResources import _resultRow, _errorMessage
 import os
 
 app = Flask(__name__, template_folder='web_content')
 # app.secret_key = os.environ["SECRET_KEY"]
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
+# app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///students.sqlite3'
 db = SQLAlchemy(app)
 
 
@@ -60,20 +62,23 @@ def searchresults():
 def get_search_results(search_keyword):
     results = get_results(search_keyword)
     if results is not None:
+        import pdb; pdb.set_trace()
+        results = results[search_keyword]
         add_results_to_db(results)
     return render_template('searchresults.html')
 
 
 def add_results_to_db(results):
     shopped_data = ShoppedData(
-            title=results["title"],
-            content_descripiton=results["content_descripiton"],
-            image_url=results["image_url"],
-            price=results["price"],
-            criteria=results["searched_keyword"],
-            date_searched=results["date_searched"],
-            shop_name=results["shop_name"]
+        title=results["title"],
+        content_descripiton=results["content_descripiton"],
+        image_url=results["image_url"],
+        price=results["price"],
+        criteria=results["criteria"],
+        date_searched=results["date_searched"],
+        shop_name=results["shop_name"]
     )
+    import pdb; pdb.set_trace()
     db.session.add(shopped_data)
     db.session.commit()
 

@@ -1,14 +1,16 @@
-from shops.amazon import Amazon
-from scrapy.crawler import CrawlerProcess
+from subprocess import call
+from shops.shop_utilities.shop_names import ShopNames
+import json
 
 
 def get_results(search_keyword):
-    amazon = Amazon()
-    import pdb; pdb.set_trace()
-    if __name__ == "__main__":
-        process = CrawlerProcess({
-            'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
-        })
-
-        process.crawl(amazon)
-        process.start()
+    name = ShopNames.AMAZON.name
+    file_name = "{}_RESULTS.json".format(name)
+    open(file_name, 'w+').close()
+    call(["scrapy", "crawl", "{}".format(name), "-a", "search_keyword={}".format(search_keyword), "-o", file_name])
+    results = None
+    with open(file_name) as items_file:
+        results = items_file.read()
+    if results is not None:
+        results = json.loads(results)[0]
+    return results

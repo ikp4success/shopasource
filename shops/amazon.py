@@ -7,23 +7,26 @@ from shops.shop_utilities.shop_names import ShopNames
 
 
 class Amazon(scrapy.Spider):
-    shop_name = ShopNames.AMAZON
-    shop_url = _amazonurl
+    name = ShopNames.AMAZON.name
+    _search_keyword = None
 
-    def start_request(self):
-        import pdb; pdb.set_trace()
-        yield get_request(self.shop_url, self.parse_data)
+    def __init__(self, search_keyword):
+        self._search_keyword = search_keyword
 
-    def parse_data(self):
+    def start_requests(self):
+        shop_url = _amazonurl.format(self._search_keyword)
+        yield get_request(shop_url, self.parse_data)
+
+    def parse_data(self, response):
         result_meta = {
-                        "printer": {
-                            "image_url": "",
-                            "shop_name": "",
-                            "price": "$2.00",
-                            "title": "HP Printer",
-                            "search_keyword": "printer",
-                            "content_descripiton": "This is a nice printer",
-                            "date_searched": "08/06/2018"
-                        }
-                }
+            self._search_keyword: {
+                "image_url": "",
+                "shop_name": "",
+                "price": "$2.00",
+                "title": "HP Printer",
+                "criteria": "printer",
+                "content_descripiton": "This is a nice printer",
+                "date_searched": "08/06/2018"
+            }
+        }
         yield result_meta
