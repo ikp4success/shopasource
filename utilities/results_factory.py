@@ -15,7 +15,7 @@ def get_results(search_keyword):
     results = pool.map(launch_spiders_partial, ShopNames)
     pool.close()
     pool.join()
-    # update_results_row(results["results_row"])
+    # update_results_row(results[0]["results_row"])
     return results
 
 

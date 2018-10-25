@@ -5,12 +5,14 @@ from utilities.results_factory import get_results
 
 # from twilio.twiml.messaging_response import MessagingResponse
 # from utilities.DefaultResources import _resultRow, _errorMessage
-import os
+# import os
 
 app = Flask(__name__, template_folder='web_content')
 # app.secret_key = os.environ["SECRET_KEY"]
 # app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///students.sqlite3'
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+app.config['DEBUG'] = True
 db = SQLAlchemy(app)
 
 
@@ -37,6 +39,17 @@ class ShoppedData(db.Model):
             }
         }
     db.create_all()
+
+
+@app.after_request
+def add_header(response):
+    """
+    Add headers to both force latest IE rendering engine or Chrome Frame,
+    and also to cache the rendered page for 10 minutes.
+    """
+    response.headers['X-UA-Compatible'] = 'IE=Edge,chrome=1'
+    response.headers['Cache-Control'] = 'public, max-age=0'
+    return response
 
 
 @app.route("/", methods=['GET'])
