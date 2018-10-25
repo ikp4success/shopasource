@@ -61,10 +61,11 @@ def searchresults():
 
 def get_search_results(search_keyword):
     results = get_results(search_keyword)
-    if results is not None:
-        import pdb; pdb.set_trace()
-        results = results[search_keyword]
-        add_results_to_db(results)
+    # if results is not None:
+    #     import pdb; pdb.set_trace()
+    #     # results = results[search_keyword]
+    #     # add_results_to_db(results)
+    #     results_row = results.get("results_row", "")
     return render_template('searchresults.html')
 
 
@@ -78,7 +79,7 @@ def add_results_to_db(results):
         date_searched=results["date_searched"],
         shop_name=results["shop_name"]
     )
-    import pdb; pdb.set_trace()
+    # import pdb; pdb.set_trace()
     db.session.add(shopped_data)
     db.session.commit()
 

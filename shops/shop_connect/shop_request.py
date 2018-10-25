@@ -7,7 +7,10 @@ from shops.shop_utilities.extra_function import prepend_domain
 
 
 def get_request(url, callback, domain_url=None):
-    request = scrapy.Request(prepend_domain(url, domain_url), callback=callback, errback=errcallback)
+    url = prepend_domain(url, domain_url)
+    if url is None:
+        return None
+    request = scrapy.Request(url, callback=callback, errback=errcallback)
     return request
 
 
