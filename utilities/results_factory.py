@@ -28,17 +28,23 @@ def launch_spiders(sn, sk):
     results = None
     with open(file_name) as items_file:
         results = items_file.read()
-    if results is not None:
-        results = json.loads(results)[0]
-        result_data = results.get(search_keyword, {})
-        _resultRow_res = _resultRow.replace("{PRODUCTIMAGESOURCE}", result_data.get("image_url", "")) \
-            .replace("{PRODUCTLINK}", result_data.get("shop_link", "")) \
-            .replace("{PRODUCTTITLE}", result_data.get("title", "")) \
-            .replace("{PRODUCTDESCRIPTION}", result_data.get("content_descripition", "")) \
-            .replace("{PRODUCTPRICE}", result_data.get("price", "")) \
-            .replace("{PRODUCTSHOPNAME}", result_data.get("shop_name", ""))
-        results["results_row"] = _resultRow_res
-        update_results_row(_resultRow_res)
+    if results is not None and results != "":
+        import pdb; pdb.set_trace()
+        results = json.loads(results)
+        if results is not None:
+            results = results[0]
+            result_data = results.get(search_keyword, {})
+            _resultRow_res = _resultRow.replace("{PRODUCTIMAGESOURCE}", result_data.get("image_url", "")) \
+                .replace("{PRODUCTLINK}", result_data.get("shop_link", "")) \
+                .replace("{PRODUCTTITLE}", result_data.get("title", "")) \
+                .replace("{PRODUCTDESCRIPTION}", result_data.get("content_descripition", "")) \
+                .replace("{PRODUCTPRICE}", result_data.get("price", "")) \
+                .replace("{PRODUCTSHOPNAME}", result_data.get("shop_name", ""))
+            results["results_row"] = _resultRow_res
+            update_results_row(_resultRow_res)
+    else:
+        import pdb; pdb.set_trace()
+        update_results_row_error("Sorry, no products found")
     return results
 
 

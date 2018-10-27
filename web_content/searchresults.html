@@ -68,19 +68,7 @@
 		<script type="text/babel">
     class Resultrow extends React.Component {
 		    render() {
-		        return ( <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images-na.ssl-images-amazon.com/images/I/61SzASCwGjL._UL1020_.jpg" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a href="https://www.amazon.com/toraway-Stylish-Business-Leather-Windows/dp/B01A82JTJW/ref=sr_1_1/143-9943764-8304809?s=apparel&ie=UTF8&qid=1540616606&sr=1-1&nodeID=7141123011&psd=1&keywords=wallet">Wallet,toraway Luxury Men Stylish Bifold Business ...</a>
-              </h4>
-              <p class="card-text">PU Leather100% brand new and high qualityDesigned to hold cash, cards and other little thingsSlim Bi-Fold flip wallet, easy to carry aroundAs a perfect gift for yourself or your friends.Inside Detail: Credit card inserts, window ID</p>
-              <p class="card-text">Price: $4.08</p>
-              <p class="card-text">Shop: AMAZON</p>
-            </div>
-          </div>
-        </div>);
+		        return ({REACT_RESULT_ROW});
 			}
 	}
 	  ReactDOM.render(
@@ -88,9 +76,15 @@
 	   document.getElementById('resultreact')
 	);
 	</script>
+	<div style="padding-top: 80px;
+	margin:0 auto;
+	width: 60%;"class="bs-component">
+              <div class="alert alert-dismissible alert-danger">
+                <button type="button" class="close" data-dismiss="alert">×</button>
+                <strong>Error: </strong>Sorry, no products found 
+              </div>
+            </div>
 	</div>
-
-
 
 	<footer class="py-5 bg-light">
 	<div class="container">
