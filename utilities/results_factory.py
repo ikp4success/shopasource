@@ -29,7 +29,6 @@ def launch_spiders(sn, sk):
     with open(file_name) as items_file:
         results = items_file.read()
     if results is not None and results != "":
-        import pdb; pdb.set_trace()
         results = json.loads(results)
         if results is not None:
             results = results[0]
@@ -43,7 +42,6 @@ def launch_spiders(sn, sk):
             results["results_row"] = _resultRow_res
             update_results_row(_resultRow_res)
     else:
-        import pdb; pdb.set_trace()
         update_results_row_error("Sorry, no products found")
     return results
 

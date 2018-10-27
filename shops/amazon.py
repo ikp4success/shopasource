@@ -25,7 +25,6 @@ class Amazon(scrapy.Spider):
 
     def parse_data(self, response):
         # import pdb; pdb.set_trace()
-        import pdb; pdb.set_trace()
         image_url = response.css("#imgTagWrapperId img ::attr(data-old-hires)").extract_first()
         title = response.css("#titleSection #productTitle ::text").extract_first()
         description = extract_items(response.css("#featurebullets_feature_div #feature-bullets li ::text").extract())
