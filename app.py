@@ -12,7 +12,7 @@ app = Flask(__name__, template_folder='web_content')
 # app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///students.sqlite3'
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
-# app.config['DEBUG'] = True
+app.config['DEBUG'] = True
 db = SQLAlchemy(app)
 
 
