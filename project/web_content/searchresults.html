@@ -68,7 +68,19 @@
 		<script type="text/babel">
     class Resultrow extends React.Component {
 		    render() {
-		        return ({REACT_RESULT_ROW});
+		        return ( <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://images-na.ssl-images-amazon.com/images/I/81DgMIyMHjL._SL1500_.jpg" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a href="https://www.amazon.com/Eaton-CHDIS-20A-BRKR-EHD1020/dp/B008KNAPGS?keywords=fframes&qid=1540718895&sr=8-1-spell&ref=sr_1_1">Eaton CHDIS 20A 1P CKT BRKR, EHD1020</a>
+              </h4>
+              <p class="card-text">Make sure this fitsby entering your model number.New Surplus - SERIES C F-FRAME MOLDED CASE CIRCUIT BREAKER 20A 1P CKT BRKR</p>
+              <p class="card-text">Price: $1.77</p>
+              <p class="card-text">Shop: AMAZON</p>
+            </div>
+          </div>
+        </div>);
 			}
 	}
 	  ReactDOM.render(
@@ -76,14 +88,7 @@
 	   document.getElementById('resultreact')
 	);
 	</script>
-	<div style="padding-top: 80px;
-	margin:0 auto;
-	width: 60%;"class="bs-component">
-              <div class="alert alert-dismissible alert-danger">
-                <button type="button" class="close" data-dismiss="alert">×</button>
-                <strong>Error: </strong>Sorry, no products found 
-              </div>
-            </div>
+	
 	</div>
 
 	<footer class="py-5 bg-light">

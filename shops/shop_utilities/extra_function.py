@@ -1,5 +1,6 @@
 import urllib.parse as urlparse
 import datetime as dt
+import re
 
 
 def prepend_domain(url, domain_url):
@@ -18,20 +19,28 @@ def prepend_domain(url, domain_url):
     return url
 
 
-def generate_result_meta(shop_link, search_keyword, image_url, shop_name, price, title, content_description):
+def generate_result_meta(shop_link, searched_keyword, image_url, shop_name, price, title, content_description, date_searched=None):
     if not validate_data(image_url, price, title):
         return None
 
+    numeric_price = re.findall("\d+\.+\d+", price) or re.findall("\d+", price)
+    if numeric_price is None or len(numeric_price) == 0:
+        return None
+
+    if date_searched is None:
+        date_searched = str(dt.datetime.now())
+
     result_meta = {
-        search_keyword: {
+        searched_keyword: {
             "image_url": prepend_domain(image_url, shop_link),
             "shop_name": shop_name,
             "shop_link": shop_link,
             "price": format_price(price),
             "title": truncate_data(title, 50),
-            "criteria": search_keyword,
-            "content_descripition": truncate_data(content_description, 250),
-            "date_searched": str(dt.datetime.now())
+            "searched_keyword": searched_keyword,
+            "content_description": truncate_data(content_description, 250),
+            "date_searched": date_searched,
+            "numeric_price": numeric_price[0]
         }
     }
     return result_meta
