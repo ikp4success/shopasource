@@ -1,4 +1,4 @@
-_amazonurl = "https://www.amazon.com/s/ref=nb_sb_noss_1?url=search-alias%3Daps&field-keywords={}&sort=price-asc-rank"
+_amazonurl = "https://www.amazon.com/s/ref=sr_st_relevanceblender?url=search-alias%3Daps&field-keywords={}"
 _bestbuyurl = "https://www.bestbuy.com/site/searchpage.jsp?st={}&_dyncharset=UTF-8&id=pcat17071&type=page&sc=Global&cp=1&nrp=&sp=&qp=&list=n&af=true&iht=y&usc=All+Categories&ks=960&keys=keys"
 _ebayurl = "https://www.ebay.com/sch/i.html?_from=R40&_sacat=0&_nkw={}&rt=nc&LH_PrefLoc=1&_ipg=25"
 _walmarturl = "https://www.walmart.com/search/?page=1&query={}&sort=price_low#searchProductResult"

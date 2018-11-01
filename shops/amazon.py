@@ -3,7 +3,7 @@ import scrapy
 from shops.shop_connect.shop_request import get_request
 from shops.shop_connect.shoplinks import _amazonurl
 from shops.shop_utilities.shop_names import ShopNames
-from shops.shop_utilities.extra_function import generate_result_meta, extract_items
+from shops.shop_utilities.extra_function import generate_result_meta, extract_items, safe_json
 from debug_app.manual_debug_funcs import printHtmlToFile
 
 
@@ -19,11 +19,26 @@ class Amazon(scrapy.Spider):
         yield get_request(shop_url, self.get_best_link)
 
     def get_best_link(self, response):
-        item_url = response.css("div ul#s-results-list-atf li a ::attr(href), .s-result-list .sg-col-inner a ::attr(href)").extract_first()
+        item_url = None
+        item_urls = response.css("div ul#s-results-list-atf li, .s-result-list .sg-col-inner")
+        for item_url in item_urls:
+            if "Sponsored" in item_url.extract() or "Top Rated from Our Brands" in item_url.extract():
+                continue
+            item_url = item_url.css(".a-link-normal ::attr(href), .a-link-normal ::attr(href)").extract_first()
+            if item_url is None:
+                continue
+            break
         yield get_request(url=item_url, callback=self.parse_data, domain_url=response.url)
 
     def parse_data(self, response):
         image_url = response.css("#imgTagWrapperId img ::attr(data-old-hires)").extract_first()
+        if image_url is None or image_url == "":
+            image_url = response.css("#imgTagWrapperId img ::attr(data-a-dynamic-image)").extract_first()
+            image_url_json = safe_json(image_url)
+            if image_url_json is not None:
+                image_url_json = list(image_url_json)
+                if len(image_url_json) > 0:
+                    image_url = image_url_json[0]
         title = response.css("#titleSection #productTitle ::text").extract_first()
         description = extract_items(response.css("#featurebullets_feature_div #feature-bullets li ::text").extract())
         price = response.css("#priceblock_ourprice ::text").extract_first()

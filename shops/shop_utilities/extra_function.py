@@ -1,6 +1,7 @@
 import urllib.parse as urlparse
 import datetime as dt
 import re
+import json
 
 
 def prepend_domain(url, domain_url):
@@ -17,6 +18,14 @@ def prepend_domain(url, domain_url):
             return urlparse.urljoin(domain, url)
         url = "https://{}".format(url.replace("//", ""))
     return url
+
+
+def safe_json(data):
+    try:
+        return json.loads(data)
+    except Exception:
+        return {}
+    return {}
 
 
 def generate_result_meta(shop_link, searched_keyword, image_url, shop_name, price, title, content_description, date_searched=None):
