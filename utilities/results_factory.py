@@ -26,7 +26,7 @@ def run_search(search_keyword):
     launch_spiders_partial = partial(launch_spiders, sk=search_keyword)
     results += pool.map(launch_spiders_partial, ShopNames)
     pool.close()
-    # pool.join()
+    pool.join()
 
     display_data = ""
     for result in results:
