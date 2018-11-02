@@ -4,5 +4,5 @@ _ebayurl = "https://www.ebay.com/sch/i.html?_from=R40&_sacat=0&_nkw={}&rt=nc&LH_
 _walmarturl = "https://www.walmart.com/search/?page=1&query={}&sort=price_low#searchProductResult"
 _tjmaxxurl = "https://tjmaxx.tjx.com/store/shop?Nr=AND%28OR%28product.catalogId%3Atjmaxx%29%2Cproduct.siteId%3Atjmaxx%2CisEarlyAccess%3Afalse%29&Ns=product.minListPrice%7C0%7C%7Cproduct.inventory%7C1&Ntt={}&_dyncharset=utf-8&initSubmit=true&qfh_sch=Search&tag=srt"
 _googleurl = "https://www.google.com/search?q={}&sa=X&tbas=0&biw=1920&bih=966&tbm=shop&tbs=p_ord:p"
-_targeturl = "https://www.target.com/s?searchTerm={}&sortBy=PriceLow&Nao=0"
+_targeturl = "https://redsky.target.com/v1/plp/search/?count=1&offset=0&keyword={}&sort_by=relevance&default_purchasability_filter=true&include_sponsored_search=false&platform=desktop&channel=web"
 _neweggurl = "https://www.newegg.com/Product/ProductList.aspx?Submit=ENE&N=-1&IsNodeId=1&Description={}&bop=And&Order=BESTSELLING&PageSize=36"
