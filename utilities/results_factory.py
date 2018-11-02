@@ -30,7 +30,8 @@ def run_search(search_keyword):
 
     display_data = ""
     for result in results:
-        display_data += safe_grab(result, ["results_row"], {})
+        if result != "":
+            display_data += safe_grab(result, ["results_row"], {})
 
     if display_data != "":
         update_results_row(display_data)
