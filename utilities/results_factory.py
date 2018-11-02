@@ -9,7 +9,7 @@ from functools import partial
 from utilities.DefaultResources import _resultRow
 from utilities.DefaultResources import _errorMessage
 from project.models import ShoppedData
-from shops.shop_utilities.extra_function import truncate_data
+from shops.shop_utilities.extra_function import truncate_data, safe_json, safe_grab
 
 
 def run_search(search_keyword):
@@ -24,14 +24,16 @@ def run_search(search_keyword):
 
     pool = ThreadPool(len(ShopNames))
     launch_spiders_partial = partial(launch_spiders, sk=search_keyword)
-    results = pool.map(launch_spiders_partial, ShopNames)
+    results += pool.map(launch_spiders_partial, ShopNames)
     pool.close()
-    pool.join()
-    if results is not None and len(results) > 0:
-        if results[0] != "":
-            update_results_row(results[0]["results_row"])
-        else:
-            update_results_row_error("Sorry, no products found")
+    # pool.join()
+
+    display_data = ""
+    for result in results:
+        display_data += safe_grab(result, ["results_row"], {})
+
+    if display_data != "":
+        update_results_row(display_data)
     else:
         update_results_row_error("Sorry, no products found")
     return
@@ -45,15 +47,14 @@ def launch_spiders(sn, sk):
     call(["scrapy", "crawl", "{}".format(name), "-a", "search_keyword={}".format(search_keyword), "-o", file_name])
     results = None
     output_data = ""
-    with open(file_name) as items_file:
+    with open(file_name, "r") as items_file:
         results = items_file.read()
     if results is not None and results != "":
         results = _result_handler(results, search_keyword)
-        if results is not None:
-            _built_result_rows = build_result_row(results)
-            output_data += _built_result_rows
-            results["results_row"] = output_data
-            # update_results_row(output_data)
+        _built_result_rows = build_result_row(results)
+        output_data = _built_result_rows
+        results["results_row"] = output_data
+        # update_results_row(output_data)
     return results
 
 
@@ -124,8 +125,8 @@ def update_db_results(results):
 def update_search_view_with_db_results(results, search_keyword):
     output_data = ""
     for result in results:
-        results = json.loads("".join(results))
-        result_data = results.get(search_keyword, {})
+        result = safe_json(result)
+        result_data = safe_grab(result, [search_keyword], {})
         output_data += build_result_row(result_data)
     if output_data != "":
         update_results_row(output_data)

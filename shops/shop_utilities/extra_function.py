@@ -20,19 +20,21 @@ def prepend_domain(url, domain_url):
     return url
 
 
-def safe_grab(data, keys):
+def safe_grab(data, keys, default=None):
     if data is not None and keys is not None and len(keys) > 0:
         keys_list = keys
         key = keys_list[0]
         data = data.get(key)
         keys_list.pop(0)
     else:
-        return data
+        return data or default
     return safe_grab(data, keys)
 
 
 def safe_json(data):
     try:
+        if not isinstance(data, str):
+            data = json.dumps(data)
         return json.loads(data)
     except Exception:
         return {}

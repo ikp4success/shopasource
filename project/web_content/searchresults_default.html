@@ -64,11 +64,11 @@
 
 
 	<div class="container results">
-		<div id="resultreact" class="row"></div>
+		<div id="resultreact"></div>
 		<script type="text/babel">
     class Resultrow extends React.Component {
 		    render() {
-		        return ({REACT_RESULT_ROW});
+		        return (<div class="row">{REACT_RESULT_ROW}</div>);
 			}
 	}
 	  ReactDOM.render(
