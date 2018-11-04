@@ -2,8 +2,9 @@ from subprocess import call
 from shops.shop_utilities.shop_names import ShopNames
 from multiprocessing.dummy import Pool as ThreadPool
 from project import db
+from dateutil import parser
+from datetime import datetime, timezone
 
-import json
 from functools import partial
 
 from utilities.DefaultResources import _resultRow
@@ -17,24 +18,19 @@ def run_search(search_keyword):
         update_results_row_error("Search keyword is empty or invalid")
 
     search_keyword = truncate_data(search_keyword, 50)
-    results = get_data_from_db(search_keyword)
-    if results is not None:
-        if update_search_view_with_db_results(results, search_keyword):
-            return
+    if update_search_view_with_db_results(search_keyword, check=True):
+        return
 
+    display_data = None
     pool = ThreadPool(len(ShopNames))
     launch_spiders_partial = partial(launch_spiders, sk=search_keyword)
-    results += pool.map(launch_spiders_partial, ShopNames)
+    display_data = pool.map(launch_spiders_partial, ShopNames)
     pool.close()
     pool.join()
 
-    display_data = ""
-    for result in results:
-        if result != "":
-            display_data += safe_grab(result, ["results_row"], {})
-
-    if display_data != "":
-        update_results_row(display_data)
+    display_data = [x for x in display_data if x != '']
+    if display_data is not None and len(display_data) > 0:
+        update_search_view_with_db_results(search_keyword)
     else:
         update_results_row_error("Sorry, no products found")
     return
@@ -47,28 +43,21 @@ def launch_spiders(sn, sk):
     open(file_name, 'w+').close()
     call(["scrapy", "crawl", "{}".format(name), "-a", "search_keyword={}".format(search_keyword), "-o", file_name])
     results = None
-    output_data = ""
+
     with open(file_name, "r") as items_file:
         results = items_file.read()
     if results is not None and results != "":
-        results = _result_handler(results, search_keyword)
-        _built_result_rows = build_result_row(results)
-        output_data = _built_result_rows
-        results["results_row"] = output_data
-        # update_results_row(output_data)
+        results = safe_json(results)
+        execute_add_results_to_db(results, search_keyword)
     return results
 
 
-def _result_handler(results, search_keyword):
-    if results is not None and results != "":
-        results = json.loads(results)
-        if results is not None:
-            results = results[0]
-            result_data = results.get(search_keyword, {})
-            if len(result_data) > 0:
-                add_results_to_db(result_data)
-                return result_data
-    return None
+def execute_add_results_to_db(results, search_keyword):
+    if results is not None:
+        results = results[0]
+        result_data = results.get(search_keyword, {})
+        if len(result_data) > 0:
+            add_results_to_db(result_data)
 
 
 def build_result_row(result_data):
@@ -123,15 +112,39 @@ def update_db_results(results):
     return False
 
 
-def update_search_view_with_db_results(results, search_keyword):
+def update_search_view_with_db_results(search_keyword, check=False):
+    results = get_data_from_db(search_keyword)
+    if results is not None:
+        output_data = ""
+        if check:
+            if is_new_data(results, search_keyword):
+                output_data = update(results, search_keyword)
+        else:
+            output_data = update(results, search_keyword)
+        if output_data != "":
+            update_results_row(output_data.replace("<br>", ""))
+            return True
+    return False
+
+
+def update(results, search_keyword):
     output_data = ""
     for result in results:
         result = safe_json(result)
         result_data = safe_grab(result, [search_keyword], {})
         output_data += build_result_row(result_data)
-    if output_data != "":
-        update_results_row(output_data)
-        return True
+    return output_data
+
+
+def is_new_data(results, search_keyword):
+    for result in results:
+        result = safe_json(result)
+        date_searched = safe_grab(result, [search_keyword, "date_searched"])
+        if date_searched is not None:
+            date_searched_parse = parser.parse(date_searched)
+            dt_time_diff = datetime.now(timezone.utc) - date_searched_parse
+            if dt_time_diff.days < 7:
+                return True
     return False
 
 

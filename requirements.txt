@@ -5,4 +5,4 @@ gunicorn
 django-heroku
 flask_sqlalchemy
 requests
-easydict
+python-dateutil
