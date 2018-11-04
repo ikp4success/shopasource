@@ -6,7 +6,7 @@ class ShopNames(Enum):
     # BESTBUY = "BESTBUY",
     # EBAY = "EBAY",
     TARGET = "TARGET",
-    # WALMART = "WALMART",
+    WALMART = "WALMART",
     # TJMAXX = "TJMAXX",
     # GOOGLE = "GOOGLE",
     # NEWEGG = "NEWEGG"
