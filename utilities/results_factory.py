@@ -68,12 +68,12 @@ def execute_add_results_to_db(results, search_keyword):
 
 
 def build_result_row(result_data):
-    _resultRow_res = _resultRow.replace("{PRODUCTIMAGESOURCE}", safe_grab(result_data, ["image_url"], "")) \
-        .replace("{PRODUCTLINK}", safe_grab(result_data, ["shop_link"], "")) \
-        .replace("{PRODUCTTITLE}", safe_grab(result_data, ["title"], "")) \
-        .replace("{PRODUCTDESCRIPTION}", safe_grab(result_data, ["content_description"], "")) \
-        .replace("{PRODUCTPRICE}", safe_grab(result_data, ["price"], "")) \
-        .replace("{PRODUCTSHOPNAME}", safe_grab(result_data, ["shop_name"], ""))
+    _resultRow_res = _resultRow.replace("{PRODUCTIMAGESOURCE}", safe_grab(result_data, ["image_url"], "") or "") \
+        .replace("{PRODUCTLINK}", safe_grab(result_data, ["shop_link"], "") or "") \
+        .replace("{PRODUCTTITLE}", safe_grab(result_data, ["title"], "") or "") \
+        .replace("{PRODUCTDESCRIPTION}", safe_grab(result_data, ["content_description"], "") or "") \
+        .replace("{PRODUCTPRICE}", safe_grab(result_data, ["price"], "") or "") \
+        .replace("{PRODUCTSHOPNAME}", safe_grab(result_data, ["shop_name"], "") or "")
     return _resultRow_res
 
 
@@ -150,7 +150,7 @@ def is_new_data(results, search_keyword):
         if date_searched is not None:
             date_searched_parse = parser.parse(date_searched)
             dt_time_diff = datetime.now(timezone.utc) - date_searched_parse
-            if dt_time_diff.days < 0:
+            if dt_time_diff.days < 7:
                 return True
     return False
 
