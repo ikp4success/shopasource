@@ -1,4 +1,5 @@
 import scrapy
+from w3lib.url import safe_url_string
 from scrapy.spidermiddlewares.httperror import HttpError
 from twisted.internet.error import DNSLookupError
 from twisted.internet.error import TimeoutError, TCPTimedOutError
@@ -6,11 +7,12 @@ from twisted.internet.error import TimeoutError, TCPTimedOutError
 from shops.shop_utilities.extra_function import prepend_domain
 
 
-def get_request(url, callback, domain_url=None):
+def get_request(url, callback, domain_url=None, meta=None):
     url = prepend_domain(url, domain_url)
     if url is None:
         return None
-    request = scrapy.Request(url, callback=callback, errback=errcallback)
+    url = safe_url_string(url)
+    request = scrapy.Request(url, callback=callback, errback=errcallback, meta=meta)
     return request
 
 

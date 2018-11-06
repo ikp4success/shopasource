@@ -6,3 +6,4 @@ django-heroku
 flask_sqlalchemy
 requests
 python-dateutil
+user_agent

@@ -4,6 +4,7 @@ from multiprocessing.dummy import Pool as ThreadPool
 from project import db
 from dateutil import parser
 from datetime import datetime, timezone
+import traceback
 
 from functools import partial
 
@@ -14,32 +15,38 @@ from shops.shop_utilities.extra_function import truncate_data, safe_json, safe_g
 
 
 def run_search(search_keyword):
-    if search_keyword is None or search_keyword.strip() == "":
-        update_results_row_error("Search keyword is empty or invalid")
+    try:
+        if search_keyword is None or search_keyword.strip() == "":
+            update_results_row_error("Search keyword is empty or invalid")
 
-    search_keyword = truncate_data(search_keyword, 50)
-    if update_search_view_with_db_results(search_keyword, check=True):
+        search_keyword = truncate_data(search_keyword, 50)
+        if update_search_view_with_db_results(search_keyword, check=True):
+            return
+
+        display_data = None
+        pool = ThreadPool(len(ShopNames))
+        launch_spiders_partial = partial(launch_spiders, sk=search_keyword)
+        display_data = pool.map(launch_spiders_partial, ShopNames)
+        pool.close()
+        pool.join()
+
+        display_data = [x for x in display_data if x != '']
+        if display_data is not None and len(display_data) > 0:
+            update_search_view_with_db_results(search_keyword)
+        else:
+            update_results_row_error("Sorry, no products found")
         return
-
-    display_data = None
-    pool = ThreadPool(len(ShopNames))
-    launch_spiders_partial = partial(launch_spiders, sk=search_keyword)
-    display_data = pool.map(launch_spiders_partial, ShopNames)
-    pool.close()
-    pool.join()
-
-    display_data = [x for x in display_data if x != '']
-    if display_data is not None and len(display_data) > 0:
-        update_search_view_with_db_results(search_keyword)
-    else:
-        update_results_row_error("Sorry, no products found")
+    except Exception as e:
+        update_results_row_error("Sorry, error encountered during search, try again or contact admin if error persist")
+        print(e)
+        print(traceback.format_exc())
     return
 
 
 def launch_spiders(sn, sk):
     name = sn.name
     search_keyword = sk
-    file_name = "{}_RESULTS.json".format(name)
+    file_name = "json_shop_results/{}_RESULTS.json".format(name)
     open(file_name, 'w+').close()
     call(["scrapy", "crawl", "{}".format(name), "-a", "search_keyword={}".format(search_keyword), "-o", file_name])
     results = None
@@ -61,12 +68,12 @@ def execute_add_results_to_db(results, search_keyword):
 
 
 def build_result_row(result_data):
-    _resultRow_res = _resultRow.replace("{PRODUCTIMAGESOURCE}", result_data.get("image_url", "")) \
-        .replace("{PRODUCTLINK}", result_data.get("shop_link", "")) \
-        .replace("{PRODUCTTITLE}", result_data.get("title", "")) \
-        .replace("{PRODUCTDESCRIPTION}", result_data.get("content_description", "")) \
-        .replace("{PRODUCTPRICE}", result_data.get("price", "")) \
-        .replace("{PRODUCTSHOPNAME}", result_data.get("shop_name", ""))
+    _resultRow_res = _resultRow.replace("{PRODUCTIMAGESOURCE}", safe_grab(result_data, ["image_url"], "")) \
+        .replace("{PRODUCTLINK}", safe_grab(result_data, ["shop_link"], "")) \
+        .replace("{PRODUCTTITLE}", safe_grab(result_data, ["title"], "")) \
+        .replace("{PRODUCTDESCRIPTION}", safe_grab(result_data, ["content_description"], "")) \
+        .replace("{PRODUCTPRICE}", safe_grab(result_data, ["price"], "")) \
+        .replace("{PRODUCTSHOPNAME}", safe_grab(result_data, ["shop_name"], ""))
     return _resultRow_res
 
 
@@ -143,7 +150,7 @@ def is_new_data(results, search_keyword):
         if date_searched is not None:
             date_searched_parse = parser.parse(date_searched)
             dt_time_diff = datetime.now(timezone.utc) - date_searched_parse
-            if dt_time_diff.days < 7:
+            if dt_time_diff.days < 0:
                 return True
     return False
 

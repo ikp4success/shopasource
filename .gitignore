@@ -2,3 +2,4 @@ project_bestlows_v/
 *.pyc
 utilities/__pycache__/DefaultResources.cpython-36.pyc
 scraped_sites/
+__pycache__/

@@ -21,7 +21,6 @@ def prepend_domain(url, domain_url):
 
 
 def safe_grab(data, keys, default=None):
-
     if data is not None and keys is not None and len(keys) > 0:
         if not isinstance(data, dict):
             return None
@@ -30,7 +29,9 @@ def safe_grab(data, keys, default=None):
         data = data.get(key)
         keys_list.pop(0)
     else:
-        return data or default
+        if data is None and default is not None:
+            return default
+        return data
     return safe_grab(data, keys)
 
 
