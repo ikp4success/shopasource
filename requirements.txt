@@ -7,3 +7,4 @@ flask_sqlalchemy
 requests
 python-dateutil
 user_agent
+w3lib==1.19.0
