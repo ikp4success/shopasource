@@ -79,6 +79,37 @@ def extract_items(items):
     return item_r
 
 
+def get_best_item_by_match(items, search_keyword, query, keyword_exceptions=None):
+    for item in items:
+        item = match_sk(search_keyword=search_keyword, query=query, item=item, keyword_exceptions=keyword_exceptions)
+        if item is None:
+            continue
+        return item
+    return None
+
+
+def match_sk(search_keyword, item, query, keyword_exceptions=None):
+    if keyword_exceptions is None:
+        keyword_exceptions = []
+    else:
+        for key_excep in keyword_exceptions:
+            if key_excep in item.extract():
+                return None
+
+    item = item.css(query).extract_first()
+    search_keyword = search_keyword.split(" ")
+    match_count = 0
+    for sk in search_keyword:
+        if len(sk) > 1 and sk in item:
+            match_count = match_count + 1
+
+    if match_count > 0:
+        percentage_sk_match = (match_count / len(search_keyword)) * 100
+        if percentage_sk_match > 55:
+            return item
+    return None
+
+
 def format_price(price):
     return price.replace("US", "").strip()
 
