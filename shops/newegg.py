@@ -19,9 +19,12 @@ class Newegg(scrapy.Spider):
         yield get_request(shop_url, self.get_best_link)
 
     def get_best_link(self, response):
-        item_url = response.css(".item-container a ::attr(href)").extract_first()
+        item_url = response.css(".item-container a").extract_first()
+        # query = "::attr(href)"
+        # prize_query = [".price-current strong", ".price-current sup"]
+        # item_url = get_best_item_by_match(items=item_urls, query=query, search_keyword=self._search_keyword, args=prize_query)
         prize = "{}{}".format(response.css(".price-current strong").extract_first(), response.css(".price-current sup").extract_first())
-        yield get_request(url=item_url, callback=self.parse_data, domain_url=response.url, meta={"p": prize})
+        yield get_request(url=item_url, callback=self.parse_data, domain_url=response.url, meta={"p": prize, 'dont_redirect': True})
 
     def parse_data(self, response):
         image_url = response.css(".mainSlide img ::attr(src)").extract_first()

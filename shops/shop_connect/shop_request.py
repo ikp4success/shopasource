@@ -16,18 +16,18 @@ def get_request(url, callback, domain_url=None, meta=None):
     return request
 
 
-def errcallback(self, failure):
+def errcallback(failure):
     # logs failures
-    self.logger.error(repr(failure))
+    print(repr(failure))
 
     if failure.check(HttpError):
         response = failure.value.response
-        self.logger.error("HttpError occurred on %s", response.url)
+        print("HttpError occurred on %s", response.url)
 
     elif failure.check(DNSLookupError):
         request = failure.request
-        self.logger.error("DNSLookupError occurred on %s", request.url)
+        print("DNSLookupError occurred on %s", request.url)
 
     elif failure.check(TimeoutError, TCPTimedOutError):
         request = failure.request
-        self.logger.error("TimeoutError occurred on %s", request.url)
+        print("TimeoutError occurred on %s", request.url)

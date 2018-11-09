@@ -4,7 +4,7 @@ from shops.shop_connect.shop_request import get_request, prepend_domain
 from shops.shop_connect.shoplinks import _targeturl
 from shops.shop_utilities.shop_names import ShopNames
 from shops.shop_utilities.extra_function import generate_result_meta, safe_json, safe_grab
-from debug_app.manual_debug_funcs import printHtmlToFile
+# from debug_app.manual_debug_funcs import printHtmlToFile
 
 
 class Target(scrapy.Spider):
@@ -29,6 +29,6 @@ class Target(scrapy.Spider):
             image_url = "{}{}".format(base_url, primary)
             title = safe_grab(t_data, ["title"])
             description = safe_grab(t_data, ["description"])
-            price = safe_grab(t_data, ["list_price", "formatted_price"])
+            price = safe_grab(t_data, ["list_price", "formatted_price"]) or safe_grab(t_data, ["offer_price", "formatted_price"])
             url = prepend_domain(safe_grab(t_data, ["url"]), "https://www.target.com")
             yield generate_result_meta(shop_link=url, image_url=image_url, shop_name=self.name, price=price, title=title, searched_keyword=self._search_keyword, content_description=description)
