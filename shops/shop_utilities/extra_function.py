@@ -32,7 +32,7 @@ def safe_grab(data, keys, default=None):
         if data is None and default is not None:
             return default
         return data
-    return safe_grab(data, keys)
+    return safe_grab(data, keys, default)
 
 
 def safe_json(data):
@@ -79,34 +79,45 @@ def extract_items(items):
     return item_r
 
 
-def get_best_item_by_match(items, search_keyword, query, keyword_exceptions=None):
+def get_best_item_by_match(items, search_keyword, query, keyword_exceptions=None, alt_query=None):
+    if items is None:
+        return None
     for item in items:
-        item = match_sk(search_keyword=search_keyword, query=query, item=item, keyword_exceptions=keyword_exceptions)
+        item = match_sk(search_keyword=search_keyword,
+                        query=query,
+                        item=item,
+                        keyword_exceptions=keyword_exceptions,
+                        alt_query=alt_query)
         if item is None:
             continue
         return item
     return None
 
 
-def match_sk(search_keyword, item, query, keyword_exceptions=None):
+def match_sk(search_keyword, item, query, keyword_exceptions=None, alt_query=None):
+    if item is None:
+        return item
     if keyword_exceptions is None:
         keyword_exceptions = []
     else:
         for key_excep in keyword_exceptions:
             if key_excep in item.extract():
                 return None
-
-    item = item.css(query).extract_first()
+    item_q = item.css(query).extract_first()
     search_keyword = search_keyword.split(" ")
     match_count = 0
+    item_sk = None
     for sk in search_keyword:
-        if len(sk) > 1 and sk in item:
+        item_sk = item_q
+        if alt_query is not None:
+            item_sk = "".join(item.css(alt_query).extract())
+        if len(sk) > 1 and sk.lower() in item_sk.lower():
             match_count = match_count + 1
 
     if match_count > 0:
         percentage_sk_match = (match_count / len(search_keyword)) * 100
         if percentage_sk_match > 55:
-            return item
+            return {"url": item_q, "alt_item_sk": item_sk}
     return None
 
 
