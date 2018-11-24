@@ -1,4 +1,4 @@
-import urllib.parse as urlparse
+from urllib import parse as urlparse
 import datetime as dt
 import re
 import json
@@ -79,46 +79,22 @@ def extract_items(items):
     return item_r
 
 
-def get_best_item_by_match(items, search_keyword, query, keyword_exceptions=None, alt_query=None):
-    if items is None:
-        return None
-    for item in items:
-        item = match_sk(search_keyword=search_keyword,
-                        query=query,
-                        item=item,
-                        keyword_exceptions=keyword_exceptions,
-                        alt_query=alt_query)
-        if item is None:
-            continue
-        return item
-    return None
-
-
-def match_sk(search_keyword, item, query, keyword_exceptions=None, alt_query=None):
-    if item is None:
-        return item
-    if keyword_exceptions is None:
-        keyword_exceptions = []
-    else:
-        for key_excep in keyword_exceptions:
-            if key_excep in item.extract():
-                return None
-    item_q = item.css(query).extract_first()
+def match_sk(search_keyword, searched_item):
+    if search_keyword is None or searched_item is None:
+        return False
+    search_keyword = search_keyword.lower()
+    searched_item = searched_item.lower()
     search_keyword = search_keyword.split(" ")
     match_count = 0
-    item_sk = None
     for sk in search_keyword:
-        item_sk = item_q
-        if alt_query is not None:
-            item_sk = "".join(item.css(alt_query).extract())
-        if len(sk) > 1 and sk.lower() in item_sk.lower():
+        if len(sk) > 1 and sk.lower() in searched_item.lower():
             match_count = match_count + 1
 
     if match_count > 0:
         percentage_sk_match = (match_count / len(search_keyword)) * 100
         if percentage_sk_match > 55:
-            return {"url": item_q, "alt_item_sk": item_sk}
-    return None
+            return True
+    return False
 
 
 def format_price(price):
@@ -137,6 +113,8 @@ def validate_data(image_url, price, title):
 
 
 def truncate_data(data, length_cont):
+    if not data:
+        return data
     data = data.rstrip().strip()
     if len(data) > length_cont:
         try:

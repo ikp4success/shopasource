@@ -3,7 +3,7 @@ import scrapy
 from shops.shop_connect.shop_request import get_request
 from shops.shop_connect.shoplinks import _googleurl
 from shops.shop_utilities.shop_names import ShopNames
-from shops.shop_utilities.extra_function import generate_result_meta, prepend_domain
+from shops.shop_utilities.extra_function import generate_result_meta, prepend_domain, match_sk
 # from debug_app.manual_debug_funcs import printHtmlToFile
 
 
@@ -19,9 +19,14 @@ class Google(scrapy.Spider):
         yield get_request(shop_url, self.parse_data)
 
     def parse_data(self, response):
-        link = prepend_domain(response.css(".sh-pr__product-results div a ::attr(href)").extract_first(), "https://www.google.com/")
-        image_url = response.css(".MUQY0 img ::attr(src)").extract_first()
-        title = response.css(".sh-pr__product-results div a ::text").extract_first()
-        description = ""
-        price = response.css(".kD8n3 span.O8U6h ::text").extract_first()
-        yield generate_result_meta(shop_link=link, image_url=image_url, shop_name=self.name, price=price, title=title, searched_keyword=self._search_keyword, content_description=description)
+        items = response.css(".sh-dlr__list-result")
+        for item in items:
+            title = item.css(".eIuuYe a ::text").extract_first()
+            if match_sk(self._search_keyword, title):
+                link = prepend_domain(item.css(".eIuuYe a ::attr(href)").extract_first(), "https://www.google.com/")
+                image_url = item.css(".MUQY0 img ::attr(src)").extract_first()
+                description = ""
+                price = item.css("span.O8U6h ::text").extract_first()
+                if price is not None:
+                    price = price.replace("used", "")
+                yield generate_result_meta(shop_link=link, image_url=image_url, shop_name=self.name, price=price, title=title, searched_keyword=self._search_keyword, content_description=description)

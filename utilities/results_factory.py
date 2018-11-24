@@ -53,16 +53,17 @@ def launch_spiders(sn, sk):
 
     with open(file_name, "r") as items_file:
         results = items_file.read()
+
     if results is not None and results != "":
         results = safe_json(results)
-        execute_add_results_to_db(results, search_keyword)
+        for result in results:
+            execute_add_results_to_db(result, search_keyword)
     return results
 
 
-def execute_add_results_to_db(results, search_keyword):
-    if results is not None:
-        results = results[0]
-        result_data = results.get(search_keyword, {})
+def execute_add_results_to_db(result, search_keyword):
+    if result is not None:
+        result_data = result.get(search_keyword, {})
         if len(result_data) > 0:
             add_results_to_db(result_data)
 
