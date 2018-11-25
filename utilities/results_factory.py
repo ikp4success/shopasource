@@ -102,7 +102,7 @@ def update_results_row_error(data):
 
 
 def get_data_from_db(searched_keyword):
-    results = ShoppedData.query.filter(ShoppedData.searched_keyword == searched_keyword).order_by(ShoppedData.numeric_price.asc()).all()
+    results = ShoppedData.query.filter(ShoppedData.searched_keyword == searched_keyword).order_by(ShoppedData.numeric_price.desc()).all()
     if results is not None and len(results) > 0:
         results = [res.__str__() for res in results]
     return results
