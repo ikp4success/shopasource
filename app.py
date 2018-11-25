@@ -1,10 +1,14 @@
 from flask import render_template, request
+from flask import jsonify
+import requests
 
-from utilities.results_factory import run_search
+from utilities.results_factory import run_web_search, run_api_search, update_results_row_error
+from shops.shop_utilities.extra_function import truncate_data, safe_json
 from project import db, app
 
 
 db.create_all()
+
 
 @app.after_request
 def add_header(response):
@@ -27,7 +31,14 @@ def about():
     return render_template('about.html')
 
 
-@app.route("/searchresults", methods=['POST'])
+@app.route("/api/shop/search=<search_keyword>", methods=['GET'])
+def api_search(search_keyword):
+    results = run_api_search(search_keyword)
+    results = jsonify(results)
+    return (results, 200)
+
+
+@app.route("/searchresults", methods=['GET', 'POST'])
 def searchresults():
     if request.method == 'POST':
         search_keyword = request.form.get('search')
@@ -38,7 +49,15 @@ def searchresults():
 
 
 def get_search_results(search_keyword):
-    run_search(search_keyword)
+    search_keyword = truncate_data(search_keyword, 50)
+    if search_keyword is None or search_keyword.strip() == "":
+        update_results_row_error("Search keyword is empty or invalid")
+        return render_template('searchresults.html')
+
+    url = "http://127.0.0.1:5000/api/shop/search={}".format(search_keyword)
+    json_data = requests.get(url)
+    results = safe_json(json_data.text)
+    run_web_search(search_keyword, results)
     return render_template('searchresults.html')
 
 

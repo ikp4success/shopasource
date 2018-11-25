@@ -2,6 +2,7 @@ from urllib import parse as urlparse
 import datetime as dt
 import re
 import json
+import html
 
 
 def prepend_domain(url, domain_url):
@@ -118,7 +119,7 @@ def truncate_data(data, length_cont):
     data = data.rstrip().strip()
     if len(data) > length_cont:
         try:
-            return "{}...".format(data[:length_cont])
+            return html.escape("{}...".format(data[:length_cont]))
         except Exception:
             return ""  # data is not good
     else:

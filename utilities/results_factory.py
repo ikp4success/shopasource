@@ -14,33 +14,43 @@ from project.models import ShoppedData
 from shops.shop_utilities.extra_function import truncate_data, safe_json, safe_grab
 
 
-def run_search(search_keyword):
+def run_api_search(search_keyword):
+    results = {}
+    if search_keyword is not None and search_keyword.strip() != "":
+        search_keyword = truncate_data(search_keyword, 50)
+        results = get_json_db_results(search_keyword, check=True)
+        if results is None or len(results) == 0:
+            display_data = start_thread_search(search_keyword)
+            display_data = [x for x in display_data if x != '']
+            if display_data is not None and len(display_data) > 0:
+                results = get_json_db_results(search_keyword, check=False)
+    return results
+
+
+def run_web_search(search_keyword, results):
     try:
         if search_keyword is None or search_keyword.strip() == "":
             update_results_row_error("Search keyword is empty or invalid")
-
-        search_keyword = truncate_data(search_keyword, 50)
-        if update_search_view_with_db_results(search_keyword, check=True):
-            return
-
-        display_data = None
-        pool = ThreadPool(len(ShopNames))
-        launch_spiders_partial = partial(launch_spiders, sk=search_keyword)
-        display_data = pool.map(launch_spiders_partial, ShopNames)
-        pool.close()
-        pool.join()
-
-        display_data = [x for x in display_data if x != '']
-        if display_data is not None and len(display_data) > 0:
-            update_search_view_with_db_results(search_keyword)
-        else:
+        if results is None or len(results) == 0:
             update_results_row_error("Sorry, no products found")
+
+        update_search_view_with_db_results(search_keyword, results)
         return
     except Exception as e:
         update_results_row_error("Sorry, error encountered during search, try again or contact admin if error persist")
         print(e)
         print(traceback.format_exc())
     return
+
+
+def start_thread_search(search_keyword):
+    display_data = None
+    pool = ThreadPool(len(ShopNames))
+    launch_spiders_partial = partial(launch_spiders, sk=search_keyword)
+    display_data = pool.map(launch_spiders_partial, ShopNames)
+    pool.close()
+    pool.join()
+    return display_data
 
 
 def launch_spiders(sn, sk):
@@ -64,8 +74,6 @@ def launch_spiders(sn, sk):
 def execute_add_results_to_db(result, search_keyword):
     if result is not None:
         result_data = result.get(search_keyword, {})
-        print("TEST")
-        print(result_data)
         if len(result_data) > 0:
             add_results_to_db(result_data)
 
@@ -123,19 +131,25 @@ def update_db_results(results):
     return False
 
 
-def update_search_view_with_db_results(search_keyword, check=False):
+def get_json_db_results(search_keyword, check=False):
     results = get_data_from_db(search_keyword)
     if results is not None:
-        output_data = ""
         if check:
             if is_new_data(results, search_keyword):
-                output_data = update(results, search_keyword)
+                return results
         else:
-            output_data = update(results, search_keyword)
+            return results
+    return results
+
+
+def update_search_view_with_db_results(search_keyword, results):
+    if results is not None:
+        output_data = ""
+        output_data = update(results, search_keyword)
         if output_data != "":
             update_results_row(output_data.replace("<br>", ""))
-            return True
-    return False
+            return
+    return
 
 
 def update(results, search_keyword):
