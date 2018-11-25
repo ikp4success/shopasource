@@ -87,7 +87,7 @@ def match_sk(search_keyword, searched_item):
     search_keyword = search_keyword.split(" ")
     match_count = 0
     for sk in search_keyword:
-        if len(sk) > 1 and sk.lower() in searched_item.lower():
+        if len(sk) > 1 and sk in searched_item.lower():
             match_count = match_count + 1
 
     if match_count > 0:

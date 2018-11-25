@@ -64,6 +64,8 @@ def launch_spiders(sn, sk):
 def execute_add_results_to_db(result, search_keyword):
     if result is not None:
         result_data = result.get(search_keyword, {})
+        print("TEST")
+        print(result_data)
         if len(result_data) > 0:
             add_results_to_db(result_data)
 
@@ -109,8 +111,9 @@ def get_data_from_db(searched_keyword):
 def update_db_results(results):
     searched_keyword = results.get("searched_keyword")
     shop_name = results.get("shop_name")
+    title = results.get("title")
     result_find = ShoppedData.query.\
-        filter(ShoppedData.searched_keyword == searched_keyword, ShoppedData.shop_name == shop_name).\
+        filter(ShoppedData.searched_keyword == searched_keyword, ShoppedData.shop_name == shop_name, ShoppedData.title == title).\
         scalar()
     if result_find is not None:
         ShoppedData.query.\
@@ -156,9 +159,9 @@ def is_new_data(results, search_keyword):
     return False
 
 
-def add_results_to_db(results):
-    if not update_db_results(results):
-        shopped_data = wrapshopdata(results)
+def add_results_to_db(result):
+    if not update_db_results(result):
+        shopped_data = wrapshopdata(result)
         db.session.add(shopped_data)
     db.session.commit()
 

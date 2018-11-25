@@ -1,6 +1,10 @@
 from enum import Enum
 
 
+class TestShopNames(Enum):
+    AMAZON = "AMAZON",
+
+
 class ShopNames(Enum):
     AMAZON = "AMAZON",
     TARGET = "TARGET",
