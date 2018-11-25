@@ -54,7 +54,8 @@ def get_search_results(search_keyword):
         update_results_row_error("Search keyword is empty or invalid")
         return render_template('searchresults.html')
 
-    url = "http://127.0.0.1:5000/api/shop/search={}".format(search_keyword)
+    # DEBUG url = "http://127.0.0.1:5000/api/shop/search={}".format(search_keyword)
+    url = "http://bestlows.herokuapp.com/api/shop/search={}".format(search_keyword)
     json_data = requests.get(url)
     results = safe_json(json_data.text)
     run_web_search(search_keyword, results)
