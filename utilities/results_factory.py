@@ -5,6 +5,7 @@ from project import db
 from dateutil import parser
 from datetime import datetime, timezone
 import traceback
+import requests
 
 from functools import partial
 
@@ -16,28 +17,38 @@ from shops.shop_utilities.extra_function import truncate_data, safe_json, safe_g
 
 def run_api_search(search_keyword):
     results = {}
-    if search_keyword is not None and search_keyword.strip() != "":
-        search_keyword = truncate_data(search_keyword, 50)
-        results = get_json_db_results(search_keyword, check=True)
-        if results is None or len(results) == 0:
-            display_data = start_thread_search(search_keyword)
-            display_data = [x for x in display_data if x != '']
-            if display_data is not None and len(display_data) > 0:
-                results = get_json_db_results(search_keyword, check=False)
+    try:
+        if search_keyword is not None and search_keyword.strip() != "":
+            search_keyword = truncate_data(search_keyword, 50)
+            results = get_json_db_results(search_keyword, check=True)
+            if results is None or len(results) == 0:
+                return results
+    except Exception as e:
+        results["error_message"] = "Sorry, error encountered during api search, try again or contact admin if error persist"
+        print(e)
+        print(traceback.format_exc())
+        return results
     return results
 
 
-def run_web_search(search_keyword, results):
+def run_web_search(search_keyword):
     try:
         if search_keyword is None or search_keyword.strip() == "":
             update_results_row_error("Search keyword is empty or invalid")
+        search_keyword = truncate_data(search_keyword, 50)
+
+        # DEBUG url = "http://127.0.0.1:5000/api/shop/search={}".format(search_keyword)
+        url = "http://bestlows.herokuapp.com/api/shop/search={}".format(search_keyword)
+        session = requests.Session()
+        json_data = session.get(url)
+        results = safe_json(json_data.text)
         if results is None or len(results) == 0:
             update_results_row_error("Sorry, no products found")
 
         update_search_view_with_db_results(search_keyword, results)
         return
     except Exception as e:
-        update_results_row_error("Sorry, error encountered during search, try again or contact admin if error persist")
+        update_results_row_error("Sorry, error encountered during web search, try again or contact admin if error persist")
         print(e)
         print(traceback.format_exc())
     return

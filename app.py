@@ -49,17 +49,7 @@ def searchresults():
 
 
 def get_search_results(search_keyword):
-    search_keyword = truncate_data(search_keyword, 50)
-    if search_keyword is None or search_keyword.strip() == "":
-        update_results_row_error("Search keyword is empty or invalid")
-        return render_template('searchresults.html')
-
-    # DEBUG url = "http://127.0.0.1:5000/api/shop/search={}".format(search_keyword)
-    url = "http://bestlows.herokuapp.com/api/shop/search={}".format(search_keyword)
-    session = requests.Session()
-    json_data = session.get(url)
-    results = safe_json(json_data.text)
-    run_web_search(search_keyword, results)
+    run_web_search(search_keyword)
     return render_template('searchresults.html')
 
 
