@@ -7,7 +7,7 @@ from shops.shop_utilities.extra_function import generate_result_meta, extract_it
 
 
 class GroupOn(scrapy.Spider):
-    name = ShopNames.GROUPON.name
+    # name = ShopNames.GROUPON.name
     _search_keyword = None
 
     def __init__(self, search_keyword):
