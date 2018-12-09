@@ -16,6 +16,7 @@ class ShopNames(Enum):
     MICROCENTER = "MICROCENTER",
     GROUPON = "GROUPON",
     FASHIONNOVA = "FASHIONNOVA",
-    SIXPM = "SIXPM"
+    SIXPM = "SIXPM",
+    POSTMARK = "POSTMARK"
     # BESTBUY = "BESTBUY",
     # EBAY = "EBAY",

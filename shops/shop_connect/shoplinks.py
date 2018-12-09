@@ -11,9 +11,9 @@ _microcenterurl = "https://www.microcenter.com/search/search_results.aspx?N=0&NT
 _grouponurl = "https://www.groupon.com/browse/query={}?sort=relevance"
 _fashionnovaurl = "https://ultimate-fnova-dot-acp-magento.appspot.com/full_text_search?page_num=1&q={}&UUID={}"
 _6pmurl = "https://www.6pm.com/{}"
+_postmarkurl = "https://poshmark.com/search?query={}&sort_by=added_desc&department=All"
 
 # in construction
-_postmarkurl = "https://poshmark.com/search?query={}&sort_by=added_desc&department=All"
 _asosurl = "https://us.asos.com/search/?q={}"
 _macysurl = "https://www.macys.com/shop/featured/{}"
 _jcpennysurl = "https://search-api.jcpenney.com/v1/search-service/s/wallet?productGridView=medium&Ntt={}&responseType=organic"
