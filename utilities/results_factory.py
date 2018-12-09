@@ -20,9 +20,7 @@ def run_api_search(search_keyword):
     try:
         if search_keyword is not None and search_keyword.strip() != "":
             search_keyword = truncate_data(search_keyword, 50)
-            results = get_json_db_results(search_keyword, check=True)
-            if results is None or len(results) == 0:
-                return results
+            return get_json_db_results(search_keyword, check=True)
     except Exception as e:
         results["error_message"] = "Sorry, error encountered during api search, try again or contact admin if error persist"
         print(e)
@@ -55,13 +53,11 @@ def run_web_search(search_keyword):
 
 
 def start_thread_search(search_keyword):
-    display_data = None
     pool = ThreadPool(len(ShopNames))
     launch_spiders_partial = partial(launch_spiders, sk=search_keyword)
-    display_data = pool.map(launch_spiders_partial, ShopNames)
+    pool.map(launch_spiders_partial, ShopNames)
     pool.close()
     pool.join()
-    return display_data
 
 
 def launch_spiders(sn, sk):
@@ -148,6 +144,9 @@ def get_json_db_results(search_keyword, check=False):
         if check:
             if is_new_data(results, search_keyword):
                 return results
+            else:
+                start_thread_search(search_keyword)
+                return get_data_from_db(search_keyword)
         else:
             return results
     return results

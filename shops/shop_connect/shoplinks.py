@@ -8,3 +8,17 @@ _targeturl = "https://redsky.target.com/v1/plp/search/?count=20&offset=0&keyword
 _neweggurl = "https://www.newegg.com/Product/ProductList.aspx?Submit=ENE&N=-1&IsNodeId=1&Description={}&bop=And&Order=BESTSELLING&PageSize=1"
 _hmurl = "https://www2.hm.com/en_us/search-results.html?q={}&department=1&sort=ascPrice&image-size=small&image=stillLife&offset=0&page-size=1"
 _microcenterurl = "https://www.microcenter.com/search/search_results.aspx?N=0&NTX=&NR=&filterProperty=&NTT={}&NTK=all&page=1&sortby=match&SortNow=Go"
+_grouponurl = "https://www.groupon.com/browse/query={}?sort=relevance"
+_fashionnovaurl = "https://ultimate-fnova-dot-acp-magento.appspot.com/full_text_search?page_num=1&q={}&UUID={}"
+_6pmurl = "https://www.6pm.com/{}"
+
+# in construction
+_postmarkurl = "https://poshmark.com/search?query={}&sort_by=added_desc&department=All"
+_asosurl = "https://us.asos.com/search/?q={}"
+_macysurl = "https://www.macys.com/shop/featured/{}"
+_jcpennysurl = "https://search-api.jcpenney.com/v1/search-service/s/wallet?productGridView=medium&Ntt={}&responseType=organic"
+_kohlsurl = "https://www.kohls.com/search.jsp?submit-search=web-regular&search={}"
+_footlockerurl = "https://www.footlocker.com/search?query={}"
+_kmart = "https://www.kmart.com/service/search/v2/productSearch?keyword={}"
+_biglots = "https://www.biglots.com/search/?Ntt={}"
+_burlingtonurl = "https://www.burlington.com/b/catalog/searchresults.aspx?filter=&search={}"

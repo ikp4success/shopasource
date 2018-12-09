@@ -5,15 +5,20 @@ import json
 import html
 
 
-def prepend_domain(url, domain_url):
+def prepend_domain(url, domain_url, ignore_domain_splice=False):
     if domain_url is None:
         return url
-    if url is None or url == "":
+    if not url:
         return None
     url = url.strip()
+    if url.startswith("www."):
+        url = "https://{}".format(url)
+        return url
     split_url = urlparse.urlsplit(url)
     if not split_url.scheme:
         if not split_url.netloc:
+            if ignore_domain_splice:
+                return urlparse.urljoin(domain_url, url)
             split_domain = urlparse.urlsplit(domain_url)
             domain = "{}://{}".format(split_domain.scheme, split_domain.netloc)
             return urlparse.urljoin(domain, url)
@@ -99,7 +104,7 @@ def match_sk(search_keyword, searched_item):
 
 
 def format_price(price):
-    return price.replace("US", "").strip()
+    return price.replace("USD", "").replace("US", "").strip()
 
 
 def validate_data(image_url, price, title):

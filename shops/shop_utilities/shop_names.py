@@ -14,5 +14,8 @@ class ShopNames(Enum):
     NEWEGG = "NEWEGG",
     HM = "HM",
     MICROCENTER = "MICROCENTER",
+    GROUPON = "GROUPON",
+    FASHIONNOVA = "FASHIONNOVA",
+    SIXPM = "SIXPM"
     # BESTBUY = "BESTBUY",
     # EBAY = "EBAY",
