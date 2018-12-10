@@ -5,7 +5,8 @@ from project import db
 from dateutil import parser
 from datetime import datetime, timezone
 import traceback
-import requests
+import random
+# import requests
 
 from functools import partial
 
@@ -60,15 +61,19 @@ def run_web_search(search_keyword):
 
 
 def start_thread_search(search_keyword):
+    shop_names_list = []
+    for shop_name in ShopNames:
+        shop_names_list.append(shop_name.name)
+    random.shuffle(shop_names_list)
     pool = ThreadPool(len(ShopNames))
     launch_spiders_partial = partial(launch_spiders, sk=search_keyword)
-    pool.map(launch_spiders_partial, ShopNames)
+    pool.map(launch_spiders_partial, shop_names_list)
     pool.close()
     pool.join()
 
 
 def launch_spiders(sn, sk):
-    name = sn.name
+    name = sn
     search_keyword = sk
     file_name = "json_shop_results/{}_RESULTS.json".format(name)
     open(file_name, 'w+').close()
