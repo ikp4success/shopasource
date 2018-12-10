@@ -9,6 +9,15 @@ from shops.shop_utilities.extra_function import generate_result_meta, extract_it
 class GroupOn(scrapy.Spider):
     # name = ShopNames.GROUPON.name
     _search_keyword = None
+    headers = {
+        "Host": "www.groupon.com",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Connection": "keep-alive",
+        "Upgrade-Insecure-Requests": "1",
+        "Referer": "https://www.groupon.com/",
+    }
 
     def __init__(self, search_keyword):
         self._search_keyword = search_keyword
