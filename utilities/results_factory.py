@@ -46,7 +46,8 @@ def run_web_search(search_keyword):
 
         results = run_api_search(search_keyword)
         message = safe_grab(results, ["message"])
-        if message:
+
+        if results is None or len(results) == 0:
             update_results_row_error(message)
         else:
             update_search_view_with_db_results(search_keyword, results)
