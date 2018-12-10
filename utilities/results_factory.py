@@ -36,14 +36,16 @@ def run_web_search(search_keyword):
         search_keyword = truncate_data(search_keyword, 50)
 
         # DEBUG url = "http://127.0.0.1:5000/api/shop/search={}".format(search_keyword)
-        url = "http://bestlows.herokuapp.com/api/shop/search={}".format(search_keyword)
-        session = requests.Session()
-        json_data = session.get(url)
-        results = safe_json(json_data.text)
+        # url = "http://bestlows.herokuapp.com/api/shop/search={}".format(search_keyword)
+        # session = requests.Session()
+        # json_data = session.get(url, timeout=60)
+        # results = safe_json(json_data.text)
+
+        results = run_api_search(search_keyword)
         if results is None or len(results) == 0:
             update_results_row_error("Sorry, no products found")
-
-        update_search_view_with_db_results(search_keyword, results)
+        else:
+            update_search_view_with_db_results(search_keyword, results)
         return
     except Exception as e:
         update_results_row_error("Sorry, error encountered during web search, try again or contact admin if error persist")
