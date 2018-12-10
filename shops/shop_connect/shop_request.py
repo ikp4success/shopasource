@@ -7,12 +7,14 @@ from twisted.internet.error import TimeoutError, TCPTimedOutError
 from shops.shop_utilities.extra_function import prepend_domain
 
 
-def get_request(url, callback, domain_url=None, meta=None):
+def get_request(url, callback, domain_url=None, meta=None, headers=None):
+    if not headers:
+        headers = {}
     url = prepend_domain(url, domain_url)
     if url is None:
         return None
     url = safe_url_string(url)
-    request = scrapy.Request(url, callback=callback, errback=errcallback, meta=meta)
+    request = scrapy.Request(url, callback=callback, errback=errcallback, meta=meta, headers=headers)
     return request
 
 

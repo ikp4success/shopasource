@@ -20,9 +20,12 @@ def run_api_search(search_keyword):
     try:
         if search_keyword is not None and search_keyword.strip() != "":
             search_keyword = truncate_data(search_keyword, 50)
-            return get_json_db_results(search_keyword, check=True)
+            results = get_json_db_results(search_keyword, check=True)
+            if results is None or len(results) == 0:
+                results["message"] = "Sorry, no products found"
+            return results
     except Exception as e:
-        results["error_message"] = "Sorry, error encountered during api search, try again or contact admin if error persist"
+        results["message"] = "Sorry, error encountered during search, try again or contact admin if error persist"
         print(e)
         print(traceback.format_exc())
         return results
@@ -42,13 +45,13 @@ def run_web_search(search_keyword):
         # results = safe_json(json_data.text)
 
         results = run_api_search(search_keyword)
-        if results is None or len(results) == 0:
-            update_results_row_error("Sorry, no products found")
+        if safe_grab(results, "message"):
+            update_results_row_error(safe_grab(results, "message"))
         else:
             update_search_view_with_db_results(search_keyword, results)
         return
     except Exception as e:
-        update_results_row_error("Sorry, error encountered during web search, try again or contact admin if error persist")
+        update_results_row_error("Sorry, error encountered during search, try again or contact admin if error persist")
         print(e)
         print(traceback.format_exc())
     return

@@ -12,10 +12,10 @@ _grouponurl = "https://www.groupon.com/browse/query={}?sort=relevance"
 _fashionnovaurl = "https://ultimate-fnova-dot-acp-magento.appspot.com/full_text_search?page_num=1&q={}&UUID={}"
 _6pmurl = "https://www.6pm.com/{}"
 _postmarkurl = "https://poshmark.com/search?query={}&sort_by=added_desc&department=All"
+_macysurl = "https://www.macys.com/shop/search?keyword={}"
 
 # in construction
 _asosurl = "https://us.asos.com/search/?q={}"
-_macysurl = "https://www.macys.com/shop/featured/{}"
 _jcpennysurl = "https://search-api.jcpenney.com/v1/search-service/s/wallet?productGridView=medium&Ntt={}&responseType=organic"
 _kohlsurl = "https://www.kohls.com/search.jsp?submit-search=web-regular&search={}"
 _footlockerurl = "https://www.footlocker.com/search?query={}"
