@@ -20,6 +20,9 @@ def run_api_search(search_keyword):
     results = {}
     try:
         if search_keyword is not None and search_keyword.strip() != "":
+            if len(search_keyword) < 2:
+                results = {"message": "Sorry, no products found"}
+                return results
             search_keyword = truncate_data(search_keyword, 50)
             results = get_json_db_results(search_keyword, check=True)
             if results is None or len(results) == 0:
@@ -37,15 +40,20 @@ def run_web_search(search_keyword):
     try:
         if search_keyword is None or search_keyword.strip() == "":
             update_results_row_error("Search keyword is empty or invalid")
+
+        if len(search_keyword) <= 2:
+            update_results_row_error("Sorry, no products found")
+            return
+
         search_keyword = truncate_data(search_keyword, 50)
 
         # DEBUG url = "http://127.0.0.1:5000/api/shop/search={}".format(search_keyword)
-        url = "http://bestlows.herokuapp.com/api/shop/search={}".format(search_keyword)
-        session = requests.Session()
-        json_data = session.get(url, timeout=60)
-        results = safe_json(json_data.text)
+        # url = "http://bestlows.herokuapp.com/api/shop/search={}".format(search_keyword)
+        # session = requests.Session()
+        # json_data = session.get(url, timeout=60)
+        # results = safe_json(json_data.text)
 
-        # results = run_api_search(search_keyword)
+        results = run_api_search(search_keyword)
         message = safe_grab(results, ["message"])
 
         if results is None or len(results) == 0:
