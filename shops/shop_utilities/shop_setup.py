@@ -173,8 +173,9 @@ def get_shops(active=None):
     shop_names_list = []
     for shop_setting in shop_configurations:
         for shop_name in shop_setting:
-            if active is not None and shop_setting[shop_name]["active"] == active:
-                shop_names_list.append(shop_name)
+            if active is not None:
+                if shop_setting[shop_name]["active"] == active:
+                    shop_names_list.append(shop_name)
             else:
                 shop_names_list.append(shop_name)
     return shop_names_list
