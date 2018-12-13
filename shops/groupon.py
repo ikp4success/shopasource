@@ -2,12 +2,12 @@ import scrapy
 
 from shops.shop_connect.shop_request import get_request
 from shops.shop_connect.shoplinks import _grouponurl
-from shops.shop_utilities.shop_names import ShopNames
+from shops.shop_utilities.shop_setup import find_shop_configuration
 from shops.shop_utilities.extra_function import generate_result_meta, extract_items, match_sk
 
 
 class GroupOn(scrapy.Spider):
-    # name = ShopNames.GROUPON.name
+    name = find_shop_configuration("GROUPON")["name"]
     _search_keyword = None
     headers = {
         "Host": "www.groupon.com",

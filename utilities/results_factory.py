@@ -1,5 +1,5 @@
 from subprocess import call
-from shops.shop_utilities.shop_names import ShopNames
+from shops.shop_utilities.shop_setup import get_shops
 from multiprocessing.dummy import Pool as ThreadPool
 from project import db
 from dateutil import parser
@@ -61,11 +61,9 @@ def run_web_search(search_keyword):
 
 
 def start_thread_search(search_keyword):
-    shop_names_list = []
-    for shop_name in ShopNames:
-        shop_names_list.append(shop_name.name)
+    shop_names_list = get_shops(active=True)
     random.shuffle(shop_names_list)
-    pool = ThreadPool(len(ShopNames))
+    pool = ThreadPool(len(shop_names_list))
     launch_spiders_partial = partial(launch_spiders, sk=search_keyword)
     pool.map(launch_spiders_partial, shop_names_list)
     pool.close()

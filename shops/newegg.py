@@ -2,13 +2,13 @@ import scrapy
 
 from shops.shop_connect.shop_request import get_request
 from shops.shop_connect.shoplinks import _neweggurl
-from shops.shop_utilities.shop_names import ShopNames
+from shops.shop_utilities.shop_setup import find_shop_configuration
 from shops.shop_utilities.extra_function import generate_result_meta, extract_items, safe_grab, match_sk
 # from debug_app.manual_debug_funcs import printHtmlToFile
 
 
 class Newegg(scrapy.Spider):
-    name = ShopNames.NEWEGG.name
+    name = find_shop_configuration("NEWEGG")["name"]
     _search_keyword = None
 
     def __init__(self, search_keyword):

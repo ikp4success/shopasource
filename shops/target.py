@@ -2,13 +2,13 @@ import scrapy
 
 from shops.shop_connect.shop_request import get_request, prepend_domain
 from shops.shop_connect.shoplinks import _targeturl
-from shops.shop_utilities.shop_names import ShopNames
+from shops.shop_utilities.shop_setup import find_shop_configuration
 from shops.shop_utilities.extra_function import generate_result_meta, safe_json, safe_grab
 # from debug_app.manual_debug_funcs import printHtmlToFile
 
 
 class Target(scrapy.Spider):
-    name = ShopNames.TARGET.name
+    name = find_shop_configuration("TARGET")["name"]
     _search_keyword = None
 
     def __init__(self, search_keyword):

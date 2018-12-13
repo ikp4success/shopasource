@@ -13,12 +13,12 @@ _fashionnovaurl = "https://ultimate-fnova-dot-acp-magento.appspot.com/full_text_
 _6pmurl = "https://www.6pm.com/{}"
 _postmarkurl = "https://poshmark.com/search?query={}&sort_by=added_desc&department=All"
 _macysurl = "https://www.macys.com/shop/search?keyword={}"
-
-# in construction
 _asosurl = "https://us.asos.com/search/?q={}"
-_jcpennysurl = "https://search-api.jcpenney.com/v1/search-service/s/wallet?productGridView=medium&Ntt={}&responseType=organic"
+_jcpenneyurl = "https://search-api.jcpenney.com/v1/search-service/s/{}?productGridView=medium&Ntt={}&responseType=organic"
 _kohlsurl = "https://www.kohls.com/search.jsp?submit-search=web-regular&search={}"
 _footlockerurl = "https://www.footlocker.com/search?query={}"
+
+# in construction
 _kmart = "https://www.kmart.com/service/search/v2/productSearch?keyword={}"
 _biglots = "https://www.biglots.com/search/?Ntt={}"
 _burlingtonurl = "https://www.burlington.com/b/catalog/searchresults.aspx?filter=&search={}"

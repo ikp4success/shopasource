@@ -2,13 +2,13 @@ import scrapy
 
 from shops.shop_connect.shop_request import get_request
 from shops.shop_connect.shoplinks import _bestbuyurl
-from shops.shop_utilities.shop_names import ShopNames
+from shops.shop_utilities.shop_setup import find_shop_configuration
 from shops.shop_utilities.extra_function import generate_result_meta, extract_items
 # from debug_app.manual_debug_funcs import printHtmlToFile
 
 
 class BestBuy(scrapy.Spider):
-    # name = ShopNames.BESTBUY.name
+    name = find_shop_configuration("BESTBUY")["name"]
     _search_keyword = None
 
     def __init__(self, search_keyword):
@@ -23,8 +23,8 @@ class BestBuy(scrapy.Spider):
         yield get_request(url=item_url, callback=self.parse_data, domain_url=response.url)
 
     def parse_data(self, response):
-        image_url = response.css(".shop-media-gallery img.primary-image ::attr(src)").extract_first()
+        image_url = response.css(".product-gallery-static img ::attr(src)").extract_first()
         title = response.css("#sku-title ::text").extract_first()
-        description = extract_items(response.css("#long-description ::text").extract())
+        description = extract_items(response.css(".product-description ::text").extract())
         price = response.css(".priceView-hero-price ::text").extract_first()
         yield generate_result_meta(shop_link=response.url, image_url=image_url, shop_name=self.name, price=price, title=title, searched_keyword=self._search_keyword, content_description=description)

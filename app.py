@@ -1,9 +1,7 @@
 from flask import render_template, request
 from flask import jsonify
-import requests
 
-from utilities.results_factory import run_web_search, run_api_search, update_results_row_error
-from shops.shop_utilities.extra_function import truncate_data, safe_json
+from utilities.results_factory import run_web_search, run_api_search
 from project import db, app
 
 
