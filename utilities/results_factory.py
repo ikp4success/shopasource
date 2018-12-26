@@ -172,7 +172,7 @@ def update_db_results(results):
 
 def get_json_db_results(search_keyword, check=False):
     results = get_data_from_db(search_keyword)
-    if results is not None:
+    if results:
         if check:
             if is_new_data(results, search_keyword):
                 return results
@@ -185,7 +185,7 @@ def get_json_db_results(search_keyword, check=False):
 
 
 def update_search_view_with_db_results(search_keyword, results):
-    if results is not None:
+    if results:
         output_data = ""
         output_data = update(results, search_keyword)
         if output_data != "":
@@ -199,6 +199,8 @@ def update(results, search_keyword):
     for result in results:
         result = safe_json(result)
         result_data = safe_grab(result, [search_keyword], {})
+        if result_data == {}:
+            continue
         output_data += build_result_row(result_data)
     return output_data
 

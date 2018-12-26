@@ -24,6 +24,7 @@ class TestShopNames(Enum):
     KMART = "KMART",
     BIGLOTS = "BIGLOTS",
     BURLINGTON = "BURLINGTON",
+    MVMTWATCHES = "MVMTWATCHES",
 
 
 shop_configurations = [
@@ -178,6 +179,13 @@ shop_configurations = [
         "BURLINGTON": {
             "active": True,
             "name": "BURLINGTON"
+        }
+
+    },
+    {
+        "MVMTWATCHES": {
+            "active": True,
+            "name": "MVMTWATCHES"
         }
 
     },
