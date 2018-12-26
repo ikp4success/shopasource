@@ -23,11 +23,11 @@ class Target(scrapy.Spider):
         t_data = safe_grab(json_data, ["search_response", "items", "Item"], default=[])
 
         for item in t_data:
+            title = safe_grab(item, ["title"])
             images = safe_grab(item, ["images"])[0]
             base_url = safe_grab(images, ["base_url"])
             primary = safe_grab(images, ["primary"])
             image_url = "{}{}".format(base_url, primary)
-            title = safe_grab(item, ["title"])
             description = safe_grab(item, ["description"])
             price = safe_grab(item, ["list_price", "formatted_price"]) or safe_grab(item, ["offer_price", "formatted_price"])
             url = prepend_domain(safe_grab(item, ["url"]), "https://www.target.com")

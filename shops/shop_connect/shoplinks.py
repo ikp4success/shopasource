@@ -17,8 +17,9 @@ _asosurl = "https://us.asos.com/search/?q={}"
 _jcpenneyurl = "https://search-api.jcpenney.com/v1/search-service/s/{}?productGridView=medium&Ntt={}&responseType=organic"
 _kohlsurl = "https://www.kohls.com/search.jsp?submit-search=web-regular&search={}"
 _footlockerurl = "https://www.footlocker.com/search?query={}"
+_kmarturl = "https://www.kmart.com/service/search/v2/productSearch?keyword={}"
+
 
 # in construction
-_kmart = "https://www.kmart.com/service/search/v2/productSearch?keyword={}"
 _biglots = "https://www.biglots.com/search/?Ntt={}"
 _burlingtonurl = "https://www.burlington.com/b/catalog/searchresults.aspx?filter=&search={}"
