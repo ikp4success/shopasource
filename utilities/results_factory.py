@@ -1,6 +1,8 @@
 from subprocess import call
 from shops.shop_utilities.shop_setup import get_shops
 from multiprocessing.dummy import Pool as ThreadPool
+import multiprocessing.pool
+from time import sleep
 
 from project import db
 from dateutil import parser
@@ -67,6 +69,17 @@ def run_web_search(search_keyword):
         print(e)
         print(traceback.format_exc())
     return
+
+
+def ignite_thread_timeout(search_keyword):
+    pool = multiprocessing.pool.ThreadPool(1)
+    result = pool.apply_async(partial(start_thread_search, search_keyword))
+    try:
+        result.get(timeout=21)
+    except multiprocessing.TimeoutError:
+        print("Process timed out")
+    pool.terminate()
+    print("Pool terminated")
 
 
 def start_thread_search(search_keyword):
@@ -164,7 +177,7 @@ def get_json_db_results(search_keyword, check=False):
             if is_new_data(results, search_keyword):
                 return results
             else:
-                start_thread_search(search_keyword)
+                ignite_thread_timeout(search_keyword)
                 return get_data_from_db(search_keyword)
         else:
             return results
