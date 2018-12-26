@@ -1,6 +1,7 @@
 from subprocess import call
 from shops.shop_utilities.shop_setup import get_shops
 from multiprocessing.dummy import Pool as ThreadPool
+
 from project import db
 from dateutil import parser
 from datetime import datetime, timezone
@@ -56,7 +57,7 @@ def run_web_search(search_keyword):
         results = run_api_search(search_keyword)
         message = safe_grab(results, ["message"])
 
-        if results is None or len(results) == 0:
+        if results is None or len(results) == 0 or message is not None:
             update_results_row_error(message)
         else:
             update_search_view_with_db_results(search_keyword, results)
