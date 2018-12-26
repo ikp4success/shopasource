@@ -2,7 +2,6 @@ from subprocess import call
 from shops.shop_utilities.shop_setup import get_shops
 from multiprocessing.dummy import Pool as ThreadPool
 import multiprocessing.pool
-from time import sleep
 
 from project import db
 from dateutil import parser
@@ -181,6 +180,9 @@ def get_json_db_results(search_keyword, check=False):
                 return get_data_from_db(search_keyword)
         else:
             return results
+    else:
+        ignite_thread_timeout(search_keyword)
+        return get_data_from_db(search_keyword)
     return results
 
 
