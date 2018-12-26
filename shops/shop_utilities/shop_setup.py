@@ -22,7 +22,8 @@ class TestShopNames(Enum):
     BESTBUY = "BESTBUY",
     EBAY = "EBAY",
     KMART = "KMART",
-    BIGLOTS = "BIGLOTS"
+    BIGLOTS = "BIGLOTS",
+    BURLINGTON = "BURLINGTON",
 
 
 shop_configurations = [
@@ -170,6 +171,13 @@ shop_configurations = [
         "BIGLOTS": {
             "active": True,
             "name": "BIGLOTS"
+        }
+
+    },
+    {
+        "BURLINGTON": {
+            "active": True,
+            "name": "BURLINGTON"
         }
 
     },
