@@ -18,8 +18,8 @@ _jcpenneyurl = "https://search-api.jcpenney.com/v1/search-service/s/{}?productGr
 _kohlsurl = "https://www.kohls.com/search.jsp?submit-search=web-regular&search={}"
 _footlockerurl = "https://www.footlocker.com/search?query={}"
 _kmarturl = "https://www.kmart.com/service/search/v2/productSearch?keyword={}"
+_biglotsurl = "https://www.biglots.com/search/?Ntt={}"
 
 
 # in construction
-_biglots = "https://www.biglots.com/search/?Ntt={}"
 _burlingtonurl = "https://www.burlington.com/b/catalog/searchresults.aspx?filter=&search={}"

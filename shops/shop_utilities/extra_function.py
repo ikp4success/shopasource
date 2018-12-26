@@ -4,6 +4,11 @@ import re
 import json
 import html
 
+possible_match_abbrev = {
+    "television": "tv",
+    "televisions": "tv"
+}
+
 
 def prepend_domain(url, domain_url, ignore_domain_splice=False):
     if domain_url is None:
@@ -90,15 +95,19 @@ def match_sk(search_keyword, searched_item):
         return False
     search_keyword = search_keyword.lower()
     searched_item = searched_item.lower()
-    search_keyword = search_keyword.split(" ")
+    sk_abbrev = safe_grab(possible_match_abbrev, [search_keyword])
+
+    search_keyword_arr = search_keyword.split(" ")
+    search_keyword_arr.append(sk_abbrev)
     match_count = 0
-    for sk in search_keyword:
+
+    for sk in search_keyword_arr:
         if len(sk) > 1 and sk in searched_item.lower():
             match_count = match_count + 1
 
     if match_count > 0:
-        percentage_sk_match = (match_count / len(search_keyword)) * 100
-        if percentage_sk_match > 55:
+        percentage_sk_match = (match_count / len(search_keyword_arr)) * 100
+        if percentage_sk_match > 50 or (sk_abbrev and percentage_sk_match == 50):
             return True
     return False
 

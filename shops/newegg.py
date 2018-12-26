@@ -25,11 +25,11 @@ class Newegg(scrapy.Spider):
             if match_sk(self._search_keyword, item_text):
                 item_url = item.css("::attr(href)").extract_first()
                 prize = "{}{}".format(response.css(".price-current strong").extract_first(), response.css(".price-current sup").extract_first())
-                yield get_request(url=item_url, callback=self.parse_data, domain_url=response.url, meta={"p": prize})
+                yield get_request(url=item_url, callback=self.parse_data, domain_url=response.url, meta={"p": prize, "t": item_text})
 
     def parse_data(self, response):
         image_url = response.css(".mainSlide img ::attr(src)").extract_first()
-        title = response.css("#grpDescrip_h ::text").extract_first()
+        title = response.css("#grpDescrip_h ::text").extract_first() or safe_grab(response.meta, ["t"])
         description = "{}\n{}".format(extract_items(response.css(".itemDesc ::text").extract()), extract_items(response.css(".itemColumn ::text").extract())).rstrip().strip()
         price = safe_grab(response.meta, ["p"])
         price = "${}".format(price)

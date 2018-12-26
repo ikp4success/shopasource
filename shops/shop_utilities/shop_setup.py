@@ -21,7 +21,8 @@ class TestShopNames(Enum):
     FOOTLOCKER = "FOOTLOCKER",
     BESTBUY = "BESTBUY",
     EBAY = "EBAY",
-    KMART = "KMART"
+    KMART = "KMART",
+    BIGLOTS = "BIGLOTS"
 
 
 shop_configurations = [
@@ -162,6 +163,13 @@ shop_configurations = [
         "KMART": {
             "active": True,
             "name": "KMART"
+        }
+
+    },
+    {
+        "BIGLOTS": {
+            "active": True,
+            "name": "BIGLOTS"
         }
 
     },
