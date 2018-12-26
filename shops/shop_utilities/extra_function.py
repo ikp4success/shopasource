@@ -64,6 +64,9 @@ def generate_result_meta(shop_link, searched_keyword, image_url, shop_name, pric
     if numeric_price is None or len(numeric_price) == 0:
         return None
 
+    if not title:
+        return None
+
     if date_searched is None:
         date_searched = str(dt.datetime.now())
 
