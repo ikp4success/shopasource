@@ -19,6 +19,23 @@
 	src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"
 	integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
 	crossorigin="anonymous"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script type=text/javascript>
+	        $(function() {
+	          $('div#shopsearch').bind('click', function() {
+							sk = document.getElementsByName("search")[0].value
+							if(!sk){
+								return false;
+							}
+							sk_url = "/api/shop/search=" + sk;
+	            $.getJSON(sk_url,
+	                function(data) {
+	              //do nothing
+	            });
+	            return false;
+	          });
+	        });
+	</script>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
 <title>Best Lows</title>
 </head>
@@ -47,8 +64,14 @@
 			</div>
 		</div>
 	</div>
+	<div class='container'>
+    <h3>Test</h3>
+        <form>
+            <a href=# id=test><button class='btn btn-default'>Test</button></a>
+        </form>
 
-	<div class="Search">
+</div>
+	<div id="shopsearch" class="Search">
 		<form class="form-inline my-2 my-lg-0" action="searchresults"
 			Method="POST">
 			<input class="form-control mr-sm-2" type="text" name="search"
