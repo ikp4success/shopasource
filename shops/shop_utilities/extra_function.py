@@ -100,7 +100,7 @@ def match_sk(search_keyword, searched_item):
         return False
     search_keyword = search_keyword.lower()
     searched_item = searched_item.lower()
-    sk_abbrev = safe_grab(possible_match_abbrev, [search_keyword])
+    sk_abbrev = safe_grab(possible_match_abbrev, [search_keyword], default=[])
 
     search_keyword_arr = search_keyword.split(" ")
     search_keyword_arr.extend(sk_abbrev)
