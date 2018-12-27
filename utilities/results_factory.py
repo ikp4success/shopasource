@@ -43,7 +43,7 @@ def run_web_search(search_keyword):
         if search_keyword is None or search_keyword.strip() == "":
             update_results_row_error("Search keyword is empty or invalid")
 
-        if len(search_keyword) <= 2:
+        if len(search_keyword) < 2:
             update_results_row_error("Sorry, no products found")
             return
 
