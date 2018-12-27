@@ -113,7 +113,7 @@ def match_sk(search_keyword, searched_item):
 
 def format_price(price):
     if "$" not in price:
-        "${}".format(price)
+        price = "${}".format(price)
     return price.replace("USD", "").replace("US", "").strip()
 
 
