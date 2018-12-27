@@ -3,7 +3,7 @@ import scrapy
 from shops.shop_connect.shop_request import get_request
 from shops.shop_connect.shoplinks import _cushineurl
 from shops.shop_utilities.shop_setup import find_shop_configuration
-from shops.shop_utilities.extra_function import generate_result_meta, safe_json, safe_grab, prepend_domain
+from shops.shop_utilities.extra_function import generate_result_meta, safe_json, safe_grab
 
 
 class Cushine(scrapy.Spider):
@@ -18,7 +18,6 @@ class Cushine(scrapy.Spider):
         yield get_request(shop_url, self.parse_data)
 
     def parse_data(self, response):
-        import pdb; pdb.set_trace()
         json_data = safe_json(response.text)
         t_data = safe_grab(json_data, ["response", "docs"], default=[])
 
