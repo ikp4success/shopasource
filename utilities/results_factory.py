@@ -74,7 +74,7 @@ def ignite_thread_timeout(search_keyword):
     pool = multiprocessing.pool.ThreadPool(1)
     result = pool.apply_async(partial(start_thread_search, search_keyword))
     try:
-        result.get(timeout=21)
+        result.get(timeout=15)
     except multiprocessing.TimeoutError:
         print("Process timed out")
     pool.terminate()
