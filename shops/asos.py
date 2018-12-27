@@ -27,7 +27,7 @@ class Asos(scrapy.Spider):
                 yield get_request(url=item_url, callback=self.parse_data, domain_url=response.url, meta={"pc": price})
 
     def parse_data(self, response):
-        image_url = response.css(".amp-frame .fullImageContainer img ::attr(src)").extract_first()
+        image_url = response.css(".amp-frame .fullImageContainer img ::attr(src), .product-carousel img ::attr(src)").extract_first()
         title = extract_items(response.css(".product-hero h1 ::text").extract())
         description = extract_items(response.css(".product-description ::text").extract())
         price = safe_grab(response.meta, ["pc"])

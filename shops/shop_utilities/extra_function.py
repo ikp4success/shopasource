@@ -59,12 +59,9 @@ def safe_json(data):
 def generate_result_meta(shop_link, searched_keyword, image_url, shop_name, price, title, content_description, date_searched=None):
     if not validate_data(image_url, price, title):
         return None
-
+    price = str(price)
     numeric_price = re.findall("\d+\.+\d+", price) or re.findall("\d+", price)
     if numeric_price is None or len(numeric_price) == 0:
-        return None
-
-    if not title:
         return None
 
     if date_searched is None:
@@ -115,17 +112,16 @@ def match_sk(search_keyword, searched_item):
 
 
 def format_price(price):
+    if "$" not in price:
+        "${}".format(price)
     return price.replace("USD", "").replace("US", "").strip()
 
 
 def validate_data(image_url, price, title):
-    if price is None or price == "":
+    if not price:
         return False
-    if image_url is None and title is None:
+    if not title:
         return False
-    if image_url == "" and title == "":
-        return False
-
     return True
 
 

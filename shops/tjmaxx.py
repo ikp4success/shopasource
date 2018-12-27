@@ -27,7 +27,7 @@ class TjMaxx(scrapy.Spider):
                 yield get_request(url=item_url, callback=self.parse_data, domain_url=response.url)
 
     def parse_data(self, response):
-        image_url = response.css(".main-image ::attr(src)").extract_first()
+        image_url = response.css(".main-image ::attr(src), product-image img ::attr(src)").extract_first()
         title = "{} {}".format(response.css(".product-brand ::text").extract_first() or "", response.css(".product-title ::text").extract_first() or "")
         description = extract_items(response.css(".description-list li ::text").extract())
         price = extract_items(response.css(".price .product-price ::text").extract())

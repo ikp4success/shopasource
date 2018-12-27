@@ -197,6 +197,13 @@ shop_configurations = [
         }
 
     },
+    {
+        "CUSHINE": {
+            "active": True,
+            "name": "CUSHINE"
+        }
+
+    },
 ]
 
 
