@@ -80,7 +80,7 @@ function dynamic_content(data, refresh_shop_search){
   var reactelem = $(data).find("#resultreact")
   $("#resultreact").replaceWith(reactelem)
   refresh_time_out()
-  load_time_out = setTimeout(refresh_shop_data, 5000)
+  load_time_out = setTimeout(refresh_shop_data, 10000)
   return
 }
 
