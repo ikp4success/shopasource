@@ -81,6 +81,8 @@ function dynamic_content(data, refresh_shop_search){
     var reactelem = $(data).find("#resultreact")
     $("#resultreact").replaceWith(reactelem)
   }else{
+    var elem = document.getElementById("searchProgressBar")
+    elem.style.width = 1
     load_search_progress_bar(500)
   }
 
@@ -100,7 +102,7 @@ function refresh_shop_data(){
   return false
 }
 function load_search_progress_bar(interval_set) {
-  interval_set = 1000 || interval_set
+  interval_set = interval_set || 1000
   var elem = document.getElementById("searchProgressBar");
   var width = 1;
   var id = setInterval(frame, interval_set);
