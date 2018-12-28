@@ -33,6 +33,7 @@ function initial_api_search(sk){
 
 function shop_web_search(){
   document.getElementById("searchButton").disabled = true;
+  document.getElementById("searchbar").disabled = true;
   sk = document.getElementsByName("search")[0].value
   if(!sk){
     alert("textbox is empty")
@@ -74,20 +75,24 @@ function set_search_time_out(){
 
 function dynamic_content(data, refresh_shop_search){
   if(!data.includes("{REACT_RESULT_ROW}")){
+    $(".loading").hide()
     if(refresh_shop_search){
       var shopsearchelem = $(data).filter("#shopsearch")
       $("#shopsearch").replaceWith(shopsearchelem)
     }
     var reactelem = $(data).find("#resultreact")
     $("#resultreact").replaceWith(reactelem)
+    refresh_time_out()
+    load_time_out = setTimeout(refresh_shop_data)
   }else{
+    $(".loading").show()
     var elem = document.getElementById("searchProgressBar")
     elem.style.width = 1
     load_search_progress_bar(500)
+    shop_web_search()
   }
 
-  refresh_time_out()
-  load_time_out = setTimeout(refresh_shop_data, 10000)
+
   return
 }
 
@@ -101,11 +106,10 @@ function refresh_shop_data(){
   }
   return false
 }
-function load_search_progress_bar(interval_set) {
-  interval_set = interval_set || 1000
+function load_search_progress_bar() {
   var elem = document.getElementById("searchProgressBar");
   var width = 1;
-  var id = setInterval(frame, interval_set);
+  var id = setInterval(frame, 1000);
   function frame() {
     if (width >= 100) {
       clearInterval(id);
