@@ -87,7 +87,7 @@ function dynamic_content(data, refresh_shop_search){
 function refresh_shop_data(){
   initial_api_search(current_sk)
   if(current_web_url != null){
-    $.get(web_search_url,
+    $.get(current_web_url,
         function(data) {
           dynamic_content(data)
         });
