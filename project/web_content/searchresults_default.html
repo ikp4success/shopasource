@@ -42,7 +42,7 @@ function initial_api_search(){
 	if(!sk){
 		return false;
 	}
-	sk_url = "/api/shop/search=" + sk;
+	sk_url = "/api/shop/search=" + encodeURIComponent(encodeURIComponent(sk));
 	$.getJSON(sk_url,
 			function(data) {
 	});
@@ -55,7 +55,7 @@ function shop_web_search(){
 		alert("textbox is empty")
 		return false;
 	}
-		web_search_url = "/websearch/shop/search=" + sk;
+		web_search_url = "/websearch/shop/search=" + encodeURIComponent(encodeURIComponent(sk));
 		window.location.replace(web_search_url)
 	return false
 }
