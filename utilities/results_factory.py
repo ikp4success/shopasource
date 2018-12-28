@@ -54,8 +54,9 @@ def run_web_search(search_keyword):
         # session = requests.Session()
         # json_data = session.get(url, timeout=60)
         # results = safe_json(json_data.text)
-
-        results = run_api_search(search_keyword)
+        results = get_data_from_db(search_keyword)
+        if not results or len(results) == 0:
+            results = run_api_search(search_keyword)
         message = safe_grab(results, ["message"])
 
         if results is None or len(results) == 0 or message is not None:
