@@ -24,29 +24,41 @@
 <script src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script type=text/javascript>
-	        $(function() {
-	          $('div#shopsearch').bind('click', function() {
-							sk = document.getElementsByName("search")[0].value
-							if(!sk){
-								return false;
-							}
-							sk_url = "/api/shop/search=" + sk;
-	            $.getJSON(sk_url,
-	                function(data) {
-	            });
-	            return false;
-	          });
-	        });
-	function shop_web_search(){
-		sk = document.getElementsByName("search")[0].value
-		if(!sk){
-			alert("textbox is empty")
-			return false;
-		}
-			web_search_url = "/websearch/shop/search=" + sk;
-			window.location.replace(web_search_url)
+$(function() {
+	$('div#shopsearch').bind('click', function() {
+		initial_api_search()
 		return false
+	});
+});
+
+$(function() {
+	$('.mr-sm-2').bind('blur', function() {
+		initial_api_search()
+	});
+});
+
+function initial_api_search(){
+	sk = document.getElementsByName("search")[0].value
+	if(!sk){
+		return false;
 	}
+	sk_url = "/api/shop/search=" + sk;
+	$.getJSON(sk_url,
+			function(data) {
+	});
+	return false;
+}
+
+function shop_web_search(){
+	sk = document.getElementsByName("search")[0].value
+	if(!sk){
+		alert("textbox is empty")
+		return false;
+	}
+		web_search_url = "/websearch/shop/search=" + sk;
+		window.location.replace(web_search_url)
+	return false
+}
 </script>
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">

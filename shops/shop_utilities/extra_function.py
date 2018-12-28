@@ -11,7 +11,8 @@ possible_match_abbrev = {
     "computer": ["laptop", "pc", "desktop"],
     "pc": ["laptop", "computer", "desktop"],
     "laptop": ["computer", "pc", "desktop"],
-    "desktop": ["laptop", "computer", "pc"]
+    "desktop": ["laptop", "computer", "pc"],
+    "children": ["child", "kid"]
 }
 
 
