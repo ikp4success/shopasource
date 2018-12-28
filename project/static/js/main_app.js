@@ -1,41 +1,46 @@
 load_time_out = null
 refresh_shop_data_tout = null
 current_web_url = null
+current_sk = null
 
 $(function() {
   $('div#shopsearch').bind('click', function() {
-    initial_api_search()
+    sk = document.getElementsByName("search")[0].value
+    initial_api_search(sk)
     return false
   });
 });
 
 $(function() {
   $('.mr-sm-2').bind('blur', function() {
-    initial_api_search()
+    sk = document.getElementsByName("search")[0].value
+    initial_api_search(sk)
+    return false
   });
 });
 
-function initial_api_search(){
-  sk = document.getElementsByName("search")[0].value
+function initial_api_search(sk){
   if(!sk){
-    return false;
+    return false
   }
   // if(click_event){
   // 	$.ajaxSetup({async: false});
   // }
+  current_sk = sk
   sk_url = "/api/shop/search=" + encodeURIComponent(encodeURIComponent(sk));
   $.getJSON(sk_url,
       function(data) {
   });
-  return false;
+  return false
 }
 
 function shop_web_search(){
   sk = document.getElementsByName("search")[0].value
   if(!sk){
     alert("textbox is empty")
-    return false;
+    return false
   }
+  current_sk = sk
   $(".loading").show();
   load_search_progress_bar()
   set_search_time_out()
@@ -48,21 +53,25 @@ function load_shop_search(){
   // window.location.replace(web_search_url)
   $.get(web_search_url,
       function(data) {
-        search_start = false
         current_web_url = web_search_url
         dynamic_content(data)
-        clearTimeout(refresh_shop_data_tout)
-        refresh_shop_data_tout = setTimeout(refresh_shop_data, 5000)
+        // clearTimeout(refresh_shop_data_tout)
   });
   return false
 }
 
-function set_search_time_out(){
+function refresh_time_out(){
   if(load_time_out != null){
     clearTimeout(load_time_out)
+    load_time_out = null
   }
+  return
+}
+
+function set_search_time_out(){
+  refresh_time_out()
   load_time_out = setTimeout(load_shop_search, 10000)
-  return false
+  return
 }
 
 function dynamic_content(data){
@@ -70,10 +79,13 @@ function dynamic_content(data){
   var reactelem = $(data).find("#resultreact")
   $("#shopsearch").replaceWith(shopsearchelem)
   $("#resultreact").replaceWith(reactelem)
-  return false
+  refresh_time_out()
+  load_time_out = setTimeout(refresh_shop_data, 5000)
+  return
 }
 
 function refresh_shop_data(){
+  initial_api_search(current_sk)
   if(current_web_url != null){
     $.get(web_search_url,
         function(data) {
