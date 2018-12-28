@@ -73,12 +73,17 @@ function set_search_time_out(){
 }
 
 function dynamic_content(data, refresh_shop_search){
-  if(refresh_shop_search){
-    var shopsearchelem = $(data).filter("#shopsearch")
-    $("#shopsearch").replaceWith(shopsearchelem)
+  if(!data.includes("{REACT_RESULT_ROW}")){
+    if(refresh_shop_search){
+      var shopsearchelem = $(data).filter("#shopsearch")
+      $("#shopsearch").replaceWith(shopsearchelem)
+    }
+    var reactelem = $(data).find("#resultreact")
+    $("#resultreact").replaceWith(reactelem)
+  }else{
+    load_search_progress_bar(500)
   }
-  var reactelem = $(data).find("#resultreact")
-  $("#resultreact").replaceWith(reactelem)
+
   refresh_time_out()
   load_time_out = setTimeout(refresh_shop_data, 10000)
   return
@@ -94,10 +99,11 @@ function refresh_shop_data(){
   }
   return false
 }
-function load_search_progress_bar() {
+function load_search_progress_bar(interval_set) {
+  interval_set = 1000 || interval_set
   var elem = document.getElementById("searchProgressBar");
   var width = 1;
-  var id = setInterval(frame, 1000);
+  var id = setInterval(frame, interval_set);
   function frame() {
     if (width >= 100) {
       clearInterval(id);
