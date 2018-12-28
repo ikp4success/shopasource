@@ -85,10 +85,6 @@ function dynamic_content(data, refresh_shop_search){
     refresh_time_out()
     load_time_out = setTimeout(refresh_shop_data)
   }else{
-    $(".loading").show()
-    var elem = document.getElementById("searchProgressBar")
-    elem.style.width = 1
-    load_search_progress_bar(500)
     shop_web_search()
   }
 
