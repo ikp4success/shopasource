@@ -1,4 +1,4 @@
-from flask import render_template, request
+from flask import render_template
 from flask import jsonify
 
 from utilities.results_factory import run_web_search, run_api_search
@@ -19,12 +19,6 @@ def add_header(response):
     return response
 
 
-@app.route('/background_process_test')
-def background_process_test():
-    print("Hello")
-    return "nothing"
-
-
 @app.route("/", methods=['GET'])
 def home_page():
     return home()
@@ -42,14 +36,9 @@ def api_search(search_keyword):
     return (results, 200)
 
 
-@app.route("/searchresults", methods=['GET', 'POST'])
-def searchresults():
-    if request.method == 'POST':
-        search_keyword = request.form.get('search')
-        return get_search_results(search_keyword)
-    else:
-        return home()
-    return render_template('about.html')
+@app.route("/websearch/shop/search=<search_keyword>", methods=['GET'])
+def web_search(search_keyword):
+    return get_search_results(search_keyword)
 
 
 def get_search_results(search_keyword):
