@@ -4,18 +4,16 @@ current_web_url = null
 current_sk = null
 
 $(function() {
-  $('div#shopsearch').bind('click', function() {
+  $(document).on('click', 'div#shopsearch', function() {
     sk = document.getElementsByName("search")[0].value
     initial_api_search(sk)
-    return false
   });
 });
 
 $(function() {
-  $('.mr-sm-2').bind('blur', function() {
+  $(document).on('blur', '.mr-sm-2', function() {
     sk = document.getElementsByName("search")[0].value
     initial_api_search(sk)
-    return false
   });
 });
 
@@ -26,7 +24,6 @@ function initial_api_search(sk){
   // if(click_event){
   // 	$.ajaxSetup({async: false});
   // }
-  current_sk = sk
   sk_url = "/api/shop/search=" + encodeURIComponent(encodeURIComponent(sk));
   $.getJSON(sk_url,
       function(data) {
@@ -35,6 +32,7 @@ function initial_api_search(sk){
 }
 
 function shop_web_search(){
+  document.getElementById("searchButton").disabled = true;
   sk = document.getElementsByName("search")[0].value
   if(!sk){
     alert("textbox is empty")
@@ -54,7 +52,7 @@ function load_shop_search(){
   $.get(web_search_url,
       function(data) {
         current_web_url = web_search_url
-        dynamic_content(data)
+        dynamic_content(data, true)
         // clearTimeout(refresh_shop_data_tout)
   });
   return false
@@ -74,10 +72,12 @@ function set_search_time_out(){
   return
 }
 
-function dynamic_content(data){
-  var shopsearchelem = $(data).filter("#shopsearch")
+function dynamic_content(data, refresh_shop_search){
+  if(refresh_shop_search){
+    var shopsearchelem = $(data).filter("#shopsearch")
+    $("#shopsearch").replaceWith(shopsearchelem)
+  }
   var reactelem = $(data).find("#resultreact")
-  $("#shopsearch").replaceWith(shopsearchelem)
   $("#resultreact").replaceWith(reactelem)
   refresh_time_out()
   load_time_out = setTimeout(refresh_shop_data, 5000)
