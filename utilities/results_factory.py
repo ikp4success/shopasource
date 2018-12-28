@@ -8,7 +8,8 @@ from dateutil import parser
 from datetime import datetime, timezone
 import traceback
 import random
-import requests
+import time
+# import requests
 
 from functools import partial
 
@@ -54,9 +55,9 @@ def run_web_search(search_keyword):
         # session = requests.Session()
         # json_data = session.get(url, timeout=60)
         # results = safe_json(json_data.text)
-        results = get_data_from_db(search_keyword)
-        if not results or len(results) == 0:
-            results = run_api_search(search_keyword)
+
+        time.sleep(25)
+        results = web_get_data_from_db(search_keyword)
         message = safe_grab(results, ["message"])
 
         if results is None or len(results) == 0 or message is not None:
@@ -69,6 +70,13 @@ def run_web_search(search_keyword):
         print(e)
         print(traceback.format_exc())
     return
+
+
+def web_get_data_from_db(search_keyword):
+    results = get_data_from_db(search_keyword)
+    if not results or len(results) == 0:
+        results = run_api_search(search_keyword)
+    return results
 
 
 def ignite_thread_timeout(search_keyword):
