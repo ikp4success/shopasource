@@ -189,9 +189,9 @@ def get_json_db_results(search_keyword, check=False):
                 return get_data_from_db(search_keyword)
         else:
             return results
-    else:
-        ignite_thread_timeout(search_keyword)
-        return get_data_from_db(search_keyword)
+    # else:
+    #     ignite_thread_timeout(search_keyword)
+    #     return get_data_from_db(search_keyword)
     return results
 
 
