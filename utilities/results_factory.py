@@ -83,7 +83,7 @@ def ignite_thread_timeout(search_keyword):
     pool = multiprocessing.pool.ThreadPool(1)
     result = pool.apply_async(partial(start_thread_search, search_keyword))
     try:
-        result.get(timeout=26)
+        result.get(timeout=20)
     except multiprocessing.TimeoutError:
         print("Process timed out")
     pool.terminate()
@@ -189,9 +189,9 @@ def get_json_db_results(search_keyword, check=False):
                 return get_data_from_db(search_keyword)
         else:
             return results
-    # else:
-    #     ignite_thread_timeout(search_keyword)
-    #     return get_data_from_db(search_keyword)
+    else:
+        ignite_thread_timeout(search_keyword)
+        return get_data_from_db(search_keyword)
     return results
 
 
