@@ -56,7 +56,6 @@ def run_web_search(search_keyword):
         # json_data = session.get(url, timeout=60)
         # results = safe_json(json_data.text)
 
-        time.sleep(25)
         results = web_get_data_from_db(search_keyword)
         message = safe_grab(results, ["message"])
 
@@ -72,10 +71,14 @@ def run_web_search(search_keyword):
     return
 
 
-def web_get_data_from_db(search_keyword):
+def web_get_data_from_db(search_keyword, sal=False):
     results = get_data_from_db(search_keyword)
     if not results or len(results) == 0:
-        results = run_api_search(search_keyword)
+        if not sal:
+            time.sleep(20)
+            web_get_data_from_db(search_keyword, True)  # this is stupid
+        else:
+            results = run_api_search(search_keyword)
     return results
 
 
