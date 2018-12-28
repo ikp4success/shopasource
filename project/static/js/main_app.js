@@ -85,7 +85,7 @@ function dynamic_content(data, refresh_shop_search){
     refresh_time_out()
     load_time_out = setTimeout(refresh_shop_data)
   }else{
-    shop_web_search()
+    set_search_time_out()
   }
 
 
