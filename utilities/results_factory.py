@@ -57,10 +57,9 @@ def run_web_search(search_keyword):
         # results = safe_json(json_data.text)
 
         results = web_get_data_from_db(search_keyword)
-        message = safe_grab(results, ["message"])
 
-        if results is None or len(results) == 0 or message is not None:
-            update_results_row_error(message)
+        if results is None or len(results) == 0:
+            update_results_row_error("Sorry, no products found")
         else:
             update_search_view_with_db_results(search_keyword, results)
         return
@@ -74,10 +73,9 @@ def run_web_search(search_keyword):
 def web_get_data_from_db(search_keyword, sal=False):
     results = get_data_from_db(search_keyword)
     if not results or len(results) == 0:
-        if not sal:
-            time.sleep(20)
-            web_get_data_from_db(search_keyword, True)  # this is stupid
-        else:
+        time.sleep(20)
+        results = get_data_from_db(search_keyword)
+        if not results:
             results = run_api_search(search_keyword)
     return results
 
