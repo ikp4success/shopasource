@@ -32,3 +32,15 @@
     margin:0 auto;
     padding-top: 100px;
 }
+
+#searchProgress {
+  width: 85%;
+  background-color: white;
+  display: none;
+}
+
+#searchProgressBar {
+  width: 1%;
+  height: 30px;
+  background-color: #F2F2F2;
+}

@@ -72,11 +72,11 @@ def run_web_search(search_keyword):
 
 def web_get_data_from_db(search_keyword, sal=False):
     results = get_data_from_db(search_keyword)
-    if not results or len(results) == 0:
-        time.sleep(20)
-        results = get_data_from_db(search_keyword)
-        # if not results:
-        #     results = run_api_search(search_keyword)
+    # if not results or len(results) == 0:
+    #     time.sleep(20)
+    #     results = get_data_from_db(search_keyword)
+    #     # if not results:
+    #     #     results = run_api_search(search_keyword)
     return results
 
 

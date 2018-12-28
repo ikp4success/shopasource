@@ -19,45 +19,14 @@
 	src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"
 	integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
 	crossorigin="anonymous"></script>
-<script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script type=text/javascript>
-  $(function() {
-    $('div#shopsearch').bind('click', function() {
-			initial_api_search()
-			return false
-    });
-  });
-
-	$(function() {
-		$('.mr-sm-2').bind('blur', function() {
-			initial_api_search()
-		});
-	});
-
-	function initial_api_search(){
-		sk = document.getElementsByName("search")[0].value
-		if(!sk){
-			return false;
-		}
-		sk_url = "/api/shop/search=" + encodeURIComponent(encodeURIComponent(sk));
-		$.getJSON(sk_url,
-				function(data) {
-		});
-		return false;
-	}
-
-	function shop_web_search(){
-		sk = document.getElementsByName("search")[0].value
-		if(!sk){
-			alert("textbox is empty")
-			return false;
-		}
-			web_search_url = "/websearch/shop/search=" + encodeURIComponent(encodeURIComponent(sk));
-			window.location.replace(web_search_url)
-		return false
-	}
-</script>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+	<!-- <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+	<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+	<script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+	<script src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script> -->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/4column.css')}}">
+<script src="{{ url_for('static', filename='js/main_app.js')}}"></script>
 <title>Best Lows</title>
 </head>
 <body>
@@ -85,9 +54,7 @@
 			</div>
 		</div>
 	</div>
-	<div class='container'>
 
-</div>
 	<div id="shopsearch" class="Search">
 		 <!-- <form class="form-inline my-2 my-lg-0" action="searchresults" -->
 		 	<!-- Method="GET"> -->
@@ -96,7 +63,14 @@
 				placeholder="e.g television" id="inputLarge" style="width: 85%;">
 			<button class="btn btn-search" onclick="shop_web_search()" type="submit">Search</button>
 		</form>
+		<div id="searchProgress" class="loading" display: none;>
+  <div id="searchProgressBar"></div>
+</div>
 	</div>
+	<div class='container results'>
+		<div id="resultreact"></div>
+
+</div>
 
 	<footer class="py-5 bg-light">
 	<div class="container">
