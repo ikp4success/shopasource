@@ -17,12 +17,10 @@ $(function() {
   });
 });
 
-var input = document.getElementById("myInput")
-input.addEventListener("keyup", function(event) {
-  event.preventDefault();
-  if (event.keyCode === 13) {
-    document.getElementById("searchButton").click();
-  }
+$("#searchbar").keyup(function(event) {
+    if (event.keyCode === 13) {
+        $("#searchButton").click();
+    }
 });
 
 function initial_api_search(sk){
@@ -90,6 +88,8 @@ function set_search_time_out(obj_so, refresh_api){
 function dynamic_content(data, refresh_shop_search){
   if(!data.includes("{REACT_RESULT_ROW}")){
     $(".loading").hide()
+    document.getElementById("searchButton").disabled = false;
+    document.getElementById("searchbar").disabled = false;
     if(refresh_shop_search){
       var shopsearchelem = $(data).filter("#shopsearch")
       $("#shopsearch").replaceWith(shopsearchelem)
@@ -119,7 +119,7 @@ function refresh_shop_data(){
 function load_search_progress_bar() {
   var elem = document.getElementById("searchProgressBar");
   var width = 1;
-  var id = setInterval(frame, 9000);
+  var id = setInterval(frame, 4500);
   function frame() {
     if (width >= 100) {
       clearInterval(id);
