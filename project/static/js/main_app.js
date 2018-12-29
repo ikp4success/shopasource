@@ -67,7 +67,12 @@ function refresh_time_out(){
   return
 }
 
-function set_search_time_out(obj_so){
+function set_search_time_out(obj_so, refresh_api){
+  if(refresh_api){
+    sk = document.getElementsByName("search")[0].value
+    initial_api_search(sk)
+  }
+
   obj_so = obj_so || 10000
   refresh_time_out()
   load_time_out = setTimeout(load_shop_search, obj_so)
@@ -86,7 +91,7 @@ function dynamic_content(data, refresh_shop_search){
     refresh_time_out()
     load_time_out = setTimeout(refresh_shop_data)
   }else{
-    set_search_time_out(20000)
+    set_search_time_out(20000, true)
   }
 
 
@@ -106,7 +111,7 @@ function refresh_shop_data(){
 function load_search_progress_bar() {
   var elem = document.getElementById("searchProgressBar");
   var width = 1;
-  var id = setInterval(frame, 1000);
+  var id = setInterval(frame, 9000);
   function frame() {
     if (width >= 100) {
       clearInterval(id);
