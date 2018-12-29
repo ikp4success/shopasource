@@ -17,6 +17,14 @@ $(function() {
   });
 });
 
+
+input.addEventListener("keyup", function(event) {
+  event.preventDefault();
+  if (event.keyCode === 13) {
+    document.getElementById("searchButton").click();
+  }
+});
+
 function initial_api_search(sk){
   if(!sk){
     return false
