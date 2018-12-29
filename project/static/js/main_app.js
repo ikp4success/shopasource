@@ -67,9 +67,10 @@ function refresh_time_out(){
   return
 }
 
-function set_search_time_out(){
+function set_search_time_out(obj_so){
+  obj_so = obj_so || 10000
   refresh_time_out()
-  load_time_out = setTimeout(load_shop_search, 10000)
+  load_time_out = setTimeout(load_shop_search, obj_so)
   return
 }
 
@@ -85,7 +86,7 @@ function dynamic_content(data, refresh_shop_search){
     refresh_time_out()
     load_time_out = setTimeout(refresh_shop_data)
   }else{
-    load_shop_search()
+    set_search_time_out(20000)
   }
 
 
