@@ -47,6 +47,7 @@ function shop_web_search(){
   }
   current_sk = sk
   $(".loading").show();
+  restart_progress_bar()
   load_search_progress_bar()
   set_search_time_out()
 
@@ -97,11 +98,10 @@ function dynamic_content(data, refresh_shop_search){
     var reactelem = $(data).find("#resultreact")
     $("#resultreact").replaceWith(reactelem)
     refresh_time_out()
-    load_time_out = setTimeout(refresh_shop_data)
+    load_time_out = setTimeout(refresh_shop_data, 15000)
   }else{
     set_search_time_out(20000, true)
   }
-
 
   return
 }
@@ -116,6 +116,13 @@ function refresh_shop_data(){
   }
   return false
 }
+
+function restart_progress_bar(){
+  var container = document.getElementById("searchProgress");
+  var content = container.innerHTML;
+  container.innerHTML= content;
+}
+
 function load_search_progress_bar() {
   var elem = document.getElementById("searchProgressBar");
   var width = 1;
