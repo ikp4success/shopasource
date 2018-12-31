@@ -8,7 +8,7 @@ _resultRow = " <div class=\"col-lg-3 col-md-4 col-sm-6 portfolio-item\">\r\n" \
     + "              <p class=\"card-text\">Shop: {PRODUCTSHOPNAME}</p>\r\n" + "            </div>\r\n"\
     + "          </div>\r\n" + "        </div>"
 
-_errorMessage = "<div style=\"padding-top: 80px;\r\n" + "	margin:0 auto;\r\n"\
+_errorMessage = "<div id=\"err_msg\" style=\"padding-top: 80px;\r\n" + "	margin:0 auto;\r\n"\
     + "	width: 60%;\"class=\"bs-component\">\r\n"\
     + "              <div class=\"alert alert-dismissible alert-danger\">\r\n"\
     + "                <button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>\r\n"\

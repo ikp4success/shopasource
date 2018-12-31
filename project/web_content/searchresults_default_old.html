@@ -74,14 +74,18 @@
 		<div id="resultreact">
 			<div class="row">{REACT_RESULT_ROW}</div>
 		</div>
-	<div id="err_msg" style="padding-top: 80px;
-	margin:0 auto;
-	width: 60%;"class="bs-component">
-              <div class="alert alert-dismissible alert-danger">
-                <button type="button" class="close" data-dismiss="alert">×</button>
-                <strong>Error: </strong>Sorry, no products found 
-              </div>
-            </div>
+		<!-- <script type="text/babel">
+    class Resultrow extends React.Component {
+		    render() {
+		        return (<div class="row">{REACT_RESULT_ROW}</div>);
+			}
+	}
+	  ReactDOM.render(
+	    <Resultrow />,
+	   document.getElementById('resultreact')
+	);
+	</script> -->
+	{error_message}
 	</div>
 
 	<footer class="py-5 bg-light">

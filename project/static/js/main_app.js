@@ -1,5 +1,5 @@
 load_time_out = null
-refresh_shop_data_tout = null
+time_check_default = 0
 current_web_url = null
 current_sk = null
 
@@ -27,9 +27,6 @@ function initial_api_search(sk){
   if(!sk){
     return false
   }
-  // if(click_event){
-  // 	$.ajaxSetup({async: false});
-  // }
   sk_url = "/api/shop/search=" + encodeURIComponent(encodeURIComponent(sk));
   $.getJSON(sk_url,
       function(data) {
@@ -38,6 +35,7 @@ function initial_api_search(sk){
 }
 
 function shop_web_search(){
+  $("#err_msg").hide()
   document.getElementById("searchButton").disabled = true;
   document.getElementById("searchbar").disabled = true;
   sk = document.getElementsByName("search")[0].value
@@ -98,9 +96,22 @@ function dynamic_content(data, refresh_shop_search){
     var reactelem = $(data).find("#resultreact")
     $("#resultreact").replaceWith(reactelem)
     refresh_time_out()
-    load_time_out = setTimeout(refresh_shop_data, 15000)
+    load_time_out = setTimeout(refresh_shop_data, 10000)
   }else{
-    set_search_time_out(20000, true)
+    if(time_check_default != 30){
+      time_check_default = time_check_default + 10
+      set_search_time_out(13000, true)
+    }else{
+      $(".loading").hide()
+      document.getElementById("searchButton").disabled = false;
+      document.getElementById("searchbar").disabled = false;
+      var shopsearchelem = $(data).filter("#shopsearch")
+      $("#shopsearch").replaceWith(shopsearchelem)
+      var result = $(data).filter(".results")
+      $(".results").replaceWith(result)
+      $("#resultreact").hide()
+    }
+
   }
 
   return
