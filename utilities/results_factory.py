@@ -8,8 +8,9 @@ from dateutil import parser
 from datetime import datetime, timezone
 import traceback
 import random
+import os
 # import time
-# import requests
+import requests
 
 from functools import partial
 
@@ -17,6 +18,7 @@ from utilities.DefaultResources import _resultRow
 from utilities.DefaultResources import _errorMessage
 from project.models import ShoppedData
 from shops.shop_utilities.extra_function import truncate_data, safe_json, safe_grab
+os.environ['NO_PROXY'] = "bestlows.herokuapp.com"
 
 
 def run_api_search(search_keyword):
@@ -51,12 +53,12 @@ def run_web_search(search_keyword):
         search_keyword = truncate_data(search_keyword, 50)
 
         # DEBUG url = "http://127.0.0.1:5000/api/shop/search={}".format(search_keyword)
-        # url = "http://bestlows.herokuapp.com/api/shop/search={}".format(search_keyword)
-        # session = requests.Session()
-        # json_data = session.get(url, timeout=60)
-        # results = safe_json(json_data.text)
+        url = "http://bestlows.herokuapp.com/api/shop/search={}".format(search_keyword)
+        session = requests.Session()
+        json_data = session.get(url, timeout=60)
+        results = safe_json(json_data.text)
 
-        results = web_get_data_from_db(search_keyword)
+        # results = web_get_data_from_db(search_keyword)
 
         if results is None or len(results) == 0:
             update_results_row_error("Sorry, no products found")
