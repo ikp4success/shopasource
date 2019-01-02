@@ -99,7 +99,7 @@ function dynamic_content(data, refresh_shop_search){
     refresh_time_out()
     load_time_out = setTimeout(refresh_shop_data, 10000)
   }else{
-    if(time_check_default != 30){
+    if(time_check_default != 50){
       time_check_default = time_check_default + 10
       set_search_time_out(13000, true)
     }else{
