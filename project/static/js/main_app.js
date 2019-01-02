@@ -43,32 +43,39 @@ function shop_web_search(){
   }
   cancel_search = !cancel_search
   if(cancel_search){
-    cancel_search_btn()
+    document.getElementById("searchButton").disabled = true;
+    document.getElementById("searchbar").disabled = true;
+    $("#searchButton").hide()
+    $("#cancelSearchButton").show()
     time_check_default = 0
     $("#err_msg").hide()
-    document.getElementById("searchbar").disabled = true;
     current_sk = sk
     $(".loading").show()
     restart_progress_bar()
     load_search_progress_bar()
     set_search_time_out()
   }else{
-    default_search_btn()
-    document.getElementById("searchbar").disabled = false;
-    $(".loading").hide()
+    reset_controls()
   }
 
   return false
 }
+
+function reset_controls(){
+  $(".loading").hide()
+  $("#cancelSearchButton").hide()
+  document.getElementById("searchButton").disabled = false;
+  document.getElementById("searchbar").disabled = false;
+  return
+}
+
 function load_shop_search(){
   sk = document.getElementsByName("search")[0].value
   web_search_url = "/websearch/shop/search=" + encodeURIComponent(encodeURIComponent(sk));
-  // window.location.replace(web_search_url)
   $.get(web_search_url,
       function(data) {
         current_web_url = web_search_url
         dynamic_content(data, true)
-        // clearTimeout(refresh_shop_data_tout)
   });
   return false
 }
@@ -95,9 +102,7 @@ function set_search_time_out(obj_so, refresh_api){
 
 function dynamic_content(data, refresh_shop_search){
   if(!data.includes("{REACT_RESULT_ROW}")){
-    $(".loading").hide()
-    document.getElementById("searchButton").disabled = false;
-    document.getElementById("searchbar").disabled = false;
+    reset_controls()
     if(refresh_shop_search){
       var shopsearchelem = $(data).filter("#shopsearch")
       $("#shopsearch").replaceWith(shopsearchelem)
@@ -111,9 +116,7 @@ function dynamic_content(data, refresh_shop_search){
       time_check_default = time_check_default + 10
       set_search_time_out(13000, true)
     }else{
-      $(".loading").hide()
-      document.getElementById("searchButton").disabled = false;
-      document.getElementById("searchbar").disabled = false;
+      reset_controls()
       var shopsearchelem = $(data).filter("#shopsearch")
       $("#shopsearch").replaceWith(shopsearchelem)
       var result = $(data).filter(".results")
@@ -124,16 +127,6 @@ function dynamic_content(data, refresh_shop_search){
   }
 
   return
-}
-
-function cancel_search_btn(){
-    document.getElementById("searchButton").className = "btn btn-info";
-    document.getElementById("searchButton").innerHTML = "Cancel Search";
-}
-
-function default_search_btn(){
-    document.getElementById("searchButton").className = "btn btn-search";
-    document.getElementById("searchButton").innerHTML = "Search";
 }
 
 

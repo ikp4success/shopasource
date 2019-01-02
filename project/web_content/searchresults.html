@@ -61,6 +61,7 @@
 				placeholder="e.g television" id="inputLarge" style="width: 85%;"
 				id="inputDefault">
 			<button id="searchButton" class="btn btn-search" onclick="shop_web_search()" type="submit">Search</button>
+			<button id="cancelSearchButton" class="btn btn-info" onclick="reset_controls()">Cancel Search</button>
 		</form>
 		<div id="searchProgress" class="loading" display: none;>
 	  <div id="searchProgressBar"></div>
@@ -72,16 +73,277 @@
 
 	<div class="container results">
 		<div id="resultreact">
-			<div class="row">{REACT_RESULT_ROW}</div>
-		</div>
-	<div id="err_msg" style="padding-top: 80px;
-	margin:0 auto;
-	width: 60%;"class="bs-component">
-              <div class="alert alert-dismissible alert-danger">
-                <button type="button" class="close" data-dismiss="alert">×</button>
-                <strong>Error: </strong>Sorry, error encountered during search, try again or contact admin if error persist 
-              </div>
+			<div class="row"> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_33d89cee-e09f-42cf-84cd-acd7284bda23" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a href="https://www.target.com/p/spark-drone-controller-combo-white/-/A-54017897">Spark Drone Controller Combo - White</a>
+              </h4>
+              <p class="card-text"></p>
+              <p class="card-text">Price: $399.99</p>
+              <p class="card-text">Shop: TARGET</p>
             </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_89271a8a-13a2-4c1d-a5c4-fce80d587f1c" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a href="https://www.target.com/p/venom-pro-live-feed-hd-camera-gps-drone-quadcopter-2-4ghz-4-5ch-picture-video-camera/-/A-53718049">Venom Pro Live Feed HD Camera GPS Drone Quadcopter...</a>
+              </h4>
+              <p class="card-text">Be the eye in the sky with the World Tech Toys Venom Pro GPS Streaming HD Camera 2.4GHz 4.5CH RC Drone! The Venom Pro is sure to entertain all, whether you are the beginner or the seasoned veteran at flying drones. Make quick movements and soar throu...</p>
+              <p class="card-text">Price: $179.99</p>
+              <p class="card-text">Shop: TARGET</p>
+            </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_703188a1-b7bf-4db9-825d-11fb588b51c9" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a href="https://www.target.com/p/nexus-2-4ghz-4-5ch-camera-remote-control-rc-laser-battle-drone/-/A-53718040">Nexus 2.4GHz 4.5CH Camera Remote Control RC Laser ...</a>
+              </h4>
+              <p class="card-text"></p>
+              <p class="card-text">Price: $129.99</p>
+              <p class="card-text">Shop: TARGET</p>
+            </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_da46f088-b365-43bc-abff-172d0732b99e" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a href="https://www.target.com/p/sky-viper-journey-pro-video-gps-drone-v2700/-/A-53454997">Sky Viper Journey Pro Video GPS Drone V2700</a>
+              </h4>
+              <p class="card-text">With professional-grade ArduPilot firmware, the Journey Pro Video Drone outperforms every drone in its class. Built-in GPS provides an autonomous flight experience similar to that of much pricier hobby-grade drones. Using a network of satellites to s...</p>
+              <p class="card-text">Price: $79.99</p>
+              <p class="card-text">Shop: TARGET</p>
+            </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_cce7dce3-e6ca-4055-ae5f-1932821f8b33" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a href="https://www.target.com/p/sky-viper-scout-streaming-video-drone/-/A-53371936">Sky Viper Scout Streaming Video Drone</a>
+              </h4>
+              <p class="card-text">Sky Viper Drones deliver hobby-grade performance with easy-to-fly features. The Scout Video Done is a 240mm full-sized performance drone featuring Skyrocket&amp;#x27;s new Surface Scan Technology - making Sky Viper Drones easier to fly than ever before! ...</p>
+              <p class="card-text">Price: $78.99</p>
+              <p class="card-text">Shop: TARGET</p>
+            </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_76d6d305-2e21-43f3-98b4-939ee4f9ecc0" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a href="https://www.target.com/p/xdrone-x-foldable-drone/-/A-53607982">XDrone X- Foldable Drone</a>
+              </h4>
+              <p class="card-text">XDrone X- Foldable drone with altitude hold, one key take off/landing, 3D flip, app control</p>
+              <p class="card-text">Price: $69.99</p>
+              <p class="card-text">Shop: TARGET</p>
+            </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_c20c07eb-69e1-42aa-a8c2-7d131312ab5b" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a href="https://www.target.com/p/elite-rezo-2-4ghz-4-5ch-remote-control-rc-racing-drone/-/A-53718054">Elite REZO 2.4GHz - 4.5CH Remote Control RC Racing...</a>
+              </h4>
+              <p class="card-text">Get ready to race with the World Tech Elite REZO 2.4GHz 4.5CH RC Racing Drone! This awesome drone comes with a 2 light up course rings, a finish line ring and 2 racing pads to land and take off from. Make your own course and challenge your friends to...</p>
+              <p class="card-text">Price: $61.99</p>
+              <p class="card-text">Shop: TARGET</p>
+            </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_2846c148-6de1-47b9-a356-2c69840cd390" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a href="https://www.target.com/p/striker-x-glow-in-the-dark-2-4ghz-4-5ch-remote-control-rc-hd-camera-drone/-/A-53718056">Striker-X Glow-In-The-Dark 2.4GHz - 4.5CH Remote C...</a>
+              </h4>
+              <p class="card-text">Continue having a blast after sunset with the World Tech Toys Striker-X Glow-In-The-Dark 2.4GHz 4.5CH RC HD Camera Drone! Don&amp;#x27;t let the darkness or nighttime put an end to your fun, with the glow-in-the-dark design you can light up dark areas or...</p>
+              <p class="card-text">Price: $60.99</p>
+              <p class="card-text">Shop: TARGET</p>
+            </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_314f1c16-7868-4a87-a5eb-e8e1d44eb9e6" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a href="https://www.target.com/p/striker-x-pro-hd-live-feed-camera-gps-drone-2-4ghz-4-5ch-hd-picture-video-camera-remote-control-rc-quadcopter/-/A-53718047">Striker-X Pro HD Live Feed Camera GPS Drone 2.4GHz...</a>
+              </h4>
+              <p class="card-text">Be the eye in the sky with the World Tech Toys Striker-X Pro GPS Live View 2.4GHz 4.5CH RC HD Camera Drone! The Striker-X Pro is sure to entertain all, whether you are the beginner or the seasoned veteran at flying drones. Make quick movements and so...</p>
+              <p class="card-text">Price: $59.99</p>
+              <p class="card-text">Shop: TARGET</p>
+            </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_ad0ce126-a9c5-4ecd-bc3a-66b0bbf861b0" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a href="https://www.target.com/p/sky-viper-fury-stunt-drone-with-surface-scan/-/A-53454968">Sky Viper FURY Stunt Drone with Surface Scan</a>
+              </h4>
+              <p class="card-text">The Sky Viper Fury Stunt Drone simplifies flying and outperforms other drones in its class. The Fury introduces Surface Scan technology, making drones easier to fly than ever before. It includes a tiny camera sensor on the underside of the drone that...</p>
+              <p class="card-text">Price: $49.99</p>
+              <p class="card-text">Shop: TARGET</p>
+            </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_4c314d6b-2cfc-4666-a0d9-5b68c2ffceed" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a href="https://www.target.com/p/eclipse-diy-racing-drone-quadcopter-2-4ghz-4-5ch/-/A-53718052">Eclipse DIY Racing Drone Quadcopter - 2.4GHz - 4.5...</a>
+              </h4>
+              <p class="card-text">Get ready to have a blast flying this Eclipse 2.4GHz 4.5CH DIY RC Racing Drone by World Tech Elite! Assemble the Eclipse DIY racing drone featuring a lightweight body constructed of durable polymer to handle rough conditions. Boasting 4.5 channel con...</p>
+              <p class="card-text">Price: $49.99</p>
+              <p class="card-text">Shop: TARGET</p>
+            </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_915bc9ca-175c-4abe-ae53-db8c2aac4b19" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a href="https://www.target.com/p/air-hogs-supernova-orb/-/A-53262811">Air Hogs Supernova Orb</a>
+              </h4>
+              <p class="card-text">Unleash the power of your hands with the Air Hogs Supernova! Only you can control this gravity-defying orb! Launch it, push it, spin it, using just your hands - no remote control or touching needed! Equipped with an intelligent on-board system and mo...</p>
+              <p class="card-text">Price: $39.99</p>
+              <p class="card-text">Shop: TARGET</p>
+            </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://m.media-amazon.com/images/I/71ggWblAvIL._SX480_.jpg" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a href="https://www.6pm.com/p/easy-spirit-drones-2-black-black/product/9034736/color/183092">Easy SpiritDrones 2</a>
+              </h4>
+              <p class="card-text">SKU: #9034736The Easy Spirit® Drones 2 sandal is a practical fashion statement for your signature-look this season!Upper is constructed of a combination of elasticized-straps and textile materials for a formfitting and adjustable wear.Easy slip-on de...</p>
+              <p class="card-text">Price: $34.99</p>
+              <p class="card-text">Shop: SIXPM</p>
+            </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_0d079196-3382-4be9-b2df-4af88df9270a" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a href="https://www.target.com/p/hovertech-battle-fx-3-0-drone/-/A-54010776">Hovertech Battle FX 3.0 Drone</a>
+              </h4>
+              <p class="card-text">The most exciting drone targeting game is here from Blue Sky Wireless! Launch the drone and take aim! Who&amp;#x27;s going to blast the drone out of the sky first? This multiple player game is meant to be played indoors. The drone is on a 1-minute timer ...</p>
+              <p class="card-text">Price: $29.99</p>
+              <p class="card-text">Shop: TARGET</p>
+            </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_2eb8e202-d138-4d92-8585-b10e0f6aa0a4" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a href="https://www.target.com/p/xforce-hand-controlled-quadcopter-drone/-/A-54010781">XForce Hand Controlled Quadcopter Drone</a>
+              </h4>
+              <p class="card-text">The world&amp;#x27;s easiest and safest drone to fly is here from Blue Sky Wireless! Entry level drone that is easy for beginners and just as exciting for the experts. Put your drone down on a flat surface and slide on your XForce Hand-Controlled Remote ...</p>
+              <p class="card-text">Price: $29.99</p>
+              <p class="card-text">Shop: TARGET</p>
+            </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_029306c9-8db6-4ecf-8979-20f2e9562550" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a href="https://www.target.com/p/kurt-adler-5-dalek-drone-doctor-who-arch-enemy-glass-christmas-ornament-red/-/A-75473227">Kurt Adler 5&amp;quot; Dalek Drone &amp;quot;Doctor Who&amp;qu...</a>
+              </h4>
+              <p class="card-text">Officially licensed merchandise    This iconic arch enemy of the Doctor is rendered in glass  Fully dimensional ornament  Comes ready-to-hang on a silver cord    Dimensions: 5"H x 3.5"W x 2"D  Material(s): glass</p>
+              <p class="card-text">Price: $24.99</p>
+              <p class="card-text">Shop: TARGET</p>
+            </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_679fe412-f962-43ab-bdf6-55e02aff7f56" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a href="https://www.target.com/p/drone-force-terrasect-remote-control-rc-2-4-ghz/-/A-53319520">Drone Force Terrasect Remote Control RC -2.4 GHz</a>
+              </h4>
+              <p class="card-text">ROLL, FLIP, ATTACK!&amp;lt;br&amp;gt;&amp;lt;br&amp;gt;Experience truly innovative radio control action with the TerrAsect! With a green, insect-like design and glowing, red eyes the TerrAsect strikes fear into the hearts of its prey. The TerrAsect&amp;#x27;s RELENTLESS...</p>
+              <p class="card-text">Price: $23.99</p>
+              <p class="card-text">Shop: TARGET</p>
+            </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_afe2702d-9158-42e7-8643-94d1522cb5eb" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a href="https://www.target.com/p/dji-tello-snap-on-top-cover-drone-yellow/-/A-76138007">DJI Tello Snap-on Top Cover - Drone - Yellow</a>
+              </h4>
+              <p class="card-text">Colorful covers specially designed for Tello.</p>
+              <p class="card-text">Price: $21.47</p>
+              <p class="card-text">Shop: TARGET</p>
+            </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_e6ae7771-a8ad-4bc4-9b66-54d7696b19f2" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a href="https://www.target.com/p/sky-viper-dash-nano-drone/-/A-53371926">Sky Viper DASH Nano Drone</a>
+              </h4>
+              <p class="card-text">The lightweight Sky Viper Dash Nano Drone simplifies flying and outperforms other drones in its class. Fly up to 25 mph using flight technology developed for racing class drones. Flight Assist makes flying easier for casual flyers and beginners. Fly ...</p>
+              <p class="card-text">Price: $19.99</p>
+              <p class="card-text">Shop: TARGET</p>
+            </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_3fcdad0d-15b4-415f-80fa-659d7248b30d" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a href="https://www.target.com/p/silly-spinners-drone-pink/-/A-54010804">Silly Spinners Drone - Pink</a>
+              </h4>
+              <p class="card-text">Keep your flying fun and colorful with the new Silly Spinners from Blue Sky Wireless! Unique mini flyers come with a small remote control that is easy for the little ones to hold in their hands. Keep the Silly Spinner flying high with spinning LED co...</p>
+              <p class="card-text">Price: $16.99</p>
+              <p class="card-text">Shop: TARGET</p>
+            </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_d50902ce-a570-4412-885a-ce3ba86a5354" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a href="https://www.target.com/p/space-flyers-robot-brigade-drone-red/-/A-54010813">Space Flyers Robot Brigade Drone - Red</a>
+              </h4>
+              <p class="card-text">Protect the galaxy with the all new Robot Brigade Space Flyers from Blue Sky Wireless! As your Space Flyer hovers up and down, simply place your hand underneath and watch your Flyer lift back up into the sky! Easy and safe to fly. Light up the night ...</p>
+              <p class="card-text">Price: $14.99</p>
+              <p class="card-text">Shop: TARGET</p>
+            </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://di2ponv0v5otw.cloudfront.net/posts/2018/11/29/5c009935a31c338a0d3b4d0e/m_5c00996eaaa5b88aa23a0588.jpg" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a href="https://poshmark.com/listing/Muse-Drones-Tour-Crop-Top-5c009935a31c338a0d3b4d0e">Women&amp;#x27;s ClothingWomen&amp;#x27;s ClothingDressesI...</a>
+              </h4>
+              <p class="card-text">Women’s size medium crop top 
+Collected from a Muse concert in Detroit MI for their album Drones 
+Back short sleeved top with goldish colored album art detail
+Fantastic show! Fantastic band! 
+ADORABLE crop top!</p>
+              <p class="card-text">Price: $12</p>
+              <p class="card-text">Shop: POSTMARK</p>
+            </div>
+          </div>
+        </div></div>
+		</div>
+	
 	</div>
 
 	<footer class="py-5 bg-light">
