@@ -63,9 +63,12 @@ function shop_web_search(){
 
 function reset_controls(){
   $(".loading").hide()
+  $("#searchButton").show()
   $("#cancelSearchButton").hide()
   document.getElementById("searchButton").disabled = false;
   document.getElementById("searchbar").disabled = false;
+  refresh_time_out()
+  cancel_search = false
   return
 }
 
@@ -102,7 +105,6 @@ function set_search_time_out(obj_so, refresh_api){
 
 function dynamic_content(data, refresh_shop_search){
   if(!data.includes("{REACT_RESULT_ROW}")){
-    reset_controls()
     if(refresh_shop_search){
       var shopsearchelem = $(data).filter("#shopsearch")
       $("#shopsearch").replaceWith(shopsearchelem)
@@ -111,6 +113,7 @@ function dynamic_content(data, refresh_shop_search){
     $("#resultreact").replaceWith(reactelem)
     refresh_time_out()
     load_time_out = setTimeout(refresh_shop_data, 10000)
+    reset_controls()
   }else{
     if(time_check_default != 50){
       time_check_default = time_check_default + 10
