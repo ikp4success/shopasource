@@ -2,6 +2,7 @@ load_time_out = null
 time_check_default = 0
 current_web_url = null
 current_sk = null
+cancel_search = false
 
 $(function() {
   $(document).on('click', 'div#shopsearch', function() {
@@ -35,20 +36,27 @@ function initial_api_search(sk){
 }
 
 function shop_web_search(){
-  time_check_default = 0
-  $("#err_msg").hide()
-  document.getElementById("searchButton").disabled = true;
-  document.getElementById("searchbar").disabled = true;
   sk = document.getElementsByName("search")[0].value
   if(!sk){
     alert("textbox is empty")
     return false
   }
-  current_sk = sk
-  $(".loading").show();
-  restart_progress_bar()
-  load_search_progress_bar()
-  set_search_time_out()
+  cancel_search = !cancel_search
+  if(cancel_search){
+    cancel_search_btn()
+    time_check_default = 0
+    $("#err_msg").hide()
+    document.getElementById("searchbar").disabled = true;
+    current_sk = sk
+    $(".loading").show()
+    restart_progress_bar()
+    load_search_progress_bar()
+    set_search_time_out()
+  }else{
+    default_search_btn()
+    document.getElementById("searchbar").disabled = false;
+    $(".loading").hide()
+  }
 
   return false
 }
@@ -117,6 +125,17 @@ function dynamic_content(data, refresh_shop_search){
 
   return
 }
+
+function cancel_search_btn(){
+    document.getElementById("searchButton").className = "btn btn-info";
+    document.getElementById("searchButton").innerHTML = "Cancel Search";
+}
+
+function default_search_btn(){
+    document.getElementById("searchButton").className = "btn btn-search";
+    document.getElementById("searchButton").innerHTML = "Search";
+}
+
 
 function refresh_shop_data(){
   initial_api_search(current_sk)
