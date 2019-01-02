@@ -18,7 +18,6 @@ from utilities.DefaultResources import _resultRow
 from utilities.DefaultResources import _errorMessage
 from project.models import ShoppedData
 from shops.shop_utilities.extra_function import truncate_data, safe_json, safe_grab
-os.environ['NO_PROXY'] = "bestlows.herokuapp.com"
 
 
 def run_api_search(search_keyword):

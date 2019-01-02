@@ -35,6 +35,7 @@ function initial_api_search(sk){
 }
 
 function shop_web_search(){
+  time_check_default = 0
   $("#err_msg").hide()
   document.getElementById("searchButton").disabled = true;
   document.getElementById("searchbar").disabled = true;
