@@ -18,11 +18,11 @@ $(function() {
   });
 });
 
-$("#searchbar").keyup(function(event) {
-    if (event.keyCode === 13) {
-        $("#searchButton").click();
-    }
-});
+// $("#searchbar").keyup(function(event) {
+//     if (event.keyCode === 13) {
+//         $("#searchButton").click();
+//     }
+// });
 
 function initial_api_search(sk){
   if(!sk){
