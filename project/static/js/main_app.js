@@ -18,10 +18,17 @@ $(function() {
   });
 });
 
-// $("#searchbar").keyup(function(event) {
-//     if (event.keyCode === 13) {
+$(function(){
+  $(document).on("submit", "#search_form", function(e){
+    shop_web_search()
+    e.preventDefault(); // Prevents submitting in most browsers
+    return false; // Prevents submitting in some other browsers
+  });
+});
+
+// $("#searchButton").keydown(function(event) {
+//    if(event.keyCode === 13)
 //         $("#searchButton").click();
-//     }
 // });
 
 function initial_api_search(sk){
