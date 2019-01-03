@@ -70,6 +70,7 @@ function shop_web_search(){
 
 function reset_controls(){
   $(".loading").hide()
+  restart_progress_bar()
   $("#searchButton").show()
   $("#cancelSearchButton").hide()
   document.getElementById("searchButton").disabled = false;
