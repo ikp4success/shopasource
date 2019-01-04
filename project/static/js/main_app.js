@@ -7,14 +7,14 @@ used_shuffled = []
 
 $(function() {
   $(document).on('click', 'div#shopsearch', function() {
-    sk = document.getElementsByName("search")[0].value
+    sk = get_sk_refined()
     initial_api_search(sk)
   });
 });
 
 $(function() {
   $(document).on('blur', '.mr-sm-2', function() {
-    sk = document.getElementsByName("search")[0].value
+    sk = get_sk_refined()
     initial_api_search(sk)
   });
 });
@@ -22,18 +22,13 @@ $(function() {
 $(function(){
   $(document).on("submit", "#search_form", function(e){
     shop_web_search()
-    e.preventDefault(); // Prevents submitting in most browsers
-    return false; // Prevents submitting in some other browsers
+    e.preventDefault();
+    return false;
   });
 });
 
-// $("#searchButton").keydown(function(event) {
-//    if(event.keyCode === 13)
-//         $("#searchButton").click();
-// });
-
 function initial_api_search(sk){
-  if(!sk){
+  if(!sk || sk==null){
     return false
   }
   shops_url = "/websearch/shops.json";
@@ -43,7 +38,7 @@ function initial_api_search(sk){
         var shop_index;
         for(shop_index in data){
           shop_name = data[shop_index]
-          sk_url = "/api/shop/" + shop_name + "/search=" + encodeURIComponent(encodeURIComponent(sk));
+          sk_url = "/api/shop/" + shop_name + "/search=" + sk;
           $.getJSON(sk_url,
               function(data) {
           });
@@ -54,7 +49,7 @@ function initial_api_search(sk){
 }
 
 function shop_web_search(){
-  sk = document.getElementsByName("search")[0].value
+  sk = get_sk_refined()
   if(!sk){
     alert("textbox is empty")
     return false
@@ -92,14 +87,24 @@ function reset_controls(){
 }
 
 function load_shop_search(){
-  sk = document.getElementsByName("search")[0].value
-  web_search_url = "/websearch/shop/search=" + encodeURIComponent(encodeURIComponent(sk));
+  sk = get_sk_refined()
+  web_search_url = "/websearch/shop/search=" + sk;
   $.get(web_search_url,
       function(data) {
         current_web_url = web_search_url
         dynamic_content(data, true)
   });
   return false
+}
+
+function get_sk_refined(){
+  sk = document.getElementsByName("search")[0].value
+  if(sk == null){
+    return sk
+  }
+  if(sk.includes("/"))
+    return encodeURIComponent(encodeURIComponent(sk))
+  return encodeURIComponent(sk)
 }
 
 function refresh_time_out(){
@@ -112,8 +117,7 @@ function refresh_time_out(){
 
 function set_search_time_out(obj_so, refresh_api){
   if(refresh_api){
-    sk = document.getElementsByName("search")[0].value
-    // initial_api_search(sk)
+    sk = get_sk_refined()
   }
 
   obj_so = obj_so || 3000

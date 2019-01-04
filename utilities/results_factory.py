@@ -31,6 +31,7 @@ def run_api_search(shop_name, search_keyword):
                 results = {"message": "Sorry, no products found"}
                 return results
             search_keyword = truncate_data(search_keyword, 50)
+
             results = get_json_db_results(shop_name, search_keyword, check=True)
             if results is None or len(results) == 0:
                 results = {"message": "Sorry, no products found"}
@@ -76,11 +77,6 @@ def run_web_search(search_keyword):
 
 def web_get_data_from_db(search_keyword, sal=False):
     results = get_data_from_db(search_keyword)
-    # if not results or len(results) == 0:
-    #     time.sleep(20)
-    #     results = get_data_from_db(search_keyword)
-    #     # if not results:
-    #     #     results = run_api_search(search_keyword)
     return results
 
 
@@ -96,10 +92,7 @@ def ignite_thread_timeout(shop_name, search_keyword):
 
 
 def start_thread_search(shop_name, search_keyword):
-    # shop_names_list = get_shops(active=True)
-    # random.shuffle(shop_names_list)
     if not is_shop_active(shop_name):
-        print("fucked")
         return
     pool = ThreadPool(1)
     launch_spiders_partial = partial(launch_spiders, sk=search_keyword)
