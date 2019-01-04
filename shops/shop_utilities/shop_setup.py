@@ -226,3 +226,7 @@ def get_shops(active=None):
             else:
                 shop_names_list.append(shop_name)
     return shop_names_list
+
+
+def is_shop_active(shop_name):
+    return shop_name in get_shops(active=True)

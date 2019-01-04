@@ -3,6 +3,7 @@ time_check_default = 0
 current_web_url = null
 current_sk = null
 cancel_search = false
+used_shuffled = []
 
 $(function() {
   $(document).on('click', 'div#shopsearch', function() {
@@ -35,10 +36,20 @@ function initial_api_search(sk){
   if(!sk){
     return false
   }
-  sk_url = "/api/shop/search=" + encodeURIComponent(encodeURIComponent(sk));
-  $.getJSON(sk_url,
+  shops_url = "/websearch/shops.json";
+  $.getJSON(shops_url,
       function(data) {
+        data.sort(() => Math.random() - 0.5)
+        var shop_index;
+        for(shop_index in data){
+          shop_name = data[shop_index]
+          sk_url = "/api/shop/" + shop_name + "/search=" + encodeURIComponent(encodeURIComponent(sk));
+          $.getJSON(sk_url,
+              function(data) {
+          });
+        }
   });
+
   return false
 }
 
@@ -102,10 +113,10 @@ function refresh_time_out(){
 function set_search_time_out(obj_so, refresh_api){
   if(refresh_api){
     sk = document.getElementsByName("search")[0].value
-    initial_api_search(sk)
+    // initial_api_search(sk)
   }
 
-  obj_so = obj_so || 10000
+  obj_so = obj_so || 3000
   refresh_time_out()
   load_time_out = setTimeout(load_shop_search, obj_so)
   return
@@ -119,13 +130,12 @@ function dynamic_content(data, refresh_shop_search){
     }
     var reactelem = $(data).find("#resultreact")
     $("#resultreact").replaceWith(reactelem)
-    refresh_time_out()
-    load_time_out = setTimeout(refresh_shop_data, 10000)
     reset_controls()
+    load_time_out = setTimeout(refresh_shop_data, 3000)
   }else{
     if(time_check_default != 50){
       time_check_default = time_check_default + 10
-      set_search_time_out(13000, true)
+      set_search_time_out(5000, true)
     }else{
       reset_controls()
       var shopsearchelem = $(data).filter("#shopsearch")
@@ -142,7 +152,7 @@ function dynamic_content(data, refresh_shop_search){
 
 
 function refresh_shop_data(){
-  initial_api_search(current_sk)
+  // initial_api_search(current_sk)
   if(current_web_url != null){
     $.get(current_web_url,
         function(data) {

@@ -29,11 +29,16 @@ def about():
     return render_template('about.html')
 
 
-@app.route("/api/shop/search=<search_keyword>", methods=['GET'])
-def api_search(search_keyword):
-    results = run_api_search(search_keyword)
+@app.route("/api/shop/<shop_name>/search=<search_keyword>", methods=['GET'])
+def api_search(shop_name, search_keyword):
+    results = run_api_search(shop_name, search_keyword)
     results = jsonify(results)
     return (results, 200)
+
+
+@app.route("/websearch/shops.json", methods=['GET'])
+def shop_list():
+    return render_template('shops.json')
 
 
 @app.route("/websearch/shop/search=<search_keyword>", methods=['GET'])

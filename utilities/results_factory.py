@@ -1,5 +1,5 @@
 from subprocess import call
-from shops.shop_utilities.shop_setup import get_shops
+from shops.shop_utilities.shop_setup import is_shop_active
 from multiprocessing.dummy import Pool as ThreadPool
 import multiprocessing.pool
 
@@ -20,15 +20,18 @@ from project.models import ShoppedData
 from shops.shop_utilities.extra_function import truncate_data, safe_json, safe_grab
 
 
-def run_api_search(search_keyword):
+def run_api_search(shop_name, search_keyword):
     results = {}
     try:
+        if shop_name is None:
+            results = {"message": "Shop name is required"}
+            return results
         if search_keyword is not None and search_keyword.strip() != "":
             if len(search_keyword) < 2:
                 results = {"message": "Sorry, no products found"}
                 return results
             search_keyword = truncate_data(search_keyword, 50)
-            results = get_json_db_results(search_keyword, check=True)
+            results = get_json_db_results(shop_name, search_keyword, check=True)
             if results is None or len(results) == 0:
                 results = {"message": "Sorry, no products found"}
             return results
@@ -81,9 +84,9 @@ def web_get_data_from_db(search_keyword, sal=False):
     return results
 
 
-def ignite_thread_timeout(search_keyword):
+def ignite_thread_timeout(shop_name, search_keyword):
     pool = multiprocessing.pool.ThreadPool(1)
-    result = pool.apply_async(partial(start_thread_search, search_keyword))
+    result = pool.apply_async(partial(start_thread_search, shop_name, search_keyword))
     try:
         result.get(timeout=15)
     except multiprocessing.TimeoutError:
@@ -92,12 +95,15 @@ def ignite_thread_timeout(search_keyword):
     print("Pool terminated")
 
 
-def start_thread_search(search_keyword):
-    shop_names_list = get_shops(active=True)
-    random.shuffle(shop_names_list)
-    pool = ThreadPool(len(shop_names_list))
+def start_thread_search(shop_name, search_keyword):
+    # shop_names_list = get_shops(active=True)
+    # random.shuffle(shop_names_list)
+    if not is_shop_active(shop_name):
+        print("fucked")
+        return
+    pool = ThreadPool(1)
     launch_spiders_partial = partial(launch_spiders, sk=search_keyword)
-    pool.map(launch_spiders_partial, shop_names_list)
+    pool.map(launch_spiders_partial, [shop_name])
     pool.close()
     pool.join()
 
@@ -158,8 +164,12 @@ def update_results_row_error(data):
     update_search_results(_errorMessage.replace("{Message}", data), "{error_message}")
 
 
-def get_data_from_db(searched_keyword):
-    results = ShoppedData.query.filter(ShoppedData.searched_keyword == searched_keyword).order_by(ShoppedData.numeric_price.desc()).all()
+def get_data_from_db(searched_keyword, shop_name=None):
+    results = []
+    if shop_name is not None:
+        results = ShoppedData.query.filter(ShoppedData.searched_keyword == searched_keyword, ShoppedData.shop_name == shop_name).order_by(ShoppedData.numeric_price.desc()).all()
+    else:
+        results = ShoppedData.query.filter(ShoppedData.searched_keyword == searched_keyword).order_by(ShoppedData.numeric_price.desc()).all()
     if results is not None and len(results) > 0:
         results = [res.__str__() for res in results]
     return results
@@ -180,20 +190,20 @@ def update_db_results(results):
     return False
 
 
-def get_json_db_results(search_keyword, check=False):
-    results = get_data_from_db(search_keyword)
+def get_json_db_results(shop_name, search_keyword, check=False):
+    results = get_data_from_db(shop_name=shop_name, searched_keyword=search_keyword)
     if results:
         if check:
             if is_new_data(results, search_keyword):
                 return results
             else:
-                ignite_thread_timeout(search_keyword)
-                return get_data_from_db(search_keyword)
+                ignite_thread_timeout(shop_name, search_keyword)
+                return get_data_from_db(shop_name=shop_name, searched_keyword=search_keyword)
         else:
             return results
     else:
-        ignite_thread_timeout(search_keyword)
-        return get_data_from_db(search_keyword)
+        ignite_thread_timeout(shop_name, search_keyword)
+        return get_data_from_db(shop_name=shop_name, searched_keyword=search_keyword)
     return results
 
 
