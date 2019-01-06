@@ -22,22 +22,21 @@ from shops.shop_utilities.extra_function import truncate_data, safe_json, safe_g
 
 def run_api_search(shop_name, search_keyword):
     results = {}
+    err_msg = '{"message": "Sorry, no products found"}'
     try:
         if shop_name is None:
-            results = {"message": "Shop name is required"}
-            return results
+            return '{"message": "Shop name is required"}'
         if search_keyword is not None and search_keyword.strip() != "":
             if len(search_keyword) < 2:
-                results = {"message": "Sorry, no products found"}
-                return results
+                return err_msg
             search_keyword = truncate_data(search_keyword, 50)
 
             results = get_json_db_results(shop_name, search_keyword, check=True)
             if results is None or len(results) == 0:
-                results = {"message": "Sorry, no products found"}
+                results = err_msg
             return results
     except Exception as e:
-        results = {"message": "Sorry, error encountered during search, try again or contact admin if error persist"}
+        results = '{"message": "Sorry, error encountered during search, try again or contact admin if error persist"}'
         print(e)
         print(traceback.format_exc())
         return results

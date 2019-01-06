@@ -4,6 +4,7 @@ current_web_url = null
 current_sk = null
 cancel_search = false
 used_shuffled = []
+transformed_result_htm_data = ""
 
 $(function() {
   $(document).on('click', 'div#shopsearch', function() {
@@ -37,15 +38,57 @@ function initial_api_search(sk){
         data.sort(() => Math.random() - 0.5)
         var shop_index;
         for(shop_index in data){
+          var error_row = ""
           shop_name = data[shop_index]
           sk_url = "/api/shop/" + shop_name + "/search=" + sk;
-          $.getJSON(sk_url,
-              function(data) {
+          $.get("/websearch/default-resources.htm",
+              function(default_resource_data) {
+                $.getJSON(sk_url,
+                  function(shop_data_json) {
+                    var result_row = $(default_resource_data).filter("#resultRow")
+                    error_row = $(default_resource_data).filter("#errorRow")
+
+                    c_data = consume_json_data(sk, shop_data_json, result_row, error_row)
+                    if(c_data){
+                      transformed_result_htm_data.concat(c_data)
+                      $("#resultreact").replaceWith(transformed_result_htm_data)
+                    }
+                  });
           });
         }
+        if(transformed_result_htm_data == ""){
+          err_h = error_row.replace("{Message}", "Error")
+          $(".results").replaceWith(err_h)
+          $("#resultreact").hide()
+        }
+
   });
 
   return false
+}
+
+function consume_json_data(sk, data, result_row_htm){
+  shop_data = JSON.parse(data);
+  if(shop_data.message){
+    return false
+  }else{
+    shop_data = shop_data[sk]
+    body_criteria = {
+      "{PRODUCTIMAGESOURCE}": shop_data.image_url,
+      "{PRODUCTLINK}": shop_data.shop_link,
+      "{PRODUCTTITLE}": shop_data.title,
+      "{PRODUCTDESCRIPTION}": shop_data.content_description,
+      "{PRODUCTPRICE}": shop_data.price,
+      "{PRODUCTSHOPNAME}": shop_data.shop_name,
+    }
+
+    for(key in body_criteria){
+      result_row_htm = result_row_htm.html().replace(key, body_criteria[key])
+    }
+    return result_row_htm
+
+  }
+
 }
 
 function shop_web_search(){
@@ -66,7 +109,7 @@ function shop_web_search(){
     $(".loading").show()
     restart_progress_bar()
     load_search_progress_bar()
-    set_search_time_out()
+    // set_search_time_out()
   }else{
     reset_controls()
   }

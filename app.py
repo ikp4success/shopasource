@@ -41,6 +41,11 @@ def shop_list():
     return render_template('shops.json')
 
 
+@app.route("/websearch/default-resources.htm", methods=['GET'])
+def shop_default_resources():
+    return render_template('default-resources.htm')
+
+
 @app.route("/websearch/shop/search=<search_keyword>", methods=['GET'])
 def web_search(search_keyword):
     return get_search_results(search_keyword)
