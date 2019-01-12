@@ -215,8 +215,6 @@ def get_data_from_db(searched_keyword, match_acc=0, low_to_high=False, high_to_l
         for item_r in results:
             item_r = safe_json(item_r)
             if match_sk(searched_keyword, safe_grab(item_r, [searched_keyword, "title"]), match_acc):
-                print(match_acc)
-                print("OVER HERE")
                 mk_results.append(json.dumps(item_r))
         results = mk_results
     return results
