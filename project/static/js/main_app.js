@@ -88,7 +88,11 @@ function reset_controls(){
 
 function load_shop_search(){
   sk = get_sk_refined()
-  web_search_url = "/websearch/shop/search=" + sk;
+  s_match = document.getElementById("rangeacc").value
+  s_hl =  document.getElementById("highlow").checked
+  s_lh =  document.getElementById("lowhigh").checked
+  search_params = "sk=" + sk + "&smatch=" + s_match + "&shl=" + s_hl + "&slh=" + s_lh
+  web_search_url = "/websearch/shop/search?" + search_params;
   $.get(web_search_url,
       function(data) {
         current_web_url = web_search_url

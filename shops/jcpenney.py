@@ -4,7 +4,7 @@ import scrapy
 from shops.shop_connect.shop_request import get_request
 from shops.shop_connect.shoplinks import _jcpenneyurl
 from shops.shop_utilities.shop_setup import find_shop_configuration
-from shops.shop_utilities.extra_function import generate_result_meta, extract_items, match_sk, safe_json, safe_grab
+from shops.shop_utilities.extra_function import generate_result_meta, extract_items, safe_json, safe_grab
 
 
 class JcPenney(scrapy.Spider):
@@ -21,11 +21,9 @@ class JcPenney(scrapy.Spider):
     def get_best_link(self, response):
         items = safe_grab(safe_json(response.text), ["organicZoneInfo", "products"])
         for item in items:
-            title = safe_grab(item, ["name"])
-            if match_sk(self._search_keyword, title):
-                item_url = safe_grab(item, ["pdpUrl"])
-                price = safe_grab(item, ["fpacPriceMax"])
-                yield get_request(url=item_url, callback=self.parse_data, domain_url="https://www.jcpenney.com", meta={"pc": price})
+            item_url = safe_grab(item, ["pdpUrl"])
+            price = safe_grab(item, ["fpacPriceMax"])
+            yield get_request(url=item_url, callback=self.parse_data, domain_url="https://www.jcpenney.com", meta={"pc": price})
 
     def parse_data(self, response):
         image_url = response.css("._3JaiK ::attr(src)").extract_first()

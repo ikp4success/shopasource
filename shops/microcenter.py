@@ -3,7 +3,7 @@ import scrapy
 from shops.shop_connect.shop_request import get_request
 from shops.shop_connect.shoplinks import _microcenterurl
 from shops.shop_utilities.shop_setup import find_shop_configuration
-from shops.shop_utilities.extra_function import generate_result_meta, extract_items, safe_grab, match_sk
+from shops.shop_utilities.extra_function import generate_result_meta, extract_items, safe_grab
 # from debug_app.manual_debug_funcs import printHtmlToFile
 
 
@@ -22,9 +22,8 @@ class MicroCenter(scrapy.Spider):
         items = response.css(".product_wrapper")
         for item in items:
             item_title = extract_items(item.css(".pDescription ::text").extract())
-            if match_sk(self._search_keyword, item_title):
-                item_url = item.css(".pDescription ::attr(href)").extract_first()
-                yield get_request(url=item_url, callback=self.parse_data, domain_url=response.url, meta={"ti": item_title})
+            item_url = item.css(".pDescription ::attr(href)").extract_first()
+            yield get_request(url=item_url, callback=self.parse_data, domain_url=response.url, meta={"ti": item_title})
 
     def parse_data(self, response):
         image_url = response.css(".image-slide ::attr(src)").extract_first()

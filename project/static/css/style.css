@@ -5,6 +5,10 @@
     padding-bottom: 100%;
 }
 
+.sp{
+  margin: 9px;
+}
+
 .About {
     width: 55%;
     margin:0 auto;
@@ -21,6 +25,11 @@
 .results{
 	padding-top: 80px;
 	padding-bottom: 100%;
+}
+
+.fil-container{
+  padding-top: 10px;
+	padding-bottom: 10%;
 }
 
 .portfolio-item{

@@ -4,17 +4,6 @@ import re
 import json
 import html
 
-possible_match_abbrev = {
-    "television": ["tv", "televisions"],
-    "televisions": ["tv", "television"],
-    "tv": ["tv", "television"],
-    "computer": ["laptop", "pc", "desktop"],
-    "pc": ["laptop", "computer", "desktop"],
-    "laptop": ["computer", "pc", "desktop"],
-    "desktop": ["laptop", "computer", "pc"],
-    "children": ["child", "kid"]
-}
-
 
 def prepend_domain(url, domain_url, ignore_domain_splice=False):
     if domain_url is None:
@@ -94,27 +83,6 @@ def extract_items(items):
     for item in items:
         item_r += item.rstrip().strip()
     return item_r
-
-
-def match_sk(search_keyword, searched_item):
-    if search_keyword is None or searched_item is None:
-        return False
-    search_keyword = search_keyword.lower()
-    searched_item = searched_item.lower()
-    sk_abbrev = safe_grab(possible_match_abbrev, [search_keyword], default=[])
-
-    search_keyword_arr = search_keyword.split(" ")
-    search_keyword_arr.extend(sk_abbrev)
-    match_count = 0
-    for sk in search_keyword_arr:
-        if sk and len(sk) > 1 and sk in searched_item.lower():
-            match_count = match_count + 1
-
-    if match_count > 0:
-        percentage_sk_match = (match_count / len(search_keyword_arr)) * 100
-        if percentage_sk_match >= 12:
-            return True
-    return False
 
 
 def format_price(price):

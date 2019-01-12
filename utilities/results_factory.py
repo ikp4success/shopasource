@@ -2,7 +2,7 @@ from subprocess import call
 from shops.shop_utilities.shop_setup import is_shop_active
 from multiprocessing.dummy import Pool as ThreadPool
 import multiprocessing.pool
-
+import json
 from project import db
 from dateutil import parser
 from datetime import datetime, timezone
@@ -18,6 +18,41 @@ from utilities.DefaultResources import _resultRow
 from utilities.DefaultResources import _errorMessage
 from project.models import ShoppedData
 from shops.shop_utilities.extra_function import truncate_data, safe_json, safe_grab
+
+
+possible_match_abbrev = {
+    "television": ["tv", "televisions"],
+    "televisions": ["tv", "television"],
+    "tv": ["tv", "television"],
+    "computer": ["laptop", "pc", "desktop"],
+    "pc": ["laptop", "computer", "desktop"],
+    "laptop": ["computer", "pc", "desktop"],
+    "desktop": ["laptop", "computer", "pc"],
+    "children": ["child", "kid"]
+}
+
+
+def match_sk(search_keyword, searched_item, match_sk_set):
+    if match_sk_set == 0:
+        return True
+    if search_keyword is None or searched_item is None:
+        return False
+    search_keyword = search_keyword.lower()
+    searched_item = searched_item.lower()
+    sk_abbrev = safe_grab(possible_match_abbrev, [search_keyword], default=[])
+
+    search_keyword_arr = search_keyword.split(" ")
+    search_keyword_arr.extend(sk_abbrev)
+    match_count = 0
+    for sk in search_keyword_arr:
+        if sk and len(sk) > 1 and sk in searched_item.lower():
+            match_count = match_count + 1
+
+    if match_count > 0:
+        percentage_sk_match = (match_count / len(search_keyword_arr)) * 100
+        if percentage_sk_match >= match_sk_set:
+            return True
+    return False
 
 
 def run_api_search(shop_name, search_keyword):
@@ -44,7 +79,7 @@ def run_api_search(shop_name, search_keyword):
     return results
 
 
-def run_web_search(search_keyword):
+def run_web_search(search_keyword, match_acc, low_to_high, high_to_low):
     try:
         if search_keyword is None or search_keyword.strip() == "":
             update_results_row_error("Search keyword is empty or invalid")
@@ -61,7 +96,7 @@ def run_web_search(search_keyword):
         # json_data = session.get(url, timeout=60)
         # results = safe_json(json_data.text)
 
-        results = web_get_data_from_db(search_keyword)
+        results = web_get_data_from_db(search_keyword, match_acc, low_to_high, high_to_low)
 
         if results is None or len(results) == 0:
             update_results_row_error("Sorry, no products found")
@@ -75,8 +110,8 @@ def run_web_search(search_keyword):
     return
 
 
-def web_get_data_from_db(search_keyword, sal=False):
-    results = get_data_from_db(search_keyword)
+def web_get_data_from_db(search_keyword, match_acc, low_to_high, high_to_low):
+    results = get_data_from_db(searched_keyword=search_keyword, match_acc=match_acc, low_to_high=low_to_high, high_to_low=high_to_low)
     return results
 
 
@@ -157,14 +192,31 @@ def update_results_row_error(data):
     update_search_results(_errorMessage.replace("{Message}", data), "{error_message}")
 
 
-def get_data_from_db(searched_keyword, shop_name=None):
+def get_data_from_db(searched_keyword, match_acc=0, low_to_high=False, high_to_low=True, shop_name=None):
     results = []
     if shop_name is not None:
-        results = ShoppedData.query.filter(ShoppedData.searched_keyword == searched_keyword, ShoppedData.shop_name == shop_name).order_by(ShoppedData.numeric_price.desc()).all()
+        if high_to_low:
+            results = ShoppedData.query.filter(
+                                ShoppedData.searched_keyword == searched_keyword,
+                                ShoppedData.shop_name == shop_name).order_by(ShoppedData.numeric_price.desc()).all()
+        elif low_to_high:
+            results = ShoppedData.query.filter(
+                                ShoppedData.searched_keyword == searched_keyword,
+                                ShoppedData.shop_name == shop_name).order_by(ShoppedData.numeric_price.asc()).all()
     else:
-        results = ShoppedData.query.filter(ShoppedData.searched_keyword == searched_keyword).order_by(ShoppedData.numeric_price.desc()).all()
+        if high_to_low:
+            results = ShoppedData.query.filter(ShoppedData.searched_keyword == searched_keyword).order_by(ShoppedData.numeric_price.desc()).all()
+        elif low_to_high:
+            results = ShoppedData.query.filter(ShoppedData.searched_keyword == searched_keyword).order_by(ShoppedData.numeric_price.asc()).all()
+
     if results is not None and len(results) > 0:
         results = [res.__str__() for res in results]
+        mk_results = []
+        for item_r in results:
+            item_r = safe_json(item_r)
+            if match_sk(searched_keyword, safe_grab(item_r, [searched_keyword, "title"]), match_acc):
+                mk_results.append(json.dumps(item_r))
+        results = mk_results
     return results
 
 
