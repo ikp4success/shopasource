@@ -3,7 +3,7 @@ import scrapy
 from shops.shop_connect.shop_request import get_request
 from shops.shop_connect.shoplinks import _6pmurl
 from shops.shop_utilities.shop_setup import find_shop_configuration
-from shops.shop_utilities.extra_function import generate_result_meta, extract_items, match_sk
+from shops.shop_utilities.extra_function import generate_result_meta, extract_items
 
 
 class SIXPM(scrapy.Spider):
@@ -21,10 +21,9 @@ class SIXPM(scrapy.Spider):
         items = response.css(".searchPage article")
 
         for item in items:
-            title = extract_items(item.css("._2jktc ::text").extract())
-            if match_sk(self._search_keyword, title):
-                item_url = item.css("a ::attr(href)").extract_first()
-                yield get_request(url=item_url, callback=self.parse_data, domain_url=response.url)
+            # title = extract_items(item.css("._2jktc ::text").extract())
+            item_url = item.css("a ::attr(href)").extract_first()
+            yield get_request(url=item_url, callback=self.parse_data, domain_url=response.url)
 
     def parse_data(self, response):
         image_url = response.css("._3lbfA ::attr(src)").extract_first()

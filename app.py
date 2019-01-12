@@ -1,5 +1,6 @@
 from flask import render_template
 from flask import jsonify
+from flask import request
 
 from utilities.results_factory import run_web_search, run_api_search
 from project import db, app
@@ -41,13 +42,35 @@ def shop_list():
     return render_template('shops.json')
 
 
-@app.route("/websearch/shop/search=<search_keyword>", methods=['GET'])
-def web_search(search_keyword):
-    return get_search_results(search_keyword)
+@app.route("/websearch/shop/search", methods=['GET'])
+def web_search():
+    search_keyword = request.args.get("sk")
+    match_acc = 0
+    low_to_high = False
+    high_to_low = True
+    try:
+        match_acc = int(request.args.get("smatch"))
+        low_to_high = request.args.get("slh")
+        high_to_low = request.args.get("shl")
+        if low_to_high == "true":
+            high_to_low = False
+            low_to_high = True
+        elif low_to_high == "false":
+            high_to_low = True
+            low_to_high = False
+        else:
+            low_to_high = False
+            high_to_low = True
+
+    except Exception:
+        match_acc = 0
+        low_to_high = False
+        high_to_low = True
+    return get_search_results(search_keyword, match_acc, low_to_high, high_to_low)
 
 
-def get_search_results(search_keyword):
-    run_web_search(search_keyword)
+def get_search_results(search_keyword, match_acc, low_to_high, high_to_low):
+    run_web_search(search_keyword, match_acc, low_to_high, high_to_low)
     return render_template('searchresults.html')
 
 

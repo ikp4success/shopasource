@@ -3,7 +3,7 @@ import scrapy
 from shops.shop_connect.shop_request import get_request
 from shops.shop_connect.shoplinks import _macysurl
 from shops.shop_utilities.shop_setup import find_shop_configuration
-from shops.shop_utilities.extra_function import generate_result_meta, extract_items, match_sk, safe_grab
+from shops.shop_utilities.extra_function import generate_result_meta, extract_items, safe_grab
 
 
 class Macys(scrapy.Spider):
@@ -30,11 +30,9 @@ class Macys(scrapy.Spider):
         items = response.css(".items .productThumbnailItem")
 
         for item in items:
-            title = extract_items(item.css(".productDescLink ::text").extract())
-            if match_sk(self._search_keyword, title):
-                item_url = item.css("a.productDescLink ::attr(href)").extract_first()
-                price = item.css(".prices span").extract_first()
-                yield get_request(url=item_url, callback=self.parse_data, domain_url=response.url, meta={"price": price})
+            item_url = item.css("a.productDescLink ::attr(href)").extract_first()
+            price = item.css(".prices span").extract_first()
+            yield get_request(url=item_url, callback=self.parse_data, domain_url=response.url, meta={"price": price})
 
     def parse_data(self, response):
         image_url = response.css(".main-image img ::attr(src)").extract_first()

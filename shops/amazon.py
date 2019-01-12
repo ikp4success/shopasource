@@ -3,7 +3,7 @@ import scrapy
 from shops.shop_connect.shop_request import get_request
 from shops.shop_connect.shoplinks import _amazonurl
 from shops.shop_utilities.shop_setup import find_shop_configuration
-from shops.shop_utilities.extra_function import generate_result_meta, extract_items, safe_json, match_sk
+from shops.shop_utilities.extra_function import generate_result_meta, extract_items, safe_json
 # from debug_app.manual_debug_funcs import printHtmlToFile
 
 
@@ -25,10 +25,8 @@ class Amazon(scrapy.Spider):
         for item in items:
             if "Sponsored" in item.extract() or "Top Rated from Our Brands" in item.extract():
                 continue
-            item_title = item.css(".a-link-normal ::text").extract_first()
-            if match_sk(self._search_keyword, item_title):
-                item_url = item.css(".a-link-normal ::attr(href)").extract_first()
-                yield get_request(url=item_url, callback=self.parse_data, domain_url=response.url)
+            item_url = item.css(".a-link-normal ::attr(href)").extract_first()
+            yield get_request(url=item_url, callback=self.parse_data, domain_url=response.url)
 
     def parse_data(self, response):
         image_url = response.css("#imgTagWrapperId img ::attr(data-old-hires)").extract_first()
