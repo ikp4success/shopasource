@@ -9,14 +9,15 @@ transformed_result_htm_data = ""
 $(function() {
   $(document).on('click', 'div#shopsearch', function() {
     sk = get_sk_refined()
-    initial_api_search(sk)
+    // shop_web_search()
+    // initial_api_search(sk)
   });
 });
 
 $(function() {
   $(document).on('blur', '.mr-sm-2', function() {
     sk = get_sk_refined()
-    initial_api_search(sk)
+    // initial_api_search(sk)
   });
 });
 
@@ -48,7 +49,7 @@ function initial_api_search(sk){
                     var result_row = $(default_resource_data).filter("#resultRow")
                     error_row = $(default_resource_data).filter("#errorRow")
 
-                    c_data = consume_json_data(sk, shop_data_json, result_row, error_row)
+                    c_data = consume_json_data(sk, shop_data_json, result_row)
                     if(c_data){
                       transformed_result_htm_data.concat(c_data)
                       $("#resultreact").replaceWith(transformed_result_htm_data)
@@ -56,12 +57,6 @@ function initial_api_search(sk){
                   });
           });
         }
-        if(transformed_result_htm_data == ""){
-          err_h = error_row.replace("{Message}", "Error")
-          $(".results").replaceWith(err_h)
-          $("#resultreact").hide()
-        }
-
   });
 
   return false
@@ -109,6 +104,16 @@ function shop_web_search(){
     $(".loading").show()
     restart_progress_bar()
     load_search_progress_bar()
+    initial_api_search(sk)
+  //   if(transformed_result_htm_data == ""){
+  //     $.get("/websearch/default-resources.htm",
+  //         function(default_resource_data) {
+  //           error_row = $(default_resource_data).filter("#errorRow")
+  //           err_h = error_row.html().replace("{Message}", "Error")
+  //           $(".results").replaceWith(err_h)
+  //           $("#resultreact").hide()
+  //   });
+  // }
     // set_search_time_out()
   }else{
     reset_controls()
