@@ -31,12 +31,12 @@ class Macys(scrapy.Spider):
 
         for item in items:
             item_url = item.css("a.productDescLink ::attr(href)").extract_first()
-            price = item.css(".prices span").extract_first()
+            price = "".join(item.css(".prices span ::text").extract())
             yield get_request(url=item_url, callback=self.parse_data, domain_url=response.url, meta={"price": price})
 
     def parse_data(self, response):
         image_url = response.css(".main-image img ::attr(src)").extract_first()
         title = extract_items(response.xpath("//div[@data-auto='product-title']").css("::text").extract())
         description = extract_items(response.xpath("//div[@data-el='product-details']").css("::text").extract())
-        price = safe_grab(response.meta, ["price"], default=response.css(".price ::text"))
+        price = response.css(".price ::text").extract_first() or safe_grab(response.meta, ["price"])
         yield generate_result_meta(shop_link=response.url, image_url=image_url, shop_name=self.name, price=price, title=title, searched_keyword=self._search_keyword, content_description=description)
