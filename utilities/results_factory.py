@@ -91,7 +91,7 @@ def run_web_search(search_keyword, match_acc, low_to_high, high_to_low):
         search_keyword = truncate_data(search_keyword, 50)
 
         # DEBUG url = "http://127.0.0.1:5000/api/shop/search={}".format(search_keyword)
-        # url = "http://bestlows.herokuapp.com/api/shop/search={}".format(search_keyword)
+        # url = "http://hopmask.herokuapp.com/api/shop/search={}".format(search_keyword)
         # session = requests.Session()
         # json_data = session.get(url, timeout=60)
         # results = safe_json(json_data.text)
