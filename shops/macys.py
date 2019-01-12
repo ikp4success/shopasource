@@ -39,4 +39,10 @@ class Macys(scrapy.Spider):
         title = extract_items(response.xpath("//div[@data-auto='product-title']").css("::text").extract())
         description = extract_items(response.xpath("//div[@data-el='product-details']").css("::text").extract())
         price = response.css(".price ::text").extract_first() or safe_grab(response.meta, ["price"])
-        yield generate_result_meta(shop_link=response.url, image_url=image_url, shop_name=self.name, price=price, title=title, searched_keyword=self._search_keyword, content_description=description)
+        yield generate_result_meta(shop_link=response.url,
+                                   image_url=image_url,
+                                   shop_name=self.name,
+                                   price=price,
+                                   title=title,
+                                   searched_keyword=self._search_keyword,
+                                   content_description=description)

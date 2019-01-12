@@ -26,7 +26,8 @@ class TestShopNames(Enum):
     BURLINGTON = "BURLINGTON",
     MVMTWATCHES = "MVMTWATCHES",
     BOOHOO = "BOOHOO",
-    FOREVER21 = "FOREVER21"
+    FOREVER21 = "FOREVER21",
+    STYLERUNNER = "STYLERUNNER"
 
 
 shop_configurations = [
@@ -209,6 +210,12 @@ shop_configurations = [
         "FOREVER21": {
             "active": True,
             "name": "FOREVER21"
+        }
+    },
+    {
+        "STYLERUNNER": {
+            "active": True,
+            "name": "STYLERUNNER"
         }
     }
 ]
