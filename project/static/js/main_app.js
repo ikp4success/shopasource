@@ -186,3 +186,7 @@ function load_search_progress_bar() {
   }
   return false
 }
+
+function pull_down_filter(){
+  $("#filter_con").show()
+}

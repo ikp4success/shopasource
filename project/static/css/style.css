@@ -1,8 +1,12 @@
 .Search {
-    width: 55%;
+    width: 40%;
     margin:0 auto;
     padding-top: 250px;
     padding-bottom: 100%;
+}
+
+.sp{
+  margin: -5px;
 }
 
 .About {
@@ -21,6 +25,11 @@
 .results{
 	padding-top: 80px;
 	padding-bottom: 100%;
+}
+
+.fil-container{
+  padding-top: 10px;
+	padding-bottom: 10%;
 }
 
 .portfolio-item{

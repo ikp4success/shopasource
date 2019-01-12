@@ -61,12 +61,32 @@
 			<form id="search_form" class="form-inline my-2 my-lg-0">
 			<input id="searchbar" class="form-control mr-sm-2 input-large" type="text" placeholder="e.g television" style="width: 85%;" name="search">
 			<button id="searchButton" class="btn btn-search" type="button" onclick="shop_web_search()">Search</button>
+			<button class="btn btn-default dropdown-toggle" type="button" data-toggle="collapse" data-target="#cont-fil"></button>
 			<button id="cancelSearchButton" class="btn btn-info" type="button" onclick="reset_controls()" style="display: none;">Cancel Search</button>
 		</form>
 		<div id="searchProgress" class="loading" display: none;>
   <div id="searchProgressBar"></div>
-</div>
 	</div>
+	<div id="cont-fil" class='fil-container collapse'>
+		<div class="card bg-light mb-3" style="max-width: 18rem;">
+	<div class="card-header">Refine By</div>
+	<div class="card-body">
+		<p>Match Accuracy</p>
+		<input id="rangeacc" type="range" min="0" max="100" value="50" oninput="txtacc.value=rangeacc.value">
+		<input id="txtacc" type="number" value="50" min="0" max="100" oninput="rangeacc.value=txtacc.value" />
+		<div class="form-check">
+		  <input type="radio" class="form-check-input" id="highlow" name="pricerefine" checked>
+		  <label class="form-check-label" for="highlow">High To Low</label>
+		</div>
+		<div class="form-check">
+		  <input type="radio" class="form-check-input" id="lowhigh" name="pricerefine">
+		  <label class="form-check-label" for="lowhigh">Low To High</label>
+		</div>
+	</div>
+	</div>
+	</div>
+</div>
+
 	<div class='container results'>
 		<div id="resultreact"></div>
 
