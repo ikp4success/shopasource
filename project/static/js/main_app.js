@@ -4,6 +4,7 @@ current_web_url = null
 current_sk = null
 cancel_search = false
 used_shuffled = []
+shop_searching = false
 
 $(function() {
   $(document).on('click', 'div#shopsearch', function() {
@@ -56,6 +57,7 @@ function shop_web_search(){
   }
   cancel_search = !cancel_search
   if(cancel_search){
+    shop_searching = true
     document.getElementById("searchButton").disabled = true;
     document.getElementById("searchbar").disabled = true;
     $("#searchButton").hide()
@@ -68,6 +70,7 @@ function shop_web_search(){
     load_search_progress_bar()
     set_search_time_out()
   }else{
+    shop_searching = false
     reset_controls()
   }
 
@@ -75,6 +78,14 @@ function shop_web_search(){
 }
 
 function reset_controls(){
+  if(shop_searching){
+    return
+  }
+  ini_reset_controls()
+  return
+}
+
+function ini_reset_controls(){
   $(".loading").hide()
   restart_progress_bar()
   $("#searchButton").show()
@@ -83,6 +94,7 @@ function reset_controls(){
   document.getElementById("searchbar").disabled = false;
   refresh_time_out()
   cancel_search = false
+  time_check_default = 0
   return
 }
 
@@ -138,19 +150,22 @@ function dynamic_content(data, refresh_shop_search){
     }
     var reactelem = $(data).find("#resultreact")
     $("#resultreact").replaceWith(reactelem)
+    shop_searching = false
     reset_controls()
     load_time_out = setTimeout(refresh_shop_data, 3000)
   }else{
     if(time_check_default != 50){
+      shop_searching = true
       time_check_default = time_check_default + 10
       set_search_time_out(5000, true)
     }else{
-      reset_controls()
       var shopsearchelem = $(data).filter("#shopsearch")
       $("#shopsearch").replaceWith(shopsearchelem)
       var result = $(data).filter(".results")
       $(".results").replaceWith(result)
       $("#resultreact").hide()
+      shop_searching = false
+      reset_controls()
     }
 
   }
@@ -160,10 +175,12 @@ function dynamic_content(data, refresh_shop_search){
 
 
 function refresh_shop_data(){
-  // initial_api_search(current_sk)
   if(current_web_url != null){
     $.get(current_web_url,
         function(data) {
+          if(shop_searching){
+            return
+          }
           dynamic_content(data)
         });
   }

@@ -61,11 +61,30 @@
 				placeholder="e.g television" id="input-large" style="width: 85%;"
 				id="inputDefault">
 				<button id="searchButton" class="btn btn-search" type="button" onclick="shop_web_search()">Search</button>
-				<button id="cancelSearchButton" class="btn btn-info" type="button" onclick="reset_controls()" style="display: none;">Cancel Search</button>
+				<button id="cancelSearchButton" class="btn btn-info" type="button" onclick="ini_reset_controls()" style="display: none;">Cancel Search</button>
+					<button class="btn btn-default dropdown-toggle sp" type="button" data-toggle="collapse" data-target="#cont-fil"></button>
 		</form>
 		<div id="searchProgress" class="loading" display: none;>
 	  <div id="searchProgressBar"></div>
 
+	</div>
+	<div id="cont-fil" class='fil-container collapse'>
+		<div class="card bg-light mb-3" style="max-width: 18rem;">
+	<div class="card-header">Refine By</div>
+	<div class="card-body">
+		<p>Match Accuracy</p>
+		<input id="rangeacc" type="range" min="0" max="100" value="30" oninput="txtacc.value=rangeacc.value">
+		<input id="txtacc" type="number" min="0" max="100" value="30" oninput="rangeacc.value=txtacc.value" />
+		<div class="form-check">
+			<input type="radio" class="form-check-input" id="highlow" name="pricerefine" checked>
+			<label class="form-check-label" for="highlow">High To Low</label>
+		</div>
+		<div class="form-check">
+			<input type="radio" class="form-check-input" id="lowhigh" name="pricerefine">
+			<label class="form-check-label" for="lowhigh">Low To High</label>
+		</div>
+	</div>
+	</div>
 	</div>
 </div>
 
@@ -75,270 +94,31 @@
 		<div id="resultreact">
 			<div class="row"> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://90a1c75758623581b3f8-5c119c3de181c9857fcb2784776b17ef.ssl.cf2.rackcdn.com/472831_198812_01_front_thumbnail.jpg" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://images-na.ssl-images-amazon.com/images/I/71tlRqNzrjL._UL1000_.jpg" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.microcenter.com/product/472831/anti-static-metalized-bags-(10-pack)-2x6">Shaxon Anti-Static Metalized Bags (10 Pack) 2"x6"</a>
+                <a target="_blank" href="https://www.amazon.com/BURBERRY-Burberry-Halton-Wallet-Red/dp/B07KB9L569/ref=sr_1_2/133-1463635-9470625?ie=UTF8&qid=1547512836&sr=8-2&keywords=burberry+halton">Burberry Halton Wallet- Red</a>
               </h4>
-              <p class="card-text">Shaxon&amp;#x27;s metalized anti-static bags are suitable for packing of PCB, IC, and other static sensitive components. This special four-layer structure can create such effect as an inductive cover to separate the goods inside from a static field. Inne...</p>
-              <p class="card-text">Price: $4.99</p>
-              <p class="card-text">Shop: MICROCENTER</p>
+              <p class="card-text"></p>
+              <p class="card-text">Price: $379.50</p>
+              <p class="card-text">Shop: AMAZON</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://90a1c75758623581b3f8-5c119c3de181c9857fcb2784776b17ef.ssl.cf2.rackcdn.com/0424184_877241.jpg" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://images-na.ssl-images-amazon.com/images/I/71oFhLxKXOL._UL1000_.jpg" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.microcenter.com/product/424184/metalized-anti-static-bags-6-x-8">Shaxon Metalized Anti-Static Bags 6" x 8"</a>
+                <a target="_blank" href="https://www.amazon.com/Burberry-Halton-Wallet-Dark-Blue/dp/B07K4DM2DD/ref=sr_1_1/133-1463635-9470625?ie=UTF8&qid=1547512836&sr=8-1&keywords=burberry+halton">Burberry Halton Wallet- Dark Blue</a>
               </h4>
-              <p class="card-text">Metalized Anti-Static Bags 6" x 8"</p>
-              <p class="card-text">Price: $5.99</p>
-              <p class="card-text">Shop: MICROCENTER</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Hefty+Basics+++30-Gallon+Large+Trash+Bags%2C+38-Count?set=imageURL%5B%2Fimages%2Fproduct%2F24%2F130011937.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/basics-30-gallon-large-drawstring-trash-bags-38-count/p130011937?pos=1:13&Ntt=bags">Hefty Basics 30-Gallon Large Drawstring Trash Bags...</a>
-              </h4>
-              <p class="card-text">Make the most of your cleanup with these durable, drawstring trash bags. The large size makes them great for any mess or chore, with a value from a brand you can trust.</p>
-              <p class="card-text">Price: $6.95</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Flex+Fresh+13-Gallon+Trash+Bags%2C+42-Count?set=imageURL%5B%2Fimages%2Fproduct%2F187%2F810252231.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/flex-fresh-13-gallon-trash-bags-42-count/p810252231?pos=1:16&Ntt=bags">Hefty Flex Fresh 13-Gallon Trash Bags, 42-Count</a>
-              </h4>
-              <p class="card-text">Hefty has your household trash needs covered with flex fresh scented kitchen trash bags. Say goodbye to trash odor and leaks with theses puncture-resistance trash bags.</p>
-              <p class="card-text">Price: $6.95</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://lp2.hm.com/hmgoepprod?set=source[/d8/4e/d84e2c1e53d354a8511c3b6ac9fcfb1de686d405.jpg],origin[dam],category[ladies_lingerie_accessories],type[DESCRIPTIVESTILLLIFE],hmver[1]&call=url[file:/product/main]" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www2.hm.com/en_us/productpage.0532126001.html">2-pack Mesh Laundry Bags</a>
-              </h4>
-              <p class="card-text">CompositionPolyester 100%DescriptionWhiteImportedYesArt.No.0532126001</p>
-              <p class="card-text">Price: $6.99</p>
-              <p class="card-text">Shop: HM</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Teas+of+the+World+Tea+Gift+Set+80+Bags+silo+front+in+package?set=imageURL%5B%2Fimages%2Fproduct%2F7%2F810405968.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/-teas-of-the-world-tea-gift-set-80-bags/p810405968?pos=1:8&Ntt=bags">"Teas of the World" Tea Gift Set, 80-Bags</a>
-              </h4>
-              <p class="card-text">Let your taste buds travel the globe with this amazing Teas of the World gift set! Including 80 tea bags in a charming book-like package, this wonderful collection features flavors from China, Jamaica, Turkey, Morocco, Japan, England, India and Franc...</p>
-              <p class="card-text">Price: $7.50</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/42+Gallon+Contractor+Trash+Bags+20+Count+Box+Silo+Image?set=imageURL%5B%2Fimages%2Fproduct%2F51%2F130010828.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/42-gallon-contractor-bags-20-count/p130010828?pos=1:18&Ntt=bags">42-Gallon Contractor Bags, 20-Count</a>
-              </h4>
-              <p class="card-text">Strong enough for any mess or debris, these 42-gallon contractor bags are always handy to have around. Box contains 20 bags and 20 twist ties.</p>
-              <p class="card-text">Price: $8.50</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://90a1c75758623581b3f8-5c119c3de181c9857fcb2784776b17ef.ssl.cf2.rackcdn.com/404450_127837_01_front_thumbnail.jpg" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.microcenter.com/product/404450/mesh-cord-bags-3-pack">Ideastream Mesh Cord Bags 3 Pack</a>
-              </h4>
-              <p class="card-text">Tired of cords and connector cables getting tangled together in your bag? Separate them in color-coded mesh bags and reclaim control over your briefcase!</p>
-              <p class="card-text">Price: $8.99</p>
-              <p class="card-text">Shop: MICROCENTER</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://90a1c75758623581b3f8-5c119c3de181c9857fcb2784776b17ef.ssl.cf2.rackcdn.com/0424185_877258.jpg" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.microcenter.com/product/424185/anti-static-bags-10-x-12">Shaxon Anti-Static Bags 10" x 12"</a>
-              </h4>
-              <p class="card-text">Anti-Static Bags 10" x 12"</p>
-              <p class="card-text">Price: $8.99</p>
-              <p class="card-text">Shop: MICROCENTER</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Christmas+Light+Storage+Bags+2+Pack+Silo+image?set=imageURL%5B%2Fimages%2Fproduct%2F31%2F810398962.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/christmas-light-storage-bags-2-pack/p810398962?pos=1:5&Ntt=bags">Home Essentials Christmas Light Storage Bags, 2-Pa...</a>
-              </h4>
-              <p class="card-text">Keep your Christmas lights tidy and safe inside these conveient storage bags! This set of two bags each feature a lightweight, durable construction that hold up to 400 lights. Included cardboard and fabric dividers help separate the light sets as zip...</p>
-              <p class="card-text">Price: $10.00</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/AKC+SELECT+20+PK+WASTE+BAG+20+CT?set=imageURL%5B%2Fimages%2Fproduct%2F222%2F810382512.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/multi-color-heavy-duty-waste-bags-20-rolls/p810382512?pos=1:4&Ntt=bags">AKC Select Multi-Color Heavy Duty Waste Bags, 20-R...</a>
-              </h4>
-              <p class="card-text">Clean up after pooch with these stylish American Kennel Club Select heavy duty waste bags! This pack of 20 rolls features a total of 400 colored bags with solid and pattern designs. Powder-fresh scented to lock in odor, they&amp;#x27;re perfect for picki...</p>
-              <p class="card-text">Price: $11.00</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://i1.adis.ws/i/boohooamplience/dzz03082_mustard_xl?$product_image_main$" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://us.boohoo.com/quilted-belt-bag/DZZ03082.html?color=146">Quilted Belt BagQuilted Belt BagSlouch Hobo Day Ba...</a>
-              </h4>
-              <p class="card-text">Details & CareLENGTH: 108CM.</p>
-              <p class="card-text">Price: $11.20</p>
-              <p class="card-text">Shop: BOOHOO</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://i1.adis.ws/i/boohooamplience/dzz09273_black_xl?$product_image_main$" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://us.boohoo.com/suedette-and-ring-buckle-bucket-bag/DZZ09273.html?color=105">Suedette And Ring Buckle Bucket BagSuedette And Ri...</a>
-              </h4>
-              <p class="card-text">Details & CareFlat Measurement of Garment Not Worn. Total Length 33cm/13". Measured On UK Size 10. Model Wear UK Size 10</p>
-              <p class="card-text">Price: $14.40</p>
-              <p class="card-text">Shop: BOOHOO</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://i1.adis.ws/i/boohooamplience/dzz04862_mustard_xl?$product_image_main$" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://us.boohoo.com/slouch-day-bag/DZZ04862.html?color=146">Slouch Day BagSlouch Day BagAll Over Beaded Grab B...</a>
-              </h4>
-              <p class="card-text">Details & CareWIDTH:40CM/16" LENGTH:31CM/12".</p>
-              <p class="card-text">Price: $14.40</p>
-              <p class="card-text">Shop: BOOHOO</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://i1.adis.ws/i/boohooamplience/dzz09281_black_xl?$product_image_main$" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://us.boohoo.com/slouch-hobo-day-bag/DZZ09281.html?color=105">Slouch Hobo Day BagSlouch Hobo Day BagSlouch Hobo ...</a>
-              </h4>
-              <p class="card-text">Details & CareFlat Measurement of Garment Not Worn. Total Length 33cm/13". Measured On UK Size 10. Model Wear UK Size 10</p>
-              <p class="card-text">Price: $14.40</p>
-              <p class="card-text">Shop: BOOHOO</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://i1.adis.ws/i/boohooamplience/dzz24684_mustard_xl?$product_image_main$" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://us.boohoo.com/suedette-quilted-cross-body-bag/DZZ24684.html?color=146">Suedette Quilted Cross Body BagSuedette Quilted Cr...</a>
-              </h4>
-              <p class="card-text">Details & CareLength:17CM Width:23CM Depth:17CM Lock Fastening,Chain Strap & Fabric Lined</p>
-              <p class="card-text">Price: $14.40</p>
-              <p class="card-text">Shop: BOOHOO</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://i1.adis.ws/i/boohooamplience/dzz18048_black_xl?$product_image_main$" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://us.boohoo.com/structured-crosshatch-tote-bag/DZZ18048.html?color=105">Structured Crosshatch Tote BagStructured Crosshatc...</a>
-              </h4>
-              <p class="card-text">Details & CareLength: 29CM Width: 43CM. Zip Fastening & Fabric Lined.</p>
-              <p class="card-text">Price: $16.00</p>
-              <p class="card-text">Shop: BOOHOO</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://i1.adis.ws/i/boohooamplience/dzz44175_black_xl?$product_image_main$" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://us.boohoo.com/-structured-cross-hatch-tote-bag/DZZ44175.html?color=105">Structured Cross Hatch Tote BagStructured Cross Ha...</a>
-              </h4>
-              <p class="card-text">Details & CareLength:30CM/11.7" Width:45.5CM/18" Depth:30CM/11.7" Poppper Fastening and Fabric Lined</p>
-              <p class="card-text">Price: $16.00</p>
-              <p class="card-text">Shop: BOOHOO</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://90a1c75758623581b3f8-5c119c3de181c9857fcb2784776b17ef.ssl.cf2.rackcdn.com/472832_198820_01_front_thumbnail.jpg" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.microcenter.com/product/472832/anti-static-metalized-bags-(10-pack)-12x16">Shaxon Anti-Static Metalized Bags (10 Pack) 12&amp;quo...</a>
-              </h4>
-              <p class="card-text">Shaxon&amp;#x27;s metalized anti-static bags are suitable for packing of PCB, IC, and other static sensitive components. This special four-layer structure can create such effect as an inductive cover to separate the goods inside from a static field. Inne...</p>
-              <p class="card-text">Price: $16.99</p>
-              <p class="card-text">Shop: MICROCENTER</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://s7d9.scene7.com/is/image/JCPenney/1b8c5861-4f15-11e8-b062-69f7c189563d?resmode=sharp2&op_sharpen=1&wid=550&hei=550" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.jcpenney.com/p/st-john-s-bay-whipstitch-hobo-bag/ppr5007627427?pTmplType=regular&catId=SearchResults&searchTerm=bags&productGridView=medium&badge=onlyatjcp">St. John&amp;#x27;s Bay Whipstitch Hobo BagSt. John&amp;#x...</a>
-              </h4>
-              <p class="card-text">Pockets: 1 Inside Cell Phone Pocket, 1 Front Zip Pocket, 1 Back Zip Pocket, 2 Front Slip Pockets, 1 Inside Slip Pocket, 1 Inside Zip Pocket
-Care: Wipe With Damp Cloth
-Closure Type: Zipper
-Outer Surf Material: 100% Polyurethane
-Country of Origin: Impo...</p>
-              <p class="card-text">Price: $33.6</p>
-              <p class="card-text">Shop: JCPENNEY</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://cdn.shopify.com/s/files/1/0293/9277/products/12-26-18_Studio_2_AB_16-05-05_BTP30933_Gold0443_AJ_760x.jpg?v=1545934853" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.fashionnova.com/products/money-bags-rhinestone-short-set-gold">Money Bags Rhinestone Short Set - Gold</a>
-              </h4>
-              <p class="card-text">Tube Top
-Available In Gold
-High Rise
-Biker Shorts
-Cropped
-Stretch
-Rhinestone Short Set
-82% Nylon, 18% Spandex</p>
-              <p class="card-text">Price: $49.99</p>
-              <p class="card-text">Shop: FASHIONNOVA</p>
+              <p class="card-text">Halton</p>
+              <p class="card-text">Price: $357.50</p>
+              <p class="card-text">Shop: AMAZON</p>
             </div>
           </div>
         </div></div>
 		</div>
-
+	
 	</div>
 
 	<footer class="py-5 bg-light">
