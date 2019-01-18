@@ -30,9 +30,9 @@ def about():
     return render_template('about.html')
 
 
-@app.route("/robots.txt", methods=['GET'])
-def robots():
-    return render_template('robots.txt')
+# @app.route("/robots.txt", methods=['GET'])
+# def robots():
+#     return render_template('robots.txt')
 
 
 @app.route("/api/shop/<shop_name>/search=<search_keyword>", methods=['GET'])
