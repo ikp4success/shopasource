@@ -9,6 +9,12 @@
   margin: 9px;
 }
 
+.spx{
+  position: relative;
+    margin: 40px;
+    top: -100px
+}
+
 .About {
     width: 55%;
     margin:0 auto;

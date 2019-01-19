@@ -5,6 +5,10 @@ current_sk = null
 cancel_search = false
 used_shuffled = []
 shop_searching = false
+var fill_html_cb = [];
+// fill_shop_cb = "<div class=\"custom-control custom-checkbox custom-control-inline\">" +
+//     +"<input type=\"checkbox\" class=\"custom-control-input\" id=\"{shop_id}\">"+
+//     +"<label class=\"custom-control-label\" for=\"{shop_id}\">{shop_name}</label></div>"
 
 $(function() {
   $(document).on('click', 'div#shopsearch', function() {
@@ -47,6 +51,31 @@ function initial_api_search(sk){
   });
 
   return false
+}
+
+function load_shops_cb(){
+  shops_url = "/websearch/shops.json";
+  $.getJSON(shops_url,
+      function(data) {
+        var shop_index;
+        data.sort();
+        fill_html_cb.push("<div>")
+        div_count = 0
+        for(shop_index in data){
+          if(div_count == 5){
+            div_count = 0
+            fill_html_cb.push("</div>")
+            fill_html_cb.push("<div>")
+          }
+          shop_name = data[shop_index]
+          fill_shop_cb = $("#shop_cb_default").html()
+          fill_shop_cb = fill_shop_cb.replace("{shop_id}", shop_name + "cb")
+          fill_shop_cb = fill_shop_cb.replace("{shop_name}", shop_name)
+          fill_html_cb.push(fill_shop_cb)
+          div_count++
+      }
+      $('#shop_cb_place').html(fill_html_cb.join(""));
+  });
 }
 
 function shop_web_search(){
