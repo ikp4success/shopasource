@@ -63,32 +63,55 @@
 	<div id="shopsearch" class="Search">
 		 <!-- <form class="form-inline my-2 my-lg-0" action="searchresults" -->
 		 	<!-- Method="GET"> -->
-			<form id="search_form" class="form-inline my-2 my-lg-0">
+			<!-- <form id="search_form" class="form-inline my-2 my-lg-0">
 			<input id="searchbar" class="form-control mr-sm-2 input-large" type="text" placeholder="e.g television" style="width: 85%;" name="search">
 			<button id="searchButton" class="btn btn-search" type="button" onclick="shop_web_search()">Search</button>
 			<button id="cancelSearchButton" class="btn btn-info" type="button" onclick="ini_reset_controls()" style="display: none;">Cancel Search</button>
 				<button class="btn btn-default dropdown-toggle sp" type="button" data-toggle="collapse" data-target="#cont-fil"></button>
-		</form>
+		</form> -->
+		<div id="search_form" class="input-group">
+  	<input id="searchbar" type="text" class="form-control input-large" aria-label="Text input with segmented dropdown button" placeholder="e.g television" style="width: 85%;" name="search">
+  <div class="input-group-append">
+    <button type="button" id="searchButton" class="btn btn-search" onclick="shop_web_search()">Search</button>
+		<button type="button" id="cancelSearchButton" class="btn btn-info" onclick="ini_reset_controls()" style="display: none;">Cancel</button>
+    <button type="button" class="btn btn-dark dropdown-toggle dropdown-toggle-split" data-toggle="collapse" data-target="#cont-fil" aria-haspopup="true" aria-expanded="false">
+      <span class="sr-only">Toggle Dropdown</span>
+    </button>
+  </div>
+</div>
 		<div id="searchProgress" class="loading" display: none;>
   <div id="searchProgressBar"></div>
 	</div>
 	<div id="cont-fil" class='fil-container collapse'>
-		<div class="card bg-light mb-3" style="max-width: 18rem;">
+	<div class="card bg-info text-white mb-3" style="max-width: 11rem; max-height: 18rem">
 	<div class="card-header">Refine By</div>
 	<div class="card-body">
-		<p>Match Accuracy</p>
-		<input id="rangeacc" type="range" min="0" max="100" value="30" oninput="txtacc.value=rangeacc.value">
-		<input id="txtacc" type="number" min="0" max="100" value="30" oninput="rangeacc.value=txtacc.value" />
-		<div class="form-check">
+		<p class="sp">Match Accuracy</p>
+		<input id="rangeacc" class="sp" type="range" min="0" max="100" value="30" oninput="txtacc.value=rangeacc.value">
+		<input id="txtacc" class="sp" type="number" min="0" max="100" value="30" oninput="rangeacc.value=txtacc.value" />
+		<div class="form-check sp">
 		  <input type="radio" class="form-check-input" id="highlow" name="pricerefine" checked>
 		  <label class="form-check-label" for="highlow">High To Low</label>
 		</div>
-		<div class="form-check">
+		<div class="form-check sp">
 		  <input type="radio" class="form-check-input" id="lowhigh" name="pricerefine">
 		  <label class="form-check-label" for="lowhigh">Low To High</label>
 		</div>
 	</div>
 	</div>
+	<div class="card text-white bg-secondary mb-3" style="max-width: 48rem; max-height: 18rem; position: relative;
+  left: 200px; top: -305px">
+  <div class="card-header">Shops</div>
+  <div class="card-body">
+			<div class="input-group mb-3">
+	  <input type="text" class="form-control" placeholder="e.g Amazon" style="width: 24px;" aria-describedby="basic-addon2">
+	  <div class="input-group-append">
+	    <button class="btn btn-outline-success" type="button">Find</button>
+	  </div>
+	</div>
+    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+  </div>
+</div>
 	</div>
 </div>
 
