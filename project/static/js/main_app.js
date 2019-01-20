@@ -120,6 +120,7 @@ function find_shop(){
         found_shop = []
         for(shop_index in data){
           shop_name = data[shop_index]
+          shop_name = friendly_name_cb(shop_name)
           if(shop_name.includes(shop_search_name)){
             found_shop.push(shop_name)
           }
