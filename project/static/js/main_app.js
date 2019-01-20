@@ -31,7 +31,8 @@ function initial_api_search(sk){
   if(!sk || sk==null){
     return false
   }
-  if(get_selected_checkboxes().length == 0){
+  gs_data = get_selected_checkboxes()
+  if(gs_data.length == 0){
     shops_url = "/websearch/shops.json";
     $.getJSON(shops_url,
         function(data) {
@@ -46,7 +47,6 @@ function initial_api_search(sk){
           }
     });
   }else{
-    gs_data = get_selected_checkboxes()
     gs_data.sort(() => Math.random() - 0.5)
     var shop_index;
     for(shop_index in gs_data){
@@ -87,11 +87,25 @@ function replace_shop_find(data){
     shop_name = data[shop_index]
     fill_shop_cb = $("#shop_cb_default").html()
     fill_shop_cb = fill_shop_cb.replace(/{shop_id}/g, shop_name + "cb")
-    fill_shop_cb = fill_shop_cb.replace("{shop_name}", shop_name)
+    fill_shop_cb = fill_shop_cb.replace(/{shop_name}/g, shop_name)
+    fill_shop_cb = fill_shop_cb.replace(/{shop_name_friend}/g, friendly_name_cb(shop_name))
     fill_html_cb.push(fill_shop_cb)
     div_count++
 }
   $('#shop_cb_place').html(fill_html_cb.join(""));
+}
+
+function friendly_name_cb(shopnamecb){
+  friend_name = {
+    "SIXPM": "6PM",
+    "HM": "H&M"
+  }
+  name_friend = friend_name[shopnamecb]
+  if(name_friend){
+      return name_friend
+  }
+
+  return shopnamecb
 }
 
 function find_shop(){
@@ -122,10 +136,8 @@ function find_shop(){
 
 function get_selected_checkboxes(){
   var selected_checkboxes = [];
-  $(document).ready(function() {
-    $("input:checkbox[name=type]:checked").each(function() {
-         selected_checkboxes.push($(this).val().toUpperCase());
-    });
+  $("div.custom-checkbox input[type=checkbox]:checked").each(function() {
+       selected_checkboxes.push($(this).attr("name").toUpperCase());
   });
   return selected_checkboxes
 }
@@ -186,6 +198,12 @@ function load_shop_search(){
   s_lh =  document.getElementById("lowhigh").checked
   search_params = "sk=" + sk + "&smatch=" + s_match + "&shl=" + s_hl + "&slh=" + s_lh
   web_search_url = "/websearch/shop/search?" + search_params;
+  gs_check = get_selected_checkboxes()
+  if(gs_check.length > 0){
+    shops_list_names = gs_check.join(",")
+    web_search_url = "/websearch/shop/search?" + search_params + "&shops=" + shops_list_names;
+  }
+
   $.get(web_search_url,
       function(data) {
         current_web_url = web_search_url

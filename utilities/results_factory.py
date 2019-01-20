@@ -55,10 +55,10 @@ def match_sk(search_keyword, searched_item, match_sk_set):
     return False
 
 
-def run_api_search(shop_name, search_keyword):
+def run_api_search(shop_names_list, search_keyword):
     results = {}
     try:
-        if shop_name is None:
+        if shop_names_list is None or len(shop_names_list) == 0:
             results = {"message": "Shop name is required"}
             return results
         if search_keyword is not None and search_keyword.strip() != "":
@@ -67,7 +67,7 @@ def run_api_search(shop_name, search_keyword):
                 return results
             search_keyword = truncate_data(search_keyword, 50)
 
-            results = get_json_db_results(shop_name, search_keyword, check=True)
+            results = get_json_db_results(shop_names_list, search_keyword, check=True)
             if results is None or len(results) == 0:
                 results = {"message": "Sorry, no products found"}
             return results
@@ -79,7 +79,7 @@ def run_api_search(shop_name, search_keyword):
     return results
 
 
-def run_web_search(search_keyword, match_acc, low_to_high, high_to_low):
+def run_web_search(search_keyword, match_acc, low_to_high, high_to_low, shop_list_names):
     try:
         if search_keyword is None or search_keyword.strip() == "":
             update_results_row_error("Search keyword is empty or invalid")
@@ -96,8 +96,7 @@ def run_web_search(search_keyword, match_acc, low_to_high, high_to_low):
         # json_data = session.get(url, timeout=60)
         # results = safe_json(json_data.text)
 
-        results = web_get_data_from_db(search_keyword, match_acc, low_to_high, high_to_low)
-
+        results = web_get_data_from_db(search_keyword, match_acc, low_to_high, high_to_low, shop_list_names)
         if results is None or len(results) == 0:
             update_results_row_error("Sorry, no products found")
         else:
@@ -110,8 +109,12 @@ def run_web_search(search_keyword, match_acc, low_to_high, high_to_low):
     return
 
 
-def web_get_data_from_db(search_keyword, match_acc, low_to_high, high_to_low):
-    results = get_data_from_db(searched_keyword=search_keyword, match_acc=match_acc, low_to_high=low_to_high, high_to_low=high_to_low)
+def web_get_data_from_db(search_keyword, match_acc, low_to_high, high_to_low, shop_names_list):
+    results = get_data_from_db(searched_keyword=search_keyword,
+                               match_acc=match_acc,
+                               low_to_high=low_to_high,
+                               high_to_low=high_to_low,
+                               shop_names_list=shop_names_list)
     return results
 
 
@@ -192,32 +195,33 @@ def update_results_row_error(data):
     update_search_results(_errorMessage.replace("{Message}", data), "{error_message}")
 
 
-def get_data_from_db(searched_keyword, match_acc=0, low_to_high=False, high_to_low=True, shop_name=None):
-    results = []
-    if shop_name is not None:
-        if high_to_low:
-            results = ShoppedData.query.filter(
-                                ShoppedData.searched_keyword == searched_keyword,
-                                ShoppedData.shop_name == shop_name).order_by(ShoppedData.numeric_price.desc()).all()
-        elif low_to_high:
-            results = ShoppedData.query.filter(
-                                ShoppedData.searched_keyword == searched_keyword,
-                                ShoppedData.shop_name == shop_name).order_by(ShoppedData.numeric_price.asc()).all()
+def get_data_from_db(searched_keyword, match_acc=0, low_to_high=False, high_to_low=True, shop_names_list=None):
+    results_db = []
+    if shop_names_list is not None:
+        for shop_name_l in shop_names_list:
+            if high_to_low:
+                results_db.append(ShoppedData.query.filter(
+                                  ShoppedData.searched_keyword == searched_keyword,
+                                  ShoppedData.shop_name == shop_name_l).order_by(ShoppedData.numeric_price.desc()).all())
+            elif low_to_high:
+                results_db.append(ShoppedData.query.filter(
+                                  ShoppedData.searched_keyword == searched_keyword,
+                                  ShoppedData.shop_name == shop_name_l).order_by(ShoppedData.numeric_price.asc()).all())
     else:
         if high_to_low:
-            results = ShoppedData.query.filter(ShoppedData.searched_keyword == searched_keyword).order_by(ShoppedData.numeric_price.desc()).all()
+            results_db.append(ShoppedData.query.filter(ShoppedData.searched_keyword == searched_keyword).order_by(ShoppedData.numeric_price.desc()).all())
         elif low_to_high:
-            results = ShoppedData.query.filter(ShoppedData.searched_keyword == searched_keyword).order_by(ShoppedData.numeric_price.asc()).all()
-
-    if results is not None and len(results) > 0:
-        results = [res.__str__() for res in results]
-        mk_results = []
-        for item_r in results:
-            item_r = safe_json(item_r)
-            if match_sk(searched_keyword, safe_grab(item_r, [searched_keyword, "title"]), match_acc):
-                mk_results.append(json.dumps(item_r))
-        results = mk_results
-    return results
+            results_db.append(ShoppedData.query.filter(ShoppedData.searched_keyword == searched_keyword).order_by(ShoppedData.numeric_price.asc()).all())
+    for results in results_db:
+        if results is not None and len(results) > 0:
+            results = [res.__str__() for res in results]
+            mk_results = []
+            for item_r in results:
+                item_r = safe_json(item_r)
+                if match_sk(searched_keyword, safe_grab(item_r, [searched_keyword, "title"]), match_acc):
+                    mk_results.append(json.dumps(item_r))
+            results = mk_results
+        return results
 
 
 def update_db_results(results):
@@ -235,20 +239,20 @@ def update_db_results(results):
     return False
 
 
-def get_json_db_results(shop_name, search_keyword, check=False):
-    results = get_data_from_db(shop_name=shop_name, searched_keyword=search_keyword)
+def get_json_db_results(shop_names_list, search_keyword, check=False):
+    results = get_data_from_db(shop_names_list=shop_names_list, searched_keyword=search_keyword)
     if results:
         if check:
             if is_new_data(results, search_keyword):
                 return results
             else:
-                ignite_thread_timeout(shop_name, search_keyword)
-                return get_data_from_db(shop_name=shop_name, searched_keyword=search_keyword)
+                ignite_thread_timeout(shop_names_list[0], search_keyword)
+                return get_data_from_db(shop_names_list=shop_names_list, searched_keyword=search_keyword)
         else:
             return results
     else:
-        ignite_thread_timeout(shop_name, search_keyword)
-        return get_data_from_db(shop_name=shop_name, searched_keyword=search_keyword)
+        ignite_thread_timeout(shop_names_list[0], search_keyword)
+        return get_data_from_db(shopshop_names_list_name=shop_names_list, searched_keyword=search_keyword)
     return results
 
 
@@ -276,6 +280,8 @@ def update(results, search_keyword):
 def is_new_data(results, search_keyword):
     for result in results:
         result = safe_json(result)
+        if result and isinstance(result, list) and len(result) > 0:
+            result = result[0]
         date_searched = safe_grab(result, [search_keyword, "date_searched"])
         if date_searched is not None:
             date_searched_parse = parser.parse(date_searched)

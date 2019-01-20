@@ -59,40 +59,59 @@
 			</div>
 		</div>
 	</div>
-	<div id="shopsearch" class="ResultSearch">
-		<!-- <form class="form-inline my-2 my-lg-0" action="searchresults"
-			Method="POST"> -->
-		<form id="search_form" class="form-inline my-2 my-lg-0">
-			<input id="searchbar" class="form-control mr-sm-2" type="text" name="search"
-				placeholder="e.g television" id="input-large" style="width: 85%;"
-				id="inputDefault">
-				<button id="searchButton" class="btn btn-search" type="button" onclick="shop_web_search()">Search</button>
-				<button id="cancelSearchButton" class="btn btn-info" type="button" onclick="ini_reset_controls()" style="display: none;">Cancel Search</button>
-					<button class="btn btn-default dropdown-toggle sp" type="button" data-toggle="collapse" data-target="#cont-fil"></button>
-		</form>
-		<div id="searchProgress" class="loading" display: none;>
+		<div id="shopsearch" class="ResultSearch">
+			<div id="search_form" class="input-group">
+	  	<input id="searchbar" type="text" class="form-control input-large" aria-label="Text input with segmented dropdown button" placeholder="e.g television" style="width: 85%;" name="search">
+	  <div class="input-group-append">
+	    <button type="button" id="searchButton" class="btn btn-search" onclick="shop_web_search()">Search</button>
+			<button type="button" id="cancelSearchButton" class="btn btn-info" onclick="ini_reset_controls()" style="display: none;">Cancel</button>
+	    <button type="button" onclick="load_shops_cb()" class="btn btn-dark dropdown-toggle dropdown-toggle-split" data-toggle="collapse" data-target="#cont-fil" aria-haspopup="true" aria-expanded="false">
+	      <span class="sr-only">Toggle Dropdown</span>
+	    </button>
+	  </div>
+	</div>
+			<div id="searchProgress" class="loading" display: none;>
 	  <div id="searchProgressBar"></div>
-
-	</div>
-	<div id="cont-fil" class='fil-container collapse'>
-		<div class="card bg-light mb-3" style="max-width: 18rem;">
-	<div class="card-header">Refine By</div>
-	<div class="card-body">
-		<p>Match Accuracy</p>
-		<input id="rangeacc" type="range" min="0" max="100" value="30" oninput="txtacc.value=rangeacc.value">
-		<input id="txtacc" type="number" min="0" max="100" value="30" oninput="rangeacc.value=txtacc.value" />
-		<div class="form-check">
-			<input type="radio" class="form-check-input" id="highlow" name="pricerefine" checked>
-			<label class="form-check-label" for="highlow">High To Low</label>
 		</div>
-		<div class="form-check">
-			<input type="radio" class="form-check-input" id="lowhigh" name="pricerefine">
-			<label class="form-check-label" for="lowhigh">Low To High</label>
+		<div id="cont-fil" class='fil-container collapse'>
+		<div class="card bg-info text-white mb-3" style="max-width: 11rem; max-height: 18rem">
+		<div class="card-header">Refine By</div>
+		<div class="card-body">
+			<p class="sp">Match Accuracy</p>
+			<input id="rangeacc" class="sp" type="range" min="0" max="100" value="30" oninput="txtacc.value=rangeacc.value">
+			<input id="txtacc" class="sp" type="number" min="0" max="100" value="30" oninput="rangeacc.value=txtacc.value" />
+			<div class="form-check sp">
+			  <input type="radio" class="form-check-input" id="highlow" name="pricerefine" checked>
+			  <label class="form-check-label" for="highlow">High To Low</label>
+			</div>
+			<div class="form-check sp">
+			  <input type="radio" class="form-check-input" id="lowhigh" name="pricerefine">
+			  <label class="form-check-label" for="lowhigh">Low To High</label>
+			</div>
+		</div>
+		</div>
+		<div class="card text-white bg-secondary mb-3" style="max-width: 48rem; max-height: 40rem; position: relative;
+	  left: 200px; top: -305px">
+	  <div class="card-header">Shops</div>
+	  <div class="card-body">
+				<div class="input-group mb-3">
+		  <input name="shop_search" type="text" class="form-control" placeholder="e.g Amazon" style="width: 24px;" aria-describedby="basic-addon2">
+		  <div class="input-group-append">
+		    <button class="btn btn-outline-success" type="button" onclick="find_shop()">Find</button>
+		  </div>
+		</div>
+		<div id="shop_cb_default" style="display: none;">
+			<div class="custom-control custom-checkbox">
+			  <input type="checkbox" class="custom-control-input" id="{shop_id}"  name="{shop_name}">
+			  <label class="custom-control-label" for="{shop_id}">{shop_name_friend}</label>
+		</div>
+		</div>
+		<div id="shop_cb_place" class="card-group">
 		</div>
 	</div>
+	  </div>
 	</div>
 	</div>
-</div>
 
 
 
@@ -103,7 +122,7 @@
             <a href="#"><img class="card-img-top" src="https://images-na.ssl-images-amazon.com/images/I/61E%2BmXq5tLL._SL1500_.jpg" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.amazon.com/TOPE-Wide-Angle-Quadcopter-Beginners-Brushless/dp/B07KXGYYQ7/ref=sr_1_51?keywords=drones&qid=1547928220&sr=8-51">TOPE GPS FPV RC Drones with 1080P FHD Camera Live ...</a>
+                <a target="_blank" href="https://www.amazon.com/TOPE-Wide-Angle-Quadcopter-Beginners-Brushless/dp/B07KXGYYQ7/ref=sr_1_49?keywords=drones&qid=1547957159&sr=8-49">TOPE GPS FPV RC Drones with 1080P FHD Camera Live ...</a>
               </h4>
               <p class="card-text">Make sure this fitsby entering your model number.150° FOV 1080P FHD WiFi Camera：The 90°Adjustable Angle FHD camera with 150°FOV (field of view) lens gives a broad view for the memorable moments. 5G WiFi achieves high-speed image transmission without ...</p>
               <p class="card-text">Price: $198.79</p>
@@ -115,7 +134,7 @@
             <a href="#"><img class="card-img-top" src="https://images-na.ssl-images-amazon.com/images/I/61mXtTN%2BDjL._SL1200_.jpg" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.amazon.com/Drones-Potensic-Quadcopter-Control-Transmission/dp/B07JGMLW2N/ref=sr_1_28?keywords=drones&qid=1547928220&sr=8-28">GPS Drones, Potensic D50 Quadcopter with Camera Li...</a>
+                <a target="_blank" href="https://www.amazon.com/Drones-Potensic-Quadcopter-Control-Transmission/dp/B07JGMLW2N/ref=sr_1_46?keywords=drones&qid=1547957159&sr=8-46">GPS Drones, Potensic D50 Quadcopter with Camera Li...</a>
               </h4>
               <p class="card-text">Make sure this fitsby entering your model number.Advanced 5G 1080P Camera: upgraded 5.0G Hz WiFi transmission = high-quality real time video&amp;amp; aerial photos.Dual GPS Mode: Detailed GPS positioning &amp;amp; Auto Return ( low battery/ out of range/remo...</p>
               <p class="card-text">Price: $159.99</p>
@@ -124,10 +143,34 @@
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://images-na.ssl-images-amazon.com/images/I/81PzJHbywKL._SL1500_.jpg" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a target="_blank" href="https://www.amazon.com/Force1-Drones-Camera-Adults-Kids/dp/B071J9L2H3/ref=sr_1_54?keywords=drones&qid=1547957159&sr=8-54">Force1 Drones with Camera for Adults and Kids - X5...</a>
+              </h4>
+              <p class="card-text">Make sure this fitsby entering your model number.SHOW OFF WITH THIS IMPRESSIVE VR STUNT DRONE: Dip and dive and catch it all live in 720p HD with your HD drone with camera live video; View your flight from a whole new perspective w/ virtual realityEA...</p>
+              <p class="card-text">Price: $109.99</p>
+              <p class="card-text">Shop: AMAZON</p>
+            </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://images-na.ssl-images-amazon.com/images/I/81LLEPJd9DL._SL1500_.jpg" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a target="_blank" href="https://www.amazon.com/Drones-Camera-Adult-Kids-Quadcopter/dp/B07GYZCXNZ/ref=sr_1_51?keywords=drones&qid=1547957159&sr=8-51">Drones with Camera for Adult and Kids – U49WF RC W...</a>
+              </h4>
+              <p class="card-text">Make sure this fitsby entering your model number.CAPTURE COOL AERIAL FOOTAGE with YOUR HD VIDEO DRONE: See life from high in the sky with your rc camera drone with real time live video feed; This easy to connect, long distance drone for iPhone and An...</p>
+              <p class="card-text">Price: $99.99</p>
+              <p class="card-text">Shop: AMAZON</p>
+            </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
             <a href="#"><img class="card-img-top" src="https://images-na.ssl-images-amazon.com/images/I/81EG1lDPPbL._SL1500_.jpg" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.amazon.com/Video-Drones-Camera-Adults-Kids/dp/B07GYZKPKR/ref=sr_1_38?keywords=drones&qid=1547928220&sr=8-38">Video Drones with Camera for Adults or Kids - U45W...</a>
+                <a target="_blank" href="https://www.amazon.com/Video-Drones-Camera-Adults-Kids/dp/B07GYZKPKR/ref=sr_1_56?keywords=drones&qid=1547957159&sr=8-56">Video Drones with Camera for Adults or Kids - U45W...</a>
               </h4>
               <p class="card-text">Make sure this fitsby entering your model number.GET IN THE PILOT&amp;#x27;S SEAT with VR LIVE STREAMING FPV DRONE CAPABILITIES: Not all drones for kids with camera and fpv drones for adults are built alike; Watch a live feed of your video drones flight ...</p>
               <p class="card-text">Price: $79.99</p>
@@ -136,30 +179,10 @@
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://s7d9.scene7.com/is/image/JCPenney/DP0301201817105037M?resmode=sharp2&op_sharpen=1&wid=550&hei=550" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.jcpenney.com/p/spiderman-remote-control-drone/ppr5007688470?pTmplType=regular&catId=SearchResults&searchTerm=drones&productGridView=medium">Spiderman Remote Control DroneSpiderman Remote Con...</a>
-              </h4>
-              <p class="card-text">Assembly: Ready-To-Assemble
-Battery Type: Lithium Ion, Rechargable
-Character: Spiderman
-Number of Batteries: 4
-# Pieces In Set: 2
-Includes: Remote Control
-Base Material: 50% Metal, 5% Other 5% Or Less, 45% Plastic
-Features: Battery Operated
-Country o...</p>
-              <p class="card-text">Price: $71.99</p>
-              <p class="card-text">Shop: JCPENNEY</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
             <a href="#"><img class="card-img-top" src="https://images-na.ssl-images-amazon.com/images/I/61lv9jpezNL._SL1001_.jpg" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.amazon.com/AKASO-Camera-Altitude-Foldable-Beginners/dp/B0752BT8D6/ref=sr_1_46?keywords=drones&qid=1547928220&sr=8-46">AKASO A200 Drone with Camera 720P FPV Drones Live ...</a>
+                <a target="_blank" href="https://www.amazon.com/AKASO-Camera-Altitude-Foldable-Beginners/dp/B0752BT8D6/ref=sr_1_35?keywords=drones&qid=1547957159&sr=8-35">AKASO A200 Drone with Camera 720P FPV Drones Live ...</a>
               </h4>
               <p class="card-text">Make sure this fitsby entering your model number.3D FLIP &amp;amp; ROLLS: A200 folding drone controller comes with the latest technology of 6-Axis Gyro flying control system offer strong stability. When it&amp;#x27;s stable, you can get it doing more tricks:...</p>
               <p class="card-text">Price: $59.99</p>
@@ -183,7 +206,7 @@ Country o...</p>
             <a href="#"><img class="card-img-top" src="https://images-na.ssl-images-amazon.com/images/I/61QB4VrVO7L._SL1000_.jpg" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.amazon.com/GoolRC-Drones-Quadcopters-Altitude-Beginner/dp/B07D58SYD5/ref=sr_1_56?keywords=drones&qid=1547928220&sr=8-56">GoolRC Drones Quadcopters with 720P Camera T106 Wi...</a>
+                <a target="_blank" href="https://www.amazon.com/GoolRC-Drones-Quadcopters-Altitude-Beginner/dp/B07D58SYD5/ref=sr_1_55?keywords=drones&qid=1547957159&sr=8-55">GoolRC Drones Quadcopters with 720P Camera T106 Wi...</a>
               </h4>
               <p class="card-text">Make sure this fitsby entering your model number.Function: Forward/backward, up/down, left/right sideward flight, 3D-flip, headless mode, wifi FPV real-time transmission, gravity sense control, altitude hold, one key return, one key take off/landingT...</p>
               <p class="card-text">Price: $46.99</p>
@@ -192,50 +215,14 @@ Country o...</p>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://m.media-amazon.com/images/I/81+m8eticyL._SX480_.jpg" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://images-na.ssl-images-amazon.com/images/I/6115o99TpgL._SL1000_.jpg" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.6pm.com/p/easy-spirit-drones-2-vapor-vapor/product/9034736/color/745781">Easy SpiritDrones 2</a>
+                <a target="_blank" href="https://www.amazon.com/PGYTECH-Quadcopter-Accessories-Waterproof-Compatible/dp/B07FCLSXW3/ref=sr_1_48?keywords=drones&qid=1547957159&sr=8-48">PGYTECH Drone Landing Pad,Drones Quadcopter Parts ...</a>
               </h4>
-              <p class="card-text">SKU: #9034736The Easy Spirit® Drones 2 sandal is a practical fashion statement for your signature-look this season!Upper is constructed of a combination of elasticized-straps and textile materials for a formfitting and adjustable wear.Easy slip-on de...</p>
-              <p class="card-text">Price: $30.99</p>
-              <p class="card-text">Shop: SIXPM</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://i5.walmartimages.com/asr/922babb8-612b-4465-90d5-5f58d2b9775c_1.85013bdbe1b2034788bc7a00906d4c94.jpeg?odnHeight=450&odnWidth=450&odnBg=FFFFFF" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.walmart.com/ip/UDI-U46-Mini-Drone-Kids-2-4G-4CH-RC-Drones-Altitude-Hold-Headless-Mode-One-Key-Take-Landing-Nano-Quadcopter-Beginners-Flying-Training/589651434">UDI U46 Mini Drone for Kids 2.4G 4CH RC Drones wit...</a>
-              </h4>
-              <p class="card-text">Beginners Real Experience: small and very light makes it not harmful to anything around you in the house and easy to take with you anywhere.Altitude Hold Function: you can make our mini drone flying in the default height and hover, more suitable and ...</p>
-              <p class="card-text">Price: $18</p>
-              <p class="card-text">Shop: WALMART</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://i5.walmartimages.com/asr/f688b450-527e-4a20-a150-df06f7bebb17_1.662b204ad6e4f10fc3b36811d57a1f61.jpeg?odnHeight=450&odnWidth=450&odnBg=FFFFFF" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.walmart.com/ip/Sky-Drones-LX-6-LED-Quadcopter/290654456">Sky Drones- LX-6 LED Quadcopter</a>
-              </h4>
-              <p class="card-text">Flying Time 6-8 Minutes Per BatteryCharging Time: 60 minutesControl Distance – 100 Feet</p>
-              <p class="card-text">Price: $13</p>
-              <p class="card-text">Shop: WALMART</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://i5.walmartimages.com/asr/598a7c18-86a4-4823-aceb-4f8d04aa777c_1.e05d4a563731eae10cce0b08025cc89c.jpeg?odnHeight=450&odnWidth=450&odnBg=FFFFFF" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.walmart.com/ip/SkyDrones-FX-Mini-Pocket-Drone-Color-may-vary/56123508">SkyDrones- FX Mini Pocket Drone (Color may vary)</a>
-              </h4>
-              <p class="card-text">Skydrones- Fx Mini Pocket Drone</p>
-              <p class="card-text">Price: $9</p>
-              <p class="card-text">Shop: WALMART</p>
+              <p class="card-text">Make sure this fitsby entering your model number.PRINTED REFLECTIVE STRIPS WITH CLEAR DIRECTIONS: Reflective strips with cardinal directions indication printed on both sides make locating much easier than ever, ideal for day and night time flying.CON...</p>
+              <p class="card-text">Price: $19.90</p>
+              <p class="card-text">Shop: AMAZON</p>
             </div>
           </div>
         </div></div>
