@@ -28,7 +28,9 @@ possible_match_abbrev = {
     "pc": ["laptop", "computer", "desktop"],
     "laptop": ["computer", "pc", "desktop"],
     "desktop": ["laptop", "computer", "pc"],
-    "children": ["child", "kid"]
+    "children": ["child", "kid"],
+    "drones": ["drone"],
+    "drone": ["drones"]
 }
 
 
@@ -97,6 +99,7 @@ def run_web_search(search_keyword, match_acc, low_to_high, high_to_low, shop_lis
         # results = safe_json(json_data.text)
 
         results = web_get_data_from_db(search_keyword, match_acc, low_to_high, high_to_low, shop_list_names)
+
         if results is None or len(results) == 0:
             update_results_row_error("Sorry, no products found")
         else:
@@ -197,6 +200,7 @@ def update_results_row_error(data):
 
 def get_data_from_db(searched_keyword, match_acc=0, low_to_high=False, high_to_low=True, shop_names_list=None):
     results_db = []
+    mk_results = []
     if shop_names_list is not None:
         for shop_name_l in shop_names_list:
             if high_to_low:
@@ -212,16 +216,15 @@ def get_data_from_db(searched_keyword, match_acc=0, low_to_high=False, high_to_l
             results_db.append(ShoppedData.query.filter(ShoppedData.searched_keyword == searched_keyword).order_by(ShoppedData.numeric_price.desc()).all())
         elif low_to_high:
             results_db.append(ShoppedData.query.filter(ShoppedData.searched_keyword == searched_keyword).order_by(ShoppedData.numeric_price.asc()).all())
+
     for results in results_db:
         if results is not None and len(results) > 0:
             results = [res.__str__() for res in results]
-            mk_results = []
             for item_r in results:
                 item_r = safe_json(item_r)
                 if match_sk(searched_keyword, safe_grab(item_r, [searched_keyword, "title"]), match_acc):
                     mk_results.append(json.dumps(item_r))
-            results = mk_results
-        return results
+    return mk_results
 
 
 def update_db_results(results):
@@ -252,7 +255,7 @@ def get_json_db_results(shop_names_list, search_keyword, check=False):
             return results
     else:
         ignite_thread_timeout(shop_names_list[0], search_keyword)
-        return get_data_from_db(shopshop_names_list_name=shop_names_list, searched_keyword=search_keyword)
+        return get_data_from_db(shop_names_list=shop_names_list, searched_keyword=search_keyword)
     return results
 
 
