@@ -10,9 +10,10 @@
 }
 
 .spx{
-  position: relative;
-    margin: 40px;
-    top: -100px
+  /* position: absolute; */
+    margin:10px;
+    /* left: 100px;
+    top: -990%" */
 }
 
 .About {

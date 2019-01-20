@@ -59,17 +59,17 @@ function load_shops_cb(){
       function(data) {
         var shop_index;
         data.sort();
-        fill_html_cb.push("<div>")
+        fill_html_cb.push("<div class=\"spx\">")
         div_count = 0
         for(shop_index in data){
           if(div_count == 5){
             div_count = 0
             fill_html_cb.push("</div>")
-            fill_html_cb.push("<div>")
+            fill_html_cb.push("<div class=\"spx\">")
           }
           shop_name = data[shop_index]
           fill_shop_cb = $("#shop_cb_default").html()
-          fill_shop_cb = fill_shop_cb.replace("{shop_id}", shop_name + "cb")
+          fill_shop_cb = fill_shop_cb.replace(/{shop_id}/g, shop_name + "cb")
           fill_shop_cb = fill_shop_cb.replace("{shop_name}", shop_name)
           fill_html_cb.push(fill_shop_cb)
           div_count++

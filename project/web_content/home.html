@@ -74,7 +74,7 @@
   <div class="input-group-append">
     <button type="button" id="searchButton" class="btn btn-search" onclick="shop_web_search()">Search</button>
 		<button type="button" id="cancelSearchButton" class="btn btn-info" onclick="ini_reset_controls()" style="display: none;">Cancel</button>
-    <button type="button" class="btn btn-dark dropdown-toggle dropdown-toggle-split" data-toggle="collapse" data-target="#cont-fil" aria-haspopup="true" aria-expanded="false">
+    <button type="button" onclick="load_shops_cb()" class="btn btn-dark dropdown-toggle dropdown-toggle-split" data-toggle="collapse" data-target="#cont-fil" aria-haspopup="true" aria-expanded="false">
       <span class="sr-only">Toggle Dropdown</span>
     </button>
   </div>
@@ -99,7 +99,7 @@
 		</div>
 	</div>
 	</div>
-	<div class="card text-white bg-secondary mb-3" style="max-width: 48rem; max-height: 18rem; position: relative;
+	<div class="card text-white bg-secondary mb-3" style="max-width: 48rem; max-height: 40rem; position: relative;
   left: 200px; top: -305px">
   <div class="card-header">Shops</div>
   <div class="card-body">
@@ -110,14 +110,15 @@
 	  </div>
 	</div>
 	<div id="shop_cb_default" style="display: none;">
-		<div class="custom-control custom-checkbox custom-control-inline">
+		<div class="custom-control custom-checkbox">
 		  <input type="checkbox" class="custom-control-input" id="{shop_id}">
 		  <label class="custom-control-label" for="{shop_id}">{shop_name}</label>
 	</div>
 	</div>
-	<div id="shop_cb_place">
+	<div id="shop_cb_place" class="card-group">
 	</div>
-	<div>
+ <!-- <div class="card-group">
+	<div class="spx">
 		<div class="custom-control custom-checkbox">
 		  <input type="checkbox" class="custom-control-input" id="amazoncb">
 		  <label class="custom-control-label" for="amazoncb">Amazon</label>
@@ -125,6 +126,14 @@
 	<div class="custom-control custom-checkbox">
 		<input type="checkbox" class="custom-control-input" id="targetcb">
 		<label class="custom-control-label" for="targetcb">Target</label>
+</div>
+<div class="custom-control custom-checkbox">
+	<input type="checkbox" class="custom-control-input" id="googleshopcb">
+	<label class="custom-control-label" for="googleshopcb">Google Shop</label>
+</div>
+<div class="custom-control custom-checkbox">
+	<input type="checkbox" class="custom-control-input" id="googleshopcb">
+	<label class="custom-control-label" for="googleshopcb">Google Shop</label>
 </div>
 </div>
 
@@ -137,7 +146,16 @@
 	<input type="checkbox" class="custom-control-input" id="googleshopcb">
 	<label class="custom-control-label" for="googleshopcb">Google Shop</label>
 </div>
+<div class="custom-control custom-checkbox">
+	<input type="checkbox" class="custom-control-input" id="googleshopcb">
+	<label class="custom-control-label" for="googleshopcb">Google Shop</label>
 </div>
+<div class="custom-control custom-checkbox">
+	<input type="checkbox" class="custom-control-input" id="googleshopcb">
+	<label class="custom-control-label" for="googleshopcb">Google Shop</label>
+</div>
+</div>
+</div> -->
 <!--<div class="custom-control custom-checkbox custom-control-inline">
 	<input type="checkbox" class="custom-control-input" id="footlockercb">
 	<label class="custom-control-label" for="footlockercb">Footlocker</label>
@@ -148,7 +166,7 @@
 </div>
   </div>
 </div>
-	</div>
+</div>
 </div>
 
 	<div class='container results'>
