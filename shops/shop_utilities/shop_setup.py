@@ -13,7 +13,7 @@ class TestShopNames(Enum):
     MICROCENTER = "MICROCENTER",
     FASHIONNOVA = "FASHIONNOVA",
     SIXPM = "SIXPM",
-    POSTMARK = "POSTMARK",
+    POSHMARK = "POSHMARK",
     MACYS = "MACYS",
     ASOS = "ASOS",
     JCPENNEY = "JCPENNEY",
@@ -102,9 +102,9 @@ shop_configurations = [
 
     },
     {
-        "POSTMARK": {
+        "POSHMARK": {
             "active": True,
-            "name": "POSTMARK"
+            "name": "POSHMARK"
         }
 
     },

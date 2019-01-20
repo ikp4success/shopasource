@@ -3,13 +3,7 @@ time_check_default = 0
 current_web_url = null
 current_sk = null
 cancel_search = false
-used_shuffled = []
 shop_searching = false
-shops_saved = []
-var fill_html_cb = [];
-// fill_shop_cb = "<div class=\"custom-control custom-checkbox custom-control-inline\">" +
-//     +"<input type=\"checkbox\" class=\"custom-control-input\" id=\"{shop_id}\">"+
-//     +"<label class=\"custom-control-label\" for=\"{shop_id}\">{shop_name}</label></div>"
 
 $(function() {
   $(document).on('click', 'div#shopsearch', function() {
@@ -69,16 +63,17 @@ function initial_api_search(sk){
 }
 
 function load_shops_cb(){
-  shops_url = "/websearch/shops.json";
+  shops_url = "/websearch/shops-active.json";
   $.getJSON(shops_url,
       function(data) {
-        shop_save = []
-        shop_save.push(data)
         replace_shop_find(data)
   });
 }
 
 function replace_shop_find(data){
+  var fill_html_cb = [];
+  fill_html_cb.length = 0
+  document.getElementById("shop_cb_place").innerHTML = ""
   var shop_index;
   data.sort();
   fill_html_cb.push("<div class=\"spx\">")
@@ -104,19 +99,25 @@ function find_shop(){
   if(shop_search_name == null){
     return
   }
-  shop_search_name = shop_search_name.toUpperCase()
-  found = []
-  for(shop_index in shop_save){
-    shop_name = shop_save[shop_index]
-    if(shop_name.includes(shop_search_name)){
-      found.push(shop_name)
-    }
-  }
-  if(found.length > 1)
-    replace_shop_find(found)
-  else{
-    $('#shop_cb_place').html("No Shop Found");
-  }
+  shops_url = "/websearch/shops-active.json";
+  $.getJSON(shops_url,
+      function(data) {
+        shop_search_name = shop_search_name.toUpperCase()
+        found_shop = []
+        for(shop_index in data){
+          shop_name = data[shop_index]
+          if(shop_name.includes(shop_search_name)){
+            found_shop.push(shop_name)
+          }
+        }
+        if(found_shop.length > 0){
+          replace_shop_find(found_shop)
+        }
+        else{
+          $('#shop_cb_place').html("No Shop Found");
+        }
+  });
+
 }
 
 function get_selected_checkboxes(){

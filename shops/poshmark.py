@@ -1,20 +1,20 @@
 import scrapy
 
 from shops.shop_connect.shop_request import get_request
-from shops.shop_connect.shoplinks import _postmarkurl
+from shops.shop_connect.shoplinks import _poshmarkurl
 from shops.shop_utilities.shop_setup import find_shop_configuration
 from shops.shop_utilities.extra_function import generate_result_meta, extract_items
 
 
 class PostMark(scrapy.Spider):
-    name = find_shop_configuration("POSTMARK")["name"]
+    name = find_shop_configuration("POSHMARK")["name"]
     _search_keyword = None
 
     def __init__(self, search_keyword):
         self._search_keyword = search_keyword
 
     def start_requests(self):
-        shop_url = _postmarkurl.format(self._search_keyword)
+        shop_url = _poshmarkurl.format(self._search_keyword)
         yield get_request(shop_url, self.get_best_link)
 
     def get_best_link(self, response):
