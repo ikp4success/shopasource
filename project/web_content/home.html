@@ -61,14 +61,6 @@
 	</div>
 
 	<div id="shopsearch" class="Search">
-		 <!-- <form class="form-inline my-2 my-lg-0" action="searchresults" -->
-		 	<!-- Method="GET"> -->
-			<!-- <form id="search_form" class="form-inline my-2 my-lg-0">
-			<input id="searchbar" class="form-control mr-sm-2 input-large" type="text" placeholder="e.g television" style="width: 85%;" name="search">
-			<button id="searchButton" class="btn btn-search" type="button" onclick="shop_web_search()">Search</button>
-			<button id="cancelSearchButton" class="btn btn-info" type="button" onclick="ini_reset_controls()" style="display: none;">Cancel Search</button>
-				<button class="btn btn-default dropdown-toggle sp" type="button" data-toggle="collapse" data-target="#cont-fil"></button>
-		</form> -->
 		<div id="search_form" class="input-group">
   	<input id="searchbar" type="text" class="form-control input-large" aria-label="Text input with segmented dropdown button" placeholder="e.g television" style="width: 85%;" name="search">
   <div class="input-group-append">
@@ -104,9 +96,9 @@
   <div class="card-header">Shops</div>
   <div class="card-body">
 			<div class="input-group mb-3">
-	  <input type="text" class="form-control" placeholder="e.g Amazon" style="width: 24px;" aria-describedby="basic-addon2">
+	  <input name="shop_search" type="text" class="form-control" placeholder="e.g Amazon" style="width: 24px;" aria-describedby="basic-addon2">
 	  <div class="input-group-append">
-	    <button class="btn btn-outline-success" type="button">Find</button>
+	    <button class="btn btn-outline-success" type="button" onclick="find_shop()">Find</button>
 	  </div>
 	</div>
 	<div id="shop_cb_default" style="display: none;">
@@ -117,52 +109,6 @@
 	</div>
 	<div id="shop_cb_place" class="card-group">
 	</div>
- <!-- <div class="card-group">
-	<div class="spx">
-		<div class="custom-control custom-checkbox">
-		  <input type="checkbox" class="custom-control-input" id="amazoncb">
-		  <label class="custom-control-label" for="amazoncb">Amazon</label>
-	</div>
-	<div class="custom-control custom-checkbox">
-		<input type="checkbox" class="custom-control-input" id="targetcb">
-		<label class="custom-control-label" for="targetcb">Target</label>
-</div>
-<div class="custom-control custom-checkbox">
-	<input type="checkbox" class="custom-control-input" id="googleshopcb">
-	<label class="custom-control-label" for="googleshopcb">Google Shop</label>
-</div>
-<div class="custom-control custom-checkbox">
-	<input type="checkbox" class="custom-control-input" id="googleshopcb">
-	<label class="custom-control-label" for="googleshopcb">Google Shop</label>
-</div>
-</div>
-
-<div class="spx">
-<div class="custom-control custom-checkbox">
-	<input type="checkbox" class="custom-control-input" id="forever21cb">
-	<label class="custom-control-label" for="forever21cb">Forever 21</label>
-</div>
-<div class="custom-control custom-checkbox">
-	<input type="checkbox" class="custom-control-input" id="googleshopcb">
-	<label class="custom-control-label" for="googleshopcb">Google Shop</label>
-</div>
-<div class="custom-control custom-checkbox">
-	<input type="checkbox" class="custom-control-input" id="googleshopcb">
-	<label class="custom-control-label" for="googleshopcb">Google Shop</label>
-</div>
-<div class="custom-control custom-checkbox">
-	<input type="checkbox" class="custom-control-input" id="googleshopcb">
-	<label class="custom-control-label" for="googleshopcb">Google Shop</label>
-</div>
-</div>
-</div> -->
-<!--<div class="custom-control custom-checkbox custom-control-inline">
-	<input type="checkbox" class="custom-control-input" id="footlockercb">
-	<label class="custom-control-label" for="footlockercb">Footlocker</label>
-</div>
-<div class="custom-control custom-checkbox custom-control-inline">
-	<input type="checkbox" class="custom-control-input" id="hmcb">
-	<label class="custom-control-label" for="hmcb">H&M</label> -->
 </div>
   </div>
 </div>

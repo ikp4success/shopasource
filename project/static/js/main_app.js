@@ -5,6 +5,7 @@ current_sk = null
 cancel_search = false
 used_shuffled = []
 shop_searching = false
+shops_saved = []
 var fill_html_cb = [];
 // fill_shop_cb = "<div class=\"custom-control custom-checkbox custom-control-inline\">" +
 //     +"<input type=\"checkbox\" class=\"custom-control-input\" id=\"{shop_id}\">"+
@@ -36,19 +37,33 @@ function initial_api_search(sk){
   if(!sk || sk==null){
     return false
   }
-  shops_url = "/websearch/shops.json";
-  $.getJSON(shops_url,
-      function(data) {
-        data.sort(() => Math.random() - 0.5)
-        var shop_index;
-        for(shop_index in data){
-          shop_name = data[shop_index]
-          sk_url = "/api/shop/" + shop_name + "/search=" + sk;
-          $.getJSON(sk_url,
-              function(data) {
-          });
-        }
-  });
+  if(get_selected_checkboxes().length == 0){
+    shops_url = "/websearch/shops.json";
+    $.getJSON(shops_url,
+        function(data) {
+          data.sort(() => Math.random() - 0.5)
+          var shop_index;
+          for(shop_index in data){
+            shop_name = data[shop_index]
+            sk_url = "/api/shop/" + shop_name + "/search=" + sk;
+            $.getJSON(sk_url,
+                function(data) {
+            });
+          }
+    });
+  }else{
+    gs_data = get_selected_checkboxes()
+    gs_data.sort(() => Math.random() - 0.5)
+    var shop_index;
+    for(shop_index in gs_data){
+      shop_name = gs_data[shop_index]
+      sk_url = "/api/shop/" + shop_name + "/search=" + sk;
+      $.getJSON(sk_url,
+          function(gs_data) {
+      });
+    }
+  }
+
 
   return false
 }
@@ -57,25 +72,61 @@ function load_shops_cb(){
   shops_url = "/websearch/shops.json";
   $.getJSON(shops_url,
       function(data) {
-        var shop_index;
-        data.sort();
-        fill_html_cb.push("<div class=\"spx\">")
-        div_count = 0
-        for(shop_index in data){
-          if(div_count == 5){
-            div_count = 0
-            fill_html_cb.push("</div>")
-            fill_html_cb.push("<div class=\"spx\">")
-          }
-          shop_name = data[shop_index]
-          fill_shop_cb = $("#shop_cb_default").html()
-          fill_shop_cb = fill_shop_cb.replace(/{shop_id}/g, shop_name + "cb")
-          fill_shop_cb = fill_shop_cb.replace("{shop_name}", shop_name)
-          fill_html_cb.push(fill_shop_cb)
-          div_count++
-      }
-      $('#shop_cb_place').html(fill_html_cb.join(""));
+        shop_save = []
+        shop_save.push(data)
+        replace_shop_find(data)
   });
+}
+
+function replace_shop_find(data){
+  var shop_index;
+  data.sort();
+  fill_html_cb.push("<div class=\"spx\">")
+  div_count = 0
+  for(shop_index in data){
+    if(div_count == 5){
+      div_count = 0
+      fill_html_cb.push("</div>")
+      fill_html_cb.push("<div class=\"spx\">")
+    }
+    shop_name = data[shop_index]
+    fill_shop_cb = $("#shop_cb_default").html()
+    fill_shop_cb = fill_shop_cb.replace(/{shop_id}/g, shop_name + "cb")
+    fill_shop_cb = fill_shop_cb.replace("{shop_name}", shop_name)
+    fill_html_cb.push(fill_shop_cb)
+    div_count++
+}
+  $('#shop_cb_place').html(fill_html_cb.join(""));
+}
+
+function find_shop(){
+  shop_search_name = document.getElementsByName("shop_search")[0].value
+  if(shop_search_name == null){
+    return
+  }
+  shop_search_name = shop_search_name.toUpperCase()
+  found = []
+  for(shop_index in shop_save){
+    shop_name = shop_save[shop_index]
+    if(shop_name.includes(shop_search_name)){
+      found.push(shop_name)
+    }
+  }
+  if(found.length > 1)
+    replace_shop_find(found)
+  else{
+    $('#shop_cb_place').html("No Shop Found");
+  }
+}
+
+function get_selected_checkboxes(){
+  var selected_checkboxes = [];
+  $(document).ready(function() {
+    $("input:checkbox[name=type]:checked").each(function() {
+         selected_checkboxes.push($(this).val().toUpperCase());
+    });
+  });
+  return selected_checkboxes
 }
 
 function shop_web_search(){
