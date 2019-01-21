@@ -8,22 +8,23 @@
 <meta name="google-site-verification" content="1FzRHrFNFAtDLWm8f0xeZl8GGV_Z-9w_GZDG0Hy0IvY" />
 
 <script type="text/javascript" src="https://cdn.ywxi.net/js/1.js" async></script>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+<script
+	src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
 	integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-	crossorigin="anonymous"></script>
-<script
-	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
-	integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
-	crossorigin="anonymous"></script>
-
-<link rel="stylesheet"
-	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
-	integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
 	crossorigin="anonymous">
-<script
-	src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"
-	integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
-	crossorigin="anonymous"></script>
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+crossorigin="anonymous">
+</script>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+crossorigin="anonymous">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+crossorigin="anonymous">
+</script>
 <!-- <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
 <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
@@ -70,9 +71,15 @@
 	    </button>
 	  </div>
 	</div>
-			<div id="searchProgress" class="loading" display: none;>
-	  <div id="searchProgressBar"></div>
-		</div>
+	<div class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
+	  <strong>Invalid Search Criteria - </strong> textBox is empty or invalid.
+	  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+	    <span aria-hidden="true">&times;</span>
+	  </button>
+	</div>
+	<div id="searchProgress" class="loading progress" style="display: none;">
+<div id="searchProgressBar" class="progress-bar progress-bar-striped bg-warning" role="progressbar"></div>
+</div>
 		<div id="cont-fil" class='fil-container collapse'>
 		<div class="card bg-info text-white mb-3" style="max-width: 11rem; max-height: 18rem">
 		<div class="card-header">Refine By</div>
@@ -95,7 +102,7 @@
 	  <div class="card-header">Shops</div>
 	  <div class="card-body">
 				<div class="input-group mb-3">
-		  <input name="shop_search" type="text" class="form-control" placeholder="e.g Amazon" style="width: 24px;" aria-describedby="basic-addon2">
+		  <input name="shop_search" type="text" class="form-control" placeholder="find shop e.g Amazon" style="width: 24px;" aria-describedby="basic-addon2">
 		  <div class="input-group-append">
 		    <button class="btn btn-outline-success" type="button" onclick="find_shop()">Find</button>
 		  </div>
@@ -106,6 +113,29 @@
 			  <label class="custom-control-label" for="{shop_id}">{shop_name_friend}</label>
 		</div>
 		</div>
+		<div  id="loading_shop" style="display: none;">
+			<div class="spinner-grow text-primary card-group" role="status">
+			  <span class="sr-only">Loading...</span>
+			</div>
+			<div class="spinner-grow text-success card-group" role="status">
+			  <span class="sr-only">Loading...</span>
+			</div>
+			<div class="spinner-grow text-danger card-group" role="status">
+			  <span class="sr-only">Loading...</span>
+			</div>
+			<div class="spinner-grow text-warning card-group" role="status">
+			  <span class="sr-only">Loading...</span>
+			</div>
+			<div class="spinner-grow text-info card-group" role="status">
+			  <span class="sr-only">Loading...</span>
+			</div>
+			<div class="spinner-grow text-light card-group" role="status">
+			  <span class="sr-only">Loading...</span>
+			</div>
+			<div class="spinner-grow text-dark card-group" role="status">
+			  <span class="sr-only">Loading...</span>
+			</div>
+	</div>
 		<div id="shop_cb_place" class="card-group">
 		</div>
 	</div>
@@ -119,1496 +149,584 @@
 		<div id="resultreact">
 			<div class="row"> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_43903d5b-ab68-4997-bb84-909c4c24c25b" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/8/optimized/10223898_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.target.com/p/lg-uv340c-43uv340c-42-5-2160p-led-lcd-tv-16-9-4k-uhdtv-taa-compliant/-/A-76019129">LG UV340C 43UV340C 42.5&amp;quot; 2160p LED-LCD TV - 1...</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/coach-skinny-wallet-in-refined-leather?ID=4552142&CategoryID=26846&isDlp=true">COACHSkinny Wallet in Refined Leather</a>
               </h4>
-              <p class="card-text">Public Display Mode From channel selection to volume level, you can control the TV settings in public areas. Public Display Mode also enables you to restore default settings, as required, on the TVs.  RS-232C Control  Via the TV&amp;#x27;s RS-232C port, ...</p>
-              <p class="card-text">Price: $747.50</p>
-              <p class="card-text">Shop: TARGET</p>
+              <p class="card-text">A slim snap wallet from COACH holds an ample selection of pockets inside smooth, refined calf leather with a luxurious hand feel.7 3/4&amp;quot;&amp;quot; (L) x 4&amp;quot;&amp;quot; (H)Snap closureFifteen credit card pockets; three full-length bill compartments; ID...</p>
+              <p class="card-text">Price: <span class="regular">
+			                                                                             $150.00
+			                                                                            
+			                                                                        </span></p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_43903d5b-ab68-4997-bb84-909c4c24c25b" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/9/optimized/8149629_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.target.com/p/lg-uv340c-75uv340c-74-6-2160p-led-lcd-tv-16-9-4k-uhdtv-taa-compliant/-/A-76112879">LG UV340C 75UV340C 74.6&amp;quot; 2160p LED-LCD TV - 1...</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/coach-slim-wallet-in-polished-pebble-leather?ID=4382474&CategoryID=26846&isDlp=true">COACHSlim Wallet in Polished Pebble Leather</a>
               </h4>
-              <p class="card-text">Public Display Mode From channel selection to volume level, you can control the TV settings in public areas. Public Display Mode also enables you to restore default settings, as required, on the TVs.  RS-232C Control  Via the TV&amp;#x27;s RS-232C port, ...</p>
-              <p class="card-text">Price: $2,745.25</p>
-              <p class="card-text">Shop: TARGET</p>
+              <p class="card-text">A tailored design in polished pebble leather, this slender COACH wallet snaps open to reveal numerous card slots neatly arranged on two sides so you can see everything at a glance. The addition of the attached wrist strap transforms it into an essent...</p>
+              <p class="card-text">Price: <span class="regular originalOrRegularPriceOnSale">
+			                                                                             $150.00
+			                                                                            
+			                                                                        </span></p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_48fcd970-d1cf-4381-9db8-aa4459cec59e" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/1/optimized/8944381_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.target.com/p/samsung-43in-2160p-120-hz-flat-panel-tv-black-un43ku6300fxza/-/A-51131064">Samsung 43in 2160p 120 Hz Flat Panel TV - Black (U...</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/coach-slim-accordion-zip-wallet-in-smooth-leather?ID=2481521&CategoryID=26846&isDlp=true">COACHSlim Accordion Zip Wallet in Smooth Leather</a>
               </h4>
-              <p class="card-text">Get instant access to the entertainment you want with the Samsung 43in 2160p 120 Hz Flat Panel TV - Black (UN43KU6300FXZA). Smart TV attributes take your home entertainment to the next level of quality.</p>
-              <p class="card-text">Price: $599.99</p>
-              <p class="card-text">Shop: TARGET</p>
+              <p class="card-text">Crafted in our smooth calf leather with a precisely finished interior, this comprehensive wallet design keeps cards, ID, coins, bills and receipts neatly organized within a secure zip-around closure.Smooth calf leatherTwelve credit card and multifunc...</p>
+              <p class="card-text">Price: <span class="regular">
+			                                                                             $140.00
+			                                                                            
+			                                                                        </span></p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/RUSTIC+GREY+OAK+65IN+TV+STAND+lifestyle?set=imageURL%5B%2Fimages%2Fproduct%2F146%2F810369326.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/3/optimized/10218363_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/65-rustic-gray-oak-tv-stand/p810369326?pos=1:45&Ntt=television">Ameriwood 65" Rustic Gray Oak TV Stand</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/dooney-bourke-plaid-continental-wallet?ID=6324389&CategoryID=26846&isDlp=true">Dooney & BourkePlaid Continental Wallet</a>
               </h4>
-              <p class="card-text">The Ameriwood rustic gray TV Stand will give your TV the strong foundation it needs with its simple, yet stylish design. The TV stand is constructed from real wood veneer for a sturdy build that supports up to a 65&amp;quot; flat-screen TV. Features two ...</p>
-              <p class="card-text">Price: $449.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
+              <p class="card-text">Pretty in plaid, the Dooney &amp;amp; Bourke Continental Wallet features vibrant pops of color and classic designer hardware.7&amp;quot;W x 3-3/4&amp;quot;H x 3/4&amp;quot;D (width is measured across the bottom of handbag); 0.60 lbs. approx. weightSnap closureGold-t...</p>
+              <p class="card-text">Price: <span class="regular originalOrRegularPriceOnSale">
+			                                                                             $128.00
+			                                                                            
+			                                                                        </span></p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/ESPRESSO+65IN+TV+STAND+lifestyle+?set=imageURL%5B%2Fimages%2Fproduct%2F144%2F810369325.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/4/optimized/9988354_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/65-espresso-brown-tv-stand/p810369325?pos=1:26&Ntt=television">Ameriwood 65" Espresso Brown TV Stand</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/michael-michael-kors-signature-trifold-wallet?ID=6617677&CategoryID=26846&isDlp=true">MICHAEL Michael KorsSignature Trifold Wallet</a>
               </h4>
-              <p class="card-text">Create a rustic vibe using this sturdy TV stand with a strong foundation that is simple, yet stylish. A great design that is sure to become a centerpiece in any room and is constructed from real wood veneer for a sturdy build that supports up to a 65...</p>
-              <p class="card-text">Price: $449.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
+              <p class="card-text">MICHAEL Michael Kors&amp;#x27; trifold wallet conceals a wealth of slots and pockets - more than a dozen in total - in signature coated twill with polished branding and a secure snap closure.7&amp;quot;W x 4&amp;quot;H x 3/4&amp;quot;DSnap flap closureGold-tone exte...</p>
+              <p class="card-text">Price: <span class="regular">
+			                                                                             $128.00
+			                                                                            
+			                                                                        </span></p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/60%22+Ash+Burl+TV+Stand+Room+View?set=imageURL%5B%2Fimages%2Fproduct%2F213%2F810219158-2.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/5/optimized/3181225_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/60-ash-burl-finish-tv-stand/p810219158?pos=1:28&Ntt=television">60" Ash Burl Finish TV Stand</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/coach-slim-accordion-zip-wallet-in-signature-jacquard?ID=7970013&CategoryID=26846&isDlp=true">COACHSlim Accordion Zip Wallet in Signature Jacqua...</a>
               </h4>
-              <p class="card-text">Get an instant room refresh with this beautiful media stand! The three hidden adjustable shelves provide ample storage for all of your movies while the ash burl finish with decorative inlays make this piece an elegant addition to your home.</p>
-              <p class="card-text">Price: $399.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
+              <p class="card-text">Applied signature hardware lends sophisticated shine to this lightweight design, while myriad pockets, compartments and an ID window allow for superb organization within. A contrast interior provides a surprise pop of color when you open the wallet.S...</p>
+              <p class="card-text">Price: <span class="regular">
+			                                                                             $125.00
+			                                                                            
+			                                                                        </span></p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_6761c8c5-2ee3-49e3-bb6c-f1fe9328fb58" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/3/optimized/10529613_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.target.com/p/tcl-43-4k-hdr-120hz-cmi-roku-smart-led-tv-black-43s405/-/A-52177069">TCL 43&amp;quot; 4K HDR 120Hz CMI Roku Smart LED TV - ...</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/dooney-bourke-signature-continental-wallet-created-for-macys?ID=2499355&CategoryID=26846&isDlp=true">Dooney &amp;amp; BourkeSignature Continental Wallet, C...</a>
               </h4>
-              <p class="card-text">The HDR 120Hz CMI Roku Smart LED TV by TCL is just the right pick for a movie
-buff. Featuring built-in ROKU streaming, 4K Ultra High Definition,streaming
-capability and Smart TV, the Roku TV provides a life-like viewing experience.It
-has an HDMI outp...</p>
-              <p class="card-text">Price: $329.99</p>
-              <p class="card-text">Shop: TARGET</p>
+              <p class="card-text">Pair this continental wallet with any Dooney &amp;amp; Bourke bag for a chic, coordinated set that&amp;#x27;s functional, too.Snap closureExterior features gold-tone hardware, logo plaque andd 1 zip pocketInterior features lining, 1 slip pocket, 2 bill compa...</p>
+              <p class="card-text">Price: $118.00</p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_94cde69d-fbf8-4c4a-a7b9-4b9432f547c5" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/0/optimized/8895310_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.target.com/p/lg-43-1080p-full-hd-smart-led-tv-43lk5700pua/-/A-50689457">LG 43" 1080p Full HD Smart LED TV - 43LK5700PUA</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/michael-kors-mens-jet-set-bifold-wallet?ID=5022993&CategoryID=47665&isDlp=true">Michael KorsMen's Jet Set Bifold Wallet</a>
               </h4>
-              <p class="card-text">Sit back, relax and have a fun saturday with the LG 43&amp;quot; 1080p Full HD Smart LED
-TV.  You can not only watch movies and TV shows on YouTube, Netflix, Amazon
-Video, Hulu and VUDU, but also share videos and photos from compatible mobile
-devices via...</p>
-              <p class="card-text">Price: $329.99</p>
-              <p class="card-text">Shop: TARGET</p>
+              <p class="card-text">A stylish multi-tasker with a signature finish, this bifold wallet from Michael Kors includes a removable passcase that keeps your most important ID handy.Exterior dimensions: 4.5&amp;quot; x 4&amp;quot;Interior: lined; two credit card pockets; removable pas...</p>
+              <p class="card-text">Price: <span class="regular">
+			                                                                             $118.00
+			                                                                            
+			                                                                        </span></p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_82db9e2d-3934-4ad0-8ccf-6558475df0f1" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/8/optimized/9760568_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.target.com/p/lg-43-4k-uhd-hdr-smart-tv-43uk6300/-/A-53025663">LG 43" 4K UHD HDR Smart TV - 43UK6300</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/michael-michael-kors-multi-function-leather-wallet?ID=5374456&CategoryID=26846&isDlp=true">MICHAEL Michael KorsMulti-Function Leather Wallet</a>
               </h4>
-              <p class="card-text">A smart tv that is both elegant and functional! This 43&amp;quot; 4K UHD HDR Smart TV
-from LG 43UK6300 features an ultra surround sound that is going to take you
-through a completely immersive movie experience. Crafted with a slim and
-seamless body, this...</p>
-              <p class="card-text">Price: $329.99</p>
-              <p class="card-text">Shop: TARGET</p>
+              <p class="card-text">Polished logo hardware provides a striking and recognizable finish for a MICHAEL Michael Kors wallet that folds up your phone and financials in beautiful leather. This classic style matches everything.7&amp;quot;W x 4-1/4&amp;quot;H x 1-1/2&amp;quot;D (width is ...</p>
+              <p class="card-text">Price: <span class="regular">
+			                                                                             $108.00
+			                                                                            
+			                                                                        </span></p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/DISTRESSD+GREY+OAK+70IN+TV+STAND+lifestyle?set=imageURL%5B%2Fimages%2Fproduct%2F123%2F810369320.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/0/optimized/10297050_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/70-gray-oak-distressed-tv-stand/p810369320?pos=1:38&Ntt=television">Ameriwood 70" Gray Oak Distressed TV Stand</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/coach-zip-around-wallet-in-patent-leather?ID=6489901&CategoryID=26846&isDlp=true">COACHZip-Around Wallet in Patent Leather</a>
               </h4>
-              <p class="card-text">This stand keeps your beloved media devices and accessories organized and protected. A total of six shelves fit all of your media components, including a movie player, cable box, stereo system, gaming consoles, DVDs and more. Glass doors protect your...</p>
-              <p class="card-text">Price: $319.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
+              <p class="card-text">A sturdy zip glides across nearly all four corners of a compact leather COACH wallet edged in visible top-stitching for a timeless, classic  feel.4-3/4&amp;quot;W x 3-3/4&amp;quot;HZip closureGold-tone exterior hardware &amp;amp; zip coin pocketInterior card slo...</p>
+              <p class="card-text">Price: <span class="regular originalOrRegularPriceOnSale">
+			                                                                             $99.00
+			                                                                            
+			                                                                        </span></p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_051a0369-bf5a-4a65-b441-b4d59f2357e6" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/9/optimized/10149829_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.target.com/p/lg-55-4k-ultra-hd-hdr-smart-oled-tv-oled55b8pua/-/A-52328755">LG 55" 4K Ultra HD HDR Smart OLED TV - OLED55B8PUA</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/calvin-klein-signature-wallet?ID=6911688&CategoryID=26846&isDlp=true">Calvin KleinSignature Wallet</a>
               </h4>
-              <p class="card-text">Accentuating your room decor settings and elevating the aesthetics this LG
-Ultra HD HDR Smart OLED TV 55&amp;quot; OLED55B8PUA is bound to change your tv
-experience forever. Powered with AI this OLED Smart TV uses intelligent voice
-control, speak into th...</p>
-              <p class="card-text">Price: $2,299.99</p>
-              <p class="card-text">Shop: TARGET</p>
+              <p class="card-text">Logo-printed faux leather patchwork brings a chic yet carefree vibe to the organized Calvin Klein Signature Wallet.8&amp;quot;W x 5&amp;quot;H x 1-1/2&amp;quot;D; 0.5 lbs. approx. weight7-1/2&amp;quot;L removable strapZip closureGold-tone exterior hardwareFits iPhon...</p>
+              <p class="card-text">Price: $98.00</p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_f653cb2d-87ce-4085-a92a-a58e3e8d5133" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/2/optimized/10153292_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.target.com/p/lg-65-4k-uhd-hdr-smart-oled-tv-oled65b8pua/-/A-52693804">LG 65" 4K UHD HDR Smart OLED TV - OLED65B8PUA</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/calvin-klein-signature-zip-around-wallet?ID=6911687&CategoryID=26846&isDlp=true">Calvin KleinSignature Zip-Around Wallet</a>
               </h4>
-              <p class="card-text">The sleek B8 is designed to elevate a room&amp;#x27;s aesthetics while complementing any décor. This new LG OLED TV with AI (Artificial Intelligence) ThinQ becomes the hub for the smart home: Using Intelligent Voice control, speak into the LG Magic Remot...</p>
-              <p class="card-text">Price: $3,299.99</p>
-              <p class="card-text">Shop: TARGET</p>
+              <p class="card-text">Sleek and organized, Calvin Klein&amp;#x27;s signature zip-around wallet converts to a wristlet for versatile styling.8&amp;quot;W x 4&amp;quot;H x 1&amp;quot;D; .50 lbs. approx. weight8&amp;quot;L removable wrist strapZip-around closureGold-tone exterior hardware10 int...</p>
+              <p class="card-text">Price: $98.00</p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/63IN+RUSTIC+TV+STAND?set=imageURL%5B%2Fimages%2Fproduct%2F63%2F810346571-1.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/0/optimized/10153350_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/63-rustic-tv-stand/p810346571?pos=1:39&Ntt=television">Stratford 63" Rustic TV Stand</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/calvin-klein-wallet?ID=6911690&CategoryID=26846&isDlp=true">Calvin KleinWallet</a>
               </h4>
-              <p class="card-text">Bring fresh rustic flair into your room with this media center TV stand from Stratford. Constructed with versatile shelving for all of your electronic needs. Featuring a rich dark stain with optimal shelving and cabinets, this TV stand gives a touch ...</p>
-              <p class="card-text">Price: $299.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
+              <p class="card-text">Beautifully sleek and undeniably chic, this Calvin Klein wallet is perfect for a busy day of errands or a night on the town.8&amp;quot;W x 5&amp;quot;H x 1-1/2&amp;quot;D; 0.5 lbs. approx. weightSilhouette is based off 5&amp;#x27;9&amp;quot; model7-1/2&amp;quot;L removable ...</p>
+              <p class="card-text">Price: $98.00</p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/55+inches+Charcoal+Gray+2+Door+TV+Stand+with+Metal+Base+Lifestyle+Image+Angled+VIew?set=imageURL%5B%2Fimages%2Fproduct%2F130%2F810412310-1.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/5/optimized/10149725_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/55-charcoal-gray-2-door-tv-stand-with-metal-base/p810412310?pos=1:20&Ntt=television">Stratford 55&amp;quot; Charcoal Gray 2-Door TV Stand w...</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/calvin-klein-saffiano-leather-zip-around-wallet?ID=6911686&CategoryID=26846&isDlp=true">Calvin KleinSaffiano Leather Zip-Around Wallet</a>
               </h4>
-              <p class="card-text">Entertain in rustic farmhouse design using this stunning charcoal gray TV stand. Two doors with interior shelving, side drawers and a spacious tabletop create opportunities to display your accessories, electronics and a flat panel TV up to 55&amp;quot;. ...</p>
-              <p class="card-text">Price: $299.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
+              <p class="card-text">Polished logo lettering marks a sleek and organized Calvin Klein leather wallet that converts to an on-the-go wristlet.8&amp;quot;W x 4&amp;quot;H x 1&amp;quot;D; .50 lbs. approx. weight8&amp;quot;L removable wrist strapZip-around closure10 interior credit card slot...</p>
+              <p class="card-text">Price: $98.00</p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://i5.wal.co/asr/587e8a6f-6f44-45d1-81b7-2f66753b4610_2.fc0d5afbb58ec1fd983a0378788c4dc3.jpeg-f01692dcfb2d4269bb189950ac629520f3644475-optim-450x450.jpg?odnBg=FFFFFF" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/4/optimized/3918654_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.walmart.com/ip/Sceptre-55-Class-4K-Ultra-HD-2160P-LED-TV-U550CV-U/46784939">Sceptre 55&amp;quot; Class 4K Ultra HD (2160P) LED TV ...</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/brahmin-ady-melbourne-embossed-leather-wallet?ID=1014692&CategoryID=26846&isDlp=true">BrahminAdy Melbourne  Embossed Leather Wallet</a>
               </h4>
-              <p class="card-text">54.64" diagonal screen sizeHDMI Inputs: 4Wall-mountable</p>
-              <p class="card-text">Price: $279</p>
-              <p class="card-text">Shop: WALMART</p>
+              <p class="card-text">Timelessly sophisticated, Brahmin&amp;#x27;s snap-flat Ady wallet fits a surprising amount of cards and currency in ultra-slim croco-embossed leather.7-1/2&amp;quot;W x 3-1/2&amp;quot;H x 1/2&amp;quot;DInterior features 13 card slots, 3 cash compartments and 1 ID wi...</p>
+              <p class="card-text">Price: <span class="regular">
+			                                                                             $95.00
+			                                                                            
+			                                                                        </span></p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://i5.walmartimages.com/asr/5ca99dd0-3719-42b6-9a30-cb2f89ddd337_3.0ae0c694eacdd737b823347396336532.jpeg?odnHeight=450&odnWidth=450&odnBg=FFFFFF" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/3/optimized/10211913_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.walmart.com/ip/RCA-55-Class-4K-Ultra-HD-2160P-LED-TV-RTU5540/55540606">RCA 55" Class 4K Ultra HD (2160P) LED TV (RTU5540)</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/the-sak-sequoia-smartphone-leather-crossbody-wallet?ID=6593055&CategoryID=26846&isDlp=true">The SakSequoia Smartphone Leather Crossbody Wallet</a>
               </h4>
-              <p class="card-text">Diagonal screen size: 55"Refresh Rate: 60HzBacklight: LEDSmart functionality: noInputs (HDMI/USB): 4/0</p>
-              <p class="card-text">Price: $279</p>
-              <p class="card-text">Shop: WALMART</p>
+              <p class="card-text">The Sak&amp;#x27;s Sequoia Crossbody combines the best of a wallet and a wristlet in one lightweight and portable design.6-1/4&amp;quot;W x 4-1/4&amp;quot;H x 2-1/4&amp;quot;D6-1/3&amp;quot; wrist strap; 24&amp;quot;L max strapZip &amp;amp; magnetic snap closuresAntique silver-...</p>
+              <p class="card-text">Price: $89.00</p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Harvey+Park+Dark+Brown+TV+Stand?set=imageURL%5B%2Fimages%2Fproduct%2F124%2F810406241-2.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/3/optimized/11073723_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/harvey-park-dark-brown-tv-stand/p810406241?pos=1:7&Ntt=television">Sauder Harvey Park Dark Brown TV Stand</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/the-sak-iris-smartphone-wristlet-wallet?ID=7094665&CategoryID=26846&isDlp=true">The SakIris Smartphone Wristlet Wallet</a>
               </h4>
-              <p class="card-text">Give your home a rustic retro vibe with this versatile TV stand from Sauder. It accommodates up to a 50&amp;quot; flat screen TV, making it the perfect piece to store your electronics, cable boxes or movies. Behind the sliding panel doors is a cubby with...</p>
-              <p class="card-text">Price: $259.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
+              <p class="card-text">Keep your look smart while protecting your tech with the sleek Iris Smartphone Wristlet Wallet by The Sak.3-1/2&amp;quot;W x 6&amp;quot;H x 1-1/2&amp;quot;D; 0.37 lbs. approx. weight6-1/3&amp;quot;L removable, adjustable strapZip &amp;amp; snap closuresAntique brass-ton...</p>
+              <p class="card-text">Price: $79.00</p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/RUSTIC+GREY+OAK+50IN+TV+STAND+lifestyle?set=imageURL%5B%2Fimages%2Fproduct%2F204%2F810369339.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/0/optimized/8895000_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/50-rustic-gray-oak-tv-stand/p810369339?pos=1:41&Ntt=television">Ameriwood 50" Rustic Gray Oak TV Stand</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/michael-kors-mens-slim-rfid-bifold-wallet?ID=5022958&CategoryID=47665&isDlp=true">Michael KorsMen's Slim RFID Bifold Wallet</a>
               </h4>
-              <p class="card-text">Get stylish and sturdy quality when you make this rustic gray TV stand a centerpiece in your room. Constructed from real wood veneer for a sturdy build that supports up to a 50&amp;quot; flat-screen TV. Features two large, open shelves for ample storage ...</p>
-              <p class="card-text">Price: $259.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
+              <p class="card-text">A logo print adds bold signature style to this Michael Kors wallet, a slim bifold with RFID protection that helps shield your data from electronic pickpockets.Exterior dimensions: 4.5&amp;quot; x 4&amp;quot;Interior: lined; RFID technology helps protect card...</p>
+              <p class="card-text">Price: <span class="regular">
+			                                                                             $78.00
+			                                                                            
+			                                                                        </span></p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_9ad425c2-4411-4a9a-840a-faf848cd1626" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/3/optimized/10250853_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.target.com/p/element-43-smart-1080p-60hz-led-hdtv-black-elst4316s/-/A-50541393">Element 43&amp;quot; Smart 1080p 60Hz LED HDTV - Black...</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/fossil-logan-leather-zip-around-wallet?ID=6496430&CategoryID=26846&isDlp=true">FossilLogan Leather Zip Around Wallet</a>
               </h4>
-              <p class="card-text">You haven&amp;#x27;t watched TV until you&amp;#x27;ve experienced it on the Element 43&amp;quot; Smart TV. Featuring a new modern design, and brilliant picture quality, Element&amp;#x27;s Smart TV brings you Full HD entertainment at an incredible value. Impressive c...</p>
-              <p class="card-text">Price: $249.99</p>
-              <p class="card-text">Shop: TARGET</p>
+              <p class="card-text">Ideal for holding all your necessities, the Fossil Logan Zip Around Wallet features an organized interior and convenient wristlet strap.7-3/4&amp;quot;W x 4&amp;quot;H x 3/4&amp;quot;D5&amp;quot;L wristlet strapZip closureOld English-tone exterior hardware, 1 back z...</p>
+              <p class="card-text">Price: <span class="regular">
+			                                                                             $75.00
+			                                                                            
+			                                                                        </span></p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_35c73bfe-33d8-4ce5-9e81-75e5d873420f" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/8/optimized/8840038_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.target.com/p/element-40-1080p-60hz-smart-led-hd-tv-black-elst4017/-/A-52209317">Element 40&amp;quot; 1080p 60Hz Smart LED HD TV - Blac...</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/giani-bernini-softy-leather-crossbody-wallet-created-for-macys?ID=4960261&CategoryID=26846&isDlp=true">Giani BerniniSofty Leather Crossbody Wallet, Creat...</a>
               </h4>
-              <p class="card-text">You haven&amp;#x27;t watched TV until you&amp;#x27;ve experienced it on the Element 40&amp;quot; Smart TV. Featuring a new modern design, and brilliant picture quality, Element&amp;#x27;s Smart TV brings you Full HD entertainment at an incredible value. Impressive c...</p>
-              <p class="card-text">Price: $249.99</p>
-              <p class="card-text">Shop: TARGET</p>
+              <p class="card-text">Travel light and luxuriously with Giani Bernini&amp;#x27;s versatile crossbody wallet. Styled in rich leather, the clean-lined silhouette can be worn as a hands-free crossbody, a sleek wristlet or even a clutch thanks to a series of removable straps.Mini...</p>
+              <p class="card-text">Price: $69.50</p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Antique+Dark+Brown+5+Shelf+TV+and+Media+Center+lifestyle?set=imageURL%5B%2Fimages%2Fproduct%2F245%2F810389683-1.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/5/optimized/8726935_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/antique-dark-brown-5-shelf-tv-media-center/p810389683?pos=1:31&Ntt=television">Antique Dark Brown 5-Shelf TV & Media Center</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/the-sak-iris-slim-leather-wallet?ID=4872125&CategoryID=26846&isDlp=true">The SakIris Slim Leather Wallet</a>
               </h4>
-              <p class="card-text">This tall media center is perfect for storing all electronic goods and accessories. Five deep shelves are ideal for placing and displaying video players, DVDs and books as a deep capacity drawer provides hidden storage for smaller accessories. The an...</p>
-              <p class="card-text">Price: $249.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
+              <p class="card-text">Polished tabs punctuate a slim leather wallet from The Sak that organizes cards and opens and closes like a book.6-6/10&amp;quot;W x 3-1/2&amp;quot;H x 1/2&amp;quot;DSnap closure1 exterior back zip pocket11 interior card slots, 1 ID window &amp;amp; 2 cash slipsAnti...</p>
+              <p class="card-text">Price: $69.00</p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/GREY+55IN+TV+STAND%2FBUFFET+lifestyle?set=imageURL%5B%2Fimages%2Fproduct%2F127%2F810369321.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/4/optimized/10031184_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/55-gray-tv-stand/p810369321?pos=1:15&Ntt=television">Ameriwood 55" Gray TV Stand</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/the-sak-silverlake-slim-leather-credit-card-wallet?ID=6593054&CategoryID=26846&isDlp=true">The SakSilverlake Slim Leather Credit Card Wallet</a>
               </h4>
-              <p class="card-text">Add an elegant touch to your living room with the beautiful gray design TV stand. Accomodating a flat panel TVs up to 55&amp;quot; wide, the stunning sliding glass doors and contemporary moulding and feet make this piece a conversation starter. Your gues...</p>
-              <p class="card-text">Price: $249.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
+              <p class="card-text">A row of sleek studs puts an edgy twist on the chic Silverlake Slim Credit Card Wallet by The Sak.7-1/3&amp;quot;W x 4&amp;quot;H x 1/4&amp;quot;DSnap closureAntique brass-tone exterior hardware &amp;amp; 2 zip pockets1 interior ID window &amp;amp; 16 credit card slotsL...</p>
+              <p class="card-text">Price: $69.00</p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/COFFEE+50IN+TV+STAND+lifestyle?set=imageURL%5B%2Fimages%2Fproduct%2F154%2F810369329.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/9/optimized/10143749_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/50-coffee-wood-tv-stand/p810369329?pos=1:46&Ntt=television">Ameriwood 50" Coffee Wood TV Stand</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/the-sak-silverlake-leather-wallet?ID=6593043&CategoryID=26846&isDlp=true">The SakSilverlake Leather Wallet</a>
               </h4>
-              <p class="card-text">The Ameriwood brown wood veneer TV stand will give your television the strong foundation it needs. Featuring a simple yet stylish design, it&amp;#x27;s sure to become a centerpiece in your room. A solid construction from real wood veneer gives this a stu...</p>
-              <p class="card-text">Price: $249.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
+              <p class="card-text">Compact and organized in a snap. The Sak&amp;#x27;s snap-tab leather wallet organizes cards, coins and cash in style.5-1/2&amp;quot;W x 3-3/4&amp;quot;H x 3/4&amp;quot;DSnap closureGold-tone exterior hardware2 interior bill pockets, 2 small slide pockets, 10 credit ...</p>
+              <p class="card-text">Price: $69.00</p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Rustic+Pine+5+Shelf+TV+and+Media+Center+lifestyle?set=imageURL%5B%2Fimages%2Fproduct%2F247%2F810389684-1.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/4/optimized/9702084_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/rustic-pine-5-shelf-tv-media-center/p810389684?pos=1:1&Ntt=television">Rustic Pine 5-Shelf TV & Media Center</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/giani-bernini-pebble-leather-receipt-wallet-created-for-macys?ID=792789&CategoryID=26846&isDlp=true">Giani BerniniPebble Leather Receipt Wallet, Create...</a>
               </h4>
-              <p class="card-text">Entertain your household in elaborate design and coloring with this tall media center. Five deep shelves are ideal for storing and displaying video players, DVDs and books as a deep capacity drawer provides hidden storage for smaller accessories. The...</p>
-              <p class="card-text">Price: $249.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
+              <p class="card-text">Store your stash in style with this luxe lovely from Giani Bernini. Soft leather is accented with signature detailing, while the pocket-lined interior keeps cash, cards and coins easily at hand.Giani Bernini walletLeatherSnap closureSilver-tone hardw...</p>
+              <p class="card-text">Price: $64.50</p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/1/optimized/2225751_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.walmart.com/ip/JVC-48-Class-FHD-1080P-LED-TV-LT-48MA570/594380290">JVC 48" Class FHD (1080P) LED TV (LT-48MA570)</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/giani-bernini-softy-leather-all-in-one-wallet-created-for-macys?ID=508806&CategoryID=26846&isDlp=true">Giani BerniniSofty Leather All In One Wallet, Crea...</a>
               </h4>
-              <p class="card-text">Screen Size (Diag.): 48"Backlight Type: LEDResolution: 1080pEffective Refresh Rate: 60Hz</p>
-              <p class="card-text">Price: $249</p>
-              <p class="card-text">Shop: WALMART</p>
+              <p class="card-text">Giani Bernini&amp;#x27;s All-In-One Softy wallet organizes your essentials and complements any handbag, in soft leather.Leather exclusive of trimSnap tab closure at front; zip closure at back compartmentTopstitch detailsInterior features signature lining...</p>
+              <p class="card-text">Price: $59.50</p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/1/optimized/1660391_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.walmart.com/ip/Sceptre-50-Class-FHD-1080P-LED-TV-X505BV-FSR/631796609">Sceptre 50" Class FHD (1080P) LED TV (X505BV-FSR)</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/giani-bernini-sandalwood-leather-all-in-one-wallet-created-for-macys?ID=956962&CategoryID=26846&isDlp=true">Giani BerniniSandalwood Leather All in One Wallet,...</a>
               </h4>
-              <p class="card-text">Screen Size (Diag.): 49.5"Backlight Type: LEDResolution: 1080p</p>
-              <p class="card-text">Price: $229</p>
-              <p class="card-text">Shop: WALMART</p>
+              <p class="card-text">Sleek and stylish. Keep your currency in check with this Giani Bernini wallet styled in soft sandalwood leather that unzips to reveal a plethora of pockets for on-th-go organization.Giani Bernini walletSandalwood leatherSnap tab closureSilver-tone ha...</p>
+              <p class="card-text">Price: $59.50</p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_2f2e8a45-24ef-422c-80d7-f9e7a0b4b081" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/2/optimized/10779262_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.target.com/p/polaroid-40gsr3000fc-40-1080p-led-tv-black/-/A-52148101">Polaroid 40GSR3000FC 40" 1080P LED TV - Black</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/dkny-mens-leather-passcase-wallet?ID=6557885&CategoryID=47665&isDlp=true">DKNYMen's Leather Passcase Wallet</a>
               </h4>
-              <p class="card-text">Take advantage of Polaroid&amp;#x27;s history of picture-perfect images with the Polaroid 40&amp;quot; 1080p LED HDTV. A perfect addition to any home entertainment array, this slim screen provides premium picture quality blended with contemporary design sens...</p>
-              <p class="card-text">Price: $219.99</p>
-              <p class="card-text">Shop: TARGET</p>
+              <p class="card-text">A flip-up pass case bring enhanced function to this wallet from DKNY, in classic leather with a gleaming logo at the front.Exterior Approx. Dimensions: 3.5&amp;quot; x 4&amp;quot;Interior: credit card slots; passcaseExterior: logoLeatherSpot cleanImportedSav...</p>
+              <p class="card-text">Price: $55.00</p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/9/optimized/10181239_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.walmart.com/ip/SAMSUNG-32-Class-HD-720P-Smart-LED-TV-UN32M4500/996476748">SAMSUNG 32&amp;quot; Class HD (720P) Smart LED TV (UN3...</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/giani-bernini-softy-leather-index-wallet-created-for-macys?ID=620323&CategoryID=26846&isDlp=true">Giani BerniniSofty Leather Index Wallet, Created f...</a>
               </h4>
-              <p class="card-text">Diagonal Screen Size: 31.5"Effective Refresh Rate: 60HzHDMI/USB: 2/1Wall-Mountable: Yes</p>
-              <p class="card-text">Price: $214</p>
-              <p class="card-text">Shop: WALMART</p>
+              <p class="card-text">Go on, take everything: the interior of this soft, waxy pebbled leather indexer from Giani Bernini offers 9 card slots among its helpful features.Giani Bernini bagSilhouette is based off 5&amp;#x27;9&amp;quot; modelLeatherSnap-tab closureContrast stitching t...</p>
+              <p class="card-text">Price: $54.50</p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/DISTRESSED+BLK%2FBRN+60IN+TV+STAND+lifestyle?set=imageURL%5B%2Fimages%2Fproduct%2F149%2F810369327.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/6/optimized/9239016_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/60-black-rustic-brown-tv-stand/p810369327?pos=1:29&Ntt=television">Ameriwood 60" Black & Rustic Brown TV Stand</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/guess-augustina-boxed-zip-around-wallet-created-for-macys?ID=5537587&CategoryID=26846&isDlp=true">GUESSAugustina Boxed Zip Around Wallet, Created fo...</a>
               </h4>
-              <p class="card-text">A stylish and modern Ameriwood TV stand great for keeping your media devices and accessories organized while your entertainment space is clutter-free. Featuring two open shelves and two cabinet spaces for concealed storage, the TV stand offers plenty...</p>
-              <p class="card-text">Price: $199.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/CHERRY+55IN+TV+STAND+lifestyle?set=imageURL%5B%2Fimages%2Fproduct%2F14%2F810369277.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/55-cherry-tv-stand/p810369277?pos=1:47&Ntt=television">Ameriwood 55" Cherry TV Stand</a>
-              </h4>
-              <p class="card-text">Give your entertainment space a rustic makeover with this stylish TV stand with plenty of organizational space. This TV console comes with two sliding glass doors and customizable size shelves to fit your needs. The glass doors at each end create two...</p>
-              <p class="card-text">Price: $199.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_05ce7cc5-aaba-46a1-a31c-9530e54d2312" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.target.com/p/atyme-40-fhd-1080p-led-tv-395ah7hd/-/A-51983798">ATYME 40" FHD (1080P) LED TV (395AH7HD)</a>
-              </h4>
-              <p class="card-text">Enjoy a dazzling picture on a 40” LED HDTV from Atyme. Immerse yourself in 1080p resolution that provides a bright, rich viewing experience. The 3 HDMI ports allow you to connect multiple HD devises extending your entertainment experience to include ...</p>
-              <p class="card-text">Price: $199.99</p>
-              <p class="card-text">Shop: TARGET</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Antique+Dark+Brown+2-Drawer+TV+Stand+lifestyle?set=imageURL%5B%2Fimages%2Fproduct%2F240%2F810389680-2.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/antique-dark-brown-2-drawer-tv-stand/p810389680?pos=1:12&Ntt=television">Antique Dark Brown 2-Drawer TV Stand</a>
-              </h4>
-              <p class="card-text">This dark brown TV Stand features a simple body with eye-catching appeal that makes it perfect for any room. A spacious tabletop, open shelf and two deep drawers provide ample storage for all of your media needs. A neutral, classic finish allows this...</p>
-              <p class="card-text">Price: $199.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/DISTRESSED+GREY+60IN+TV+STAND+lifestyle?set=imageURL%5B%2Fimages%2Fproduct%2F151%2F810369328.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/60-gray-rustic-brown-tv-stand/p810369328?pos=1:50&Ntt=television">Ameriwood 60" Gray & Rustic Brown TV Stand</a>
-              </h4>
-              <p class="card-text">The Ameriwood gray 60&amp;quot; TV stand keeps your media devices organized and your entertainment space free of clutter. Featuring two open shelves and two cabinet spaces for concealed storage, this contemporary TV stand offers plenty of room for your m...</p>
-              <p class="card-text">Price: $199.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/50+Inche+Mounted+Wood+TV+Stand+with+Displayed+TV+Room+View?set=imageURL%5B%2Fimages%2Fproduct%2F68%2F810117496-2.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/50-mounted-wood-tv-stand/p810117496?pos=1:17&Ntt=television">50" Mounted Wood TV Stand</a>
-              </h4>
-              <p class="card-text">Make your living room the center of attention with this 50&amp;quot; mounted wood TV stand. This rustic, hardwood-constructed media center is guaranteed to be a sturdy, reliable addition to any living space. Featuring stylish design, this piece will blen...</p>
-              <p class="card-text">Price: $199.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/60+IN+WEATHERED+DRIFTWOOD+TV+STAND?set=imageURL%5B%2Fimages%2Fproduct%2F163%2F810344694-3.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/60-weathered-driftwood-tv-stand/p810344694?pos=1:54&Ntt=television">Just Home 60" Weathered Driftwood TV Stand</a>
-              </h4>
-              <p class="card-text">Create a stylish spot for your living room TV and electronics with this weathered driftwood TV stand. The charming light brown finish adds rustic flair to your home&amp;#x27;s furnishings. Constructed with two shelving compartments for open concept stora...</p>
-              <p class="card-text">Price: $199.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/52+Inch+Faux+Marble+TV+Stand+with+TV+Displayed+Room+View?set=imageURL%5B%2Fimages%2Fproduct%2F235%2F810298911.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/52-faux-marble-tv-stand/p810298911?pos=1:6&Ntt=television">52" Faux Marble TV Stand</a>
-              </h4>
-              <p class="card-text">Show love to your favorite TV, gaming systems, stereos and more by housing them on a secure and stylish TV stand. The wooden stand is beautifully colored in a rich, dark cherry finish with a faux marble top that creates a striking contrast and stunni...</p>
-              <p class="card-text">Price: $199.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/60+IN+TALL+BLACK+TV+MEDIA+STAND?set=imageURL%5B%2Fimages%2Fproduct%2F160%2F810344693-3.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/60-black-tv-media-stand/p810344693?pos=1:55&Ntt=television">Just Home 60" Black TV Media Stand</a>
-              </h4>
-              <p class="card-text">Enhance your entertainment space in effortless style with this classic black TV stand. Constructed with sleek contemporary lines on a bold, raised frame, the wide table top is perfect for displaying flat screen or LCD televisions up to 60&amp;quot;. Two ...</p>
-              <p class="card-text">Price: $199.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.walmart.com/ip/Sceptre-43-Class-FHD-1080P-LED-TV-X435BV-F/698772381">Sceptre 43" Class FHD (1080P) LED TV (X435BV-F)</a>
-              </h4>
-              <p class="card-text">Screen Size (Diag.): 42.5"Backlight Type: LEDResolution: 1080pEffective Refresh Rate: 60HzAspect Ratio: 16:9</p>
-              <p class="card-text">Price: $189</p>
-              <p class="card-text">Shop: WALMART</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.walmart.com/ip/Sharp-40-Class-FHD-1080p-LED-TV-LC-40Q3070U/817165819">Sharp 40" Class FHD (1080p) LED TV (LC-40Q3070U)</a>
-              </h4>
-              <p class="card-text">Merchandise</p>
-              <p class="card-text">Price: $189</p>
-              <p class="card-text">Shop: WALMART</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://90a1c75758623581b3f8-5c119c3de181c9857fcb2784776b17ef.ssl.cf2.rackcdn.com/476227_255414_01_front_thumbnail.jpg" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.microcenter.com/product/476227/32lj500b-32-class-(315-diag)-720p-led-tv">LG 32LJ500B 32" Class (31.5" Diag.) 720p LED TV</a>
-              </h4>
-              <p class="card-text">LED uses tiny, energy-efficient light-emitting diodes to illuminate the picture. The new standard in HDTVs, LED is superior to older CCFL technology, making slimmer televisions possible, with amazing brightness, clarity and color detail.</p>
-              <p class="card-text">Price: $179.99</p>
-              <p class="card-text">Shop: MICROCENTER</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/ESPRESSO+63IN+3+SHELF+TV+STAND+lifestyle?set=imageURL%5B%2Fimages%2Fproduct%2F23%2F810369280.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/63-espresso-3-shelf-tv-stand/p810369280?pos=1:51&Ntt=television">Ameriwood 63" Espresso 3-Shelf TV Stand</a>
-              </h4>
-              <p class="card-text">Show off your big screen on this beautifully crafted TV stand. The galaxy style of this stand creates a floating shelf look that offers storage between the two metal back supports for books or DVDs. Use the lower shelves to set up your cable box, DVD...</p>
-              <p class="card-text">Price: $179.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/CONCRETE+65IN+TV+STAND+lifestyle?set=imageURL%5B%2Fimages%2Fproduct%2F20%2F810369279.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/65-faux-concrete-tv-stand/p810369279?pos=1:34&Ntt=television">Ameriwood 65" Faux Concrete TV Stand</a>
-              </h4>
-              <p class="card-text">Give your living room, den or basement an edgy urban touch with this faux concrete TV stand. Enjoy the trendy concrete look without the bulk thanks to specially laminated paper that keeps this piece stylish as well as incredibly lightweight. The top ...</p>
-              <p class="card-text">Price: $179.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/48+inches+Rustic+2+Drawer+TV+Stand+lifestyle?set=imageURL%5B%2Fimages%2Fproduct%2F95%2F810372215-2.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/48-rustic-2-drawer-tv-stand/p810372215?pos=1:53&Ntt=television">Stratford 48" Rustic 2-Drawer TV Stand</a>
-              </h4>
-              <p class="card-text">Add chic design to your living or family room using this TV stand. Featuring reclaimed wood-like drawers and top shelf, the stand easily brings rustic charm to any living setting. Store away remotes and controllers in the drawers as the two metal she...</p>
-              <p class="card-text">Price: $169.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/65IN+3+DRAWER+BLACK+MELAMINE+TV+STAND?set=imageURL%5B%2Fimages%2Fproduct%2F65%2F810361627-1.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/65-black-3-drawer-melamine-tv-stand/p810361627?pos=1:36&Ntt=television">Just Home 65" Black 3-Drawer Melamine TV Stand</a>
-              </h4>
-              <p class="card-text">Bring clean, sophisticated design into your entertainment space with this sleek TV stand. Stained in a decorative black finish, the contemporary stand features open compartments for media consoles and equipment to satisfy all your technology needs. T...</p>
-              <p class="card-text">Price: $169.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://i5.wal.co/asr/6905f23e-dc0b-4e9b-bf2f-9e6bb0ba300f_1.b66d95a60d8ce897061107cb69d5f456.jpeg-ef68ba3a4d980ba9af8a1e9f2ac39f3a4e6fe091-optim-450x450.jpg?odnBg=FFFFFF" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.walmart.com/ip/Sharp-32-Class-HD-720p-Smart-LED-TV-LC-32Q5230U/497554732">Sharp 32&amp;quot; Class HD (720p) Smart LED TV (LC-32...</a>
-              </h4>
-              <p class="card-text">Screen Size (Diag.): 32"Backlight Type: LEDResolution: 720pEffective Refresh Rate: 60HzSmart Functionality: yes</p>
-              <p class="card-text">Price: $169</p>
-              <p class="card-text">Shop: WALMART</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_541c2634-ee4e-4d36-9adc-692edb0899a2" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.target.com/p/tcl-32-720p-60hz-roku-smart-led-tv-black-32s305/-/A-50480431">TCL 32&amp;quot; 720p 60Hz Roku Smart LED TV - Black (...</a>
-              </h4>
-              <p class="card-text">You&amp;#x27;d want to spend more time at home when you have the 32&amp;quot; 720p 60Hz Roku
-Smart LED TV - Black (32S305) from TCL. The TCL Roku TV gives access to over
-450,000 movies, TV episodes, cable box and even your gaming console with a
-simple interf...</p>
-              <p class="card-text">Price: $159.99</p>
-              <p class="card-text">Shop: TARGET</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_3c15c2ab-ce51-4cef-8ad3-28d3a93975b3" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.target.com/p/element-32-smart-720p-60hz-led-tv-black-elst3216h/-/A-51362052">Element 32&amp;quot; Smart 720p 60Hz LED TV - Black (E...</a>
-              </h4>
-              <p class="card-text">Get ready to have a never before TV experience with this Element 32 inch Smart
-720p 60Hz LED TV. This smart TV comes with full HD resolution and with the best
-LED back-lit technology, which provides you with stunning clear display. This
-smart TV also...</p>
-              <p class="card-text">Price: $149.99</p>
-              <p class="card-text">Shop: TARGET</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/ESPRESSO+47IN+3+SHELF+TV+STAND+lifestyle?set=imageURL%5B%2Fimages%2Fproduct%2F25%2F810369281.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/47-espresso-3-shelf-tv-stand/p810369281?pos=1:45&Ntt=television">Ameriwood 47" Espresso 3-Shelf TV Stand</a>
-              </h4>
-              <p class="card-text">From large to small spaces, this TV stand will look great in any scenario. The unique floating shelf style creates an almost free-standing look that offers storage between the metal back supports for books or DVDs. Use the two lower shelves to set up...</p>
-              <p class="card-text">Price: $149.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images-na.ssl-images-amazon.com/images/I/61T5JG2a6zL._SL1000_.jpg" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.amazon.com/Toshiba-32LF221U19-32-inch-720p-Smart/dp/B07FPR6FMJ/ref=sr_1_3/ref=sr_1_acs_bss_3_1?s=tv&ie=UTF8&qid=1547513413&sr=1-3-acs&keywords=television">Toshiba 32LF221U19 32-inch 720p HD Smart LED TV - ...</a>
-              </h4>
-              <p class="card-text">Toshiba HD Smart TV – Fire TV Edition delivers 720p picture quality with deep blacks and rich colors.With the Fire TV experience built-in, enjoy tens of thousands of channels, apps, and Alexa skills, including Netflix, Prime Video, Hulu, HBO, SHOWTIM...</p>
-              <p class="card-text">Price: $149.99</p>
-              <p class="card-text">Shop: AMAZON</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/ESPRESSO%2FBEIGE+50IN+TV+STAND+lifestyle?set=imageURL%5B%2Fimages%2Fproduct%2F37%2F810369286.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/50-espresso-brown-beige-tv-stand/p810369286?pos=1:19&Ntt=television">Ameriwood 50" Espresso Brown & Beige TV Stand</a>
-              </h4>
-              <p class="card-text">Update your living room using this modern two-tone TV stand with both open and closed storage for all your entertainment needs. The large top surface is curved, providing even more space for your 50&amp;quot; TV. The thick outer frame is a rustic dark gr...</p>
-              <p class="card-text">Price: $149.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_1d94dc86-81c5-480f-92e8-a7155abba5b5" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.target.com/p/atyme-32-hd-720p-led-tv-320gm5hd/-/A-51983268">ATYME 32" HD (720P) LED TV (320GM5HD)</a>
-              </h4>
-              <p class="card-text">Relax and enjoy a brilliant 32” LED HDTV from Atyme. The 720p resolution provides a bright, vivid picture. The compact size of this 32&amp;quot; TV makes it a great fit for many spaces in your home. The USB drive offers you the option to view jpeg pictur...</p>
-              <p class="card-text">Price: $129.99</p>
-              <p class="card-text">Shop: TARGET</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_2d715be3-0178-4c77-940c-a2b0ec25af1b" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.target.com/p/element-22-class-1080p-60hz-led-tv-eleft222/-/A-15262601">Element 22" Class 1080p 60Hz LED TV (ELEFT222)</a>
-              </h4>
-              <p class="card-text">This 22” Element LED TV has a sleek, thin design that is perfect for your bedroom, dorm room or kitchen. Watch in full HD, 1080P with a 60Hz refresh rate. This TV includes 2 HDMI inputs for your favorite Blu-ray player or gaming system. It is mountab...</p>
-              <p class="card-text">Price: $129.99</p>
-              <p class="card-text">Shop: TARGET</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_a767b682-db64-4afe-bcd9-29f887c7f228" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.target.com/p/polaroid-32gsr3000fc-32-flat-panel-720p-led-tv/-/A-51342454">Polaroid 32GSR3000FC 32" Flat Panel 720p LED TV</a>
-              </h4>
-              <p class="card-text">Gather family and friends for movie nights or cheering on your favorite teams over the Polaroid 32&amp;quot; Flat Panel 720p LED TV. This TV features a sleek, slim design that&amp;#x27;s great for your TV console or hanging on a wall. You&amp;#x27;ll feel like y...</p>
-              <p class="card-text">Price: $129.99</p>
-              <p class="card-text">Shop: TARGET</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_c3568e75-6dc5-4111-be9b-3abd8cdac087" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.target.com/p/lg-24-class-720p-60hz-led-hdtv-24lf454b/-/A-15193616">LG 24" Class 720p 60Hz LED HDTV - 24LF454B</a>
-              </h4>
-              <p class="card-text">Smaller spaces deserve serious picture quality, too. This compact TV delivers a crisp high-definition picture at 60Hz (image refreshed 60 times per second).</p>
-              <p class="card-text">Price: $129.99</p>
-              <p class="card-text">Shop: TARGET</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/ESPRESSO+50IN+TV+STAND+lifestyle?set=imageURL%5B%2Fimages%2Fproduct%2F231%2F810369354.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/50-espressso-corner-tv-stand/p810369354?pos=1:11&Ntt=television">Ameriwood 50" Espressso Corner TV Stand</a>
-              </h4>
-              <p class="card-text">Utilize your whole living space by using this corner TV stand. The contemporary design is the perfect addition to your living room featuring an espresso finish and silver accents. Diverse storage options include two top open cubbies for media compone...</p>
-              <p class="card-text">Price: $119.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/DISTRESSED+GRAY+OAK+50IN+TV+STAND+lifestyle?set=imageURL%5B%2Fimages%2Fproduct%2F213%2F810369342.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/50-gray-oak-distressed-corner-tv-stand-/p810369342?pos=1:32&Ntt=television">Ameriwood 50" Gray Oak Distressed Corner TV Stand</a>
-              </h4>
-              <p class="card-text">This corner stand gives you the perfect opportunity to use an empty corner in your room and still have the functionality of a TV stand. Featuring light brown woodgrain finish and black accents delivering a stunning look that will add character to you...</p>
-              <p class="card-text">Price: $119.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/BLACK+50IN+TV+STAND+lifestyle?set=imageURL%5B%2Fimages%2Fproduct%2F210%2F810369341.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/50-black-corner-tv-stand/p810369341?pos=1:21&Ntt=television">Ameriwood 50" Black Corner TV Stand</a>
-              </h4>
-              <p class="card-text">The contemporary design of the black Ameriwood TV stand is the perfect stylish addition to your living room. The black woodgrain finish and silver accents create a stunning look that will add character to any space. Bring utility to an empty corner i...</p>
-              <p class="card-text">Price: $119.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/BLACK%2FCHERRY+50IN+TV+STAND+lifestyle?set=imageURL%5B%2Fimages%2Fproduct%2F216%2F810369343.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/50-black-cherry-corner-tv-stand/p810369343?pos=1:2&Ntt=television">Ameriwood 50" Black & Cherry Corner TV Stand</a>
-              </h4>
-              <p class="card-text">Maximize your living room or family room with this perfectly stylish contemporary corner TV stand. The modern black finish with cherry woodgrain cabinets and silver accents create a look that will add character to any space. A functional space saver,...</p>
-              <p class="card-text">Price: $119.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_30188133-cb74-4798-9641-4cb8d4a1d20a" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.target.com/p/element-24-720p-60hz-led-tv-black-eleft2416/-/A-17189712">Element 24" 720P 60HZ LED TV - Black (ELEFT2416)</a>
-              </h4>
-              <p class="card-text">Versatility is the name of the game with the Element HDTV. Featuring the most advanced full-array LED back-lit technology and 720p resolution, each TV delivers a crystal-clear picture with vibrant colors and sharp contrasts. Sophisticated HDMI compat...</p>
-              <p class="card-text">Price: $99.99</p>
-              <p class="card-text">Shop: TARGET</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/shopping/product/107805434877927011?q=television&tbas=0&biw=1920&bih=966&prds=paur:ClkAsKraX7kh2u1pghqQ4nQCVHzsqS8SLSFtWupBuD1NjpkGumW8d-k_x8tPSJ9CABj-weuMRFlQKTHuDD5snlxWhUNGG2DquVDP7SQruJQy0AFmRNtHZLINzBIZAFPVH72ZYmTd6FRK59DhFXylYC-IpxKQNw&sa=X&ved=0ahUKEwjQ4vGSuNPfAhWLUhUIHbSwDbgQ8wII4QY">Samsung Flat Panel Television Un32eh4003fxza</a>
-              </h4>
-              <p class="card-text"></p>
-              <p class="card-text">Price: $99.99</p>
-              <p class="card-text">Shop: GOOGLE</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/shopping/product/8604470452716451929?q=television&tbas=0&biw=1920&bih=966&prds=paur:ClkAsKraX9nJjZSieBYF5PUWCjw1o2st-K1K9WGGm2xLEwUU9BWQDOR4btn73pJ9RgZucvL3PnCml_zy2bnndAM6D4h19ARBpqzTLlePC7EQWhIsS3o4FibYiBIZAFPVH70Tm_7f8idQtyYfrtgNantNcZg3-A&sa=X&ved=0ahUKEwjQ4vGSuNPfAhWLUhUIHbSwDbgQ8wII7gY">Venturer PLV97157H 15&amp;quot; Class 720p LED LCD TV ...</a>
-              </h4>
-              <p class="card-text"></p>
-              <p class="card-text">Price: $99.99</p>
-              <p class="card-text">Shop: GOOGLE</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Black+60+Inch+Fourt+Shelf+TV+Stand+with+TV+Displayed+on+White+Background?set=imageURL%5B%2Fimages%2Fproduct%2F209%2F810059447.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/60-4-shelf-tv-stand/p810059447?pos=1:10&Ntt=television">Ameriwood 60" 4-Shelf TV Stand</a>
-              </h4>
-              <p class="card-text">Give your entertainment system a clean, minimalist look with this four shelf stand from Ameriwood. Great for TVs up to 60&amp;quot;, this stand features a sleek silhouette of straight lines for a simple, modern profile. The entertainment console can be c...</p>
-              <p class="card-text">Price: $99.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/44+inch+Metal+and+Glass+Curved+TV+Stand+lifestyle?set=imageURL%5B%2Fimages%2Fproduct%2F11%2F810409389.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/44-metal-glass-curved-tv-stand/p810409389?pos=1:44&Ntt=television">44" Metal & Glass Curved TV Stand</a>
-              </h4>
-              <p class="card-text">Bring an updated look to your media room or living area using this sleek and stunning TV stand. Its modern curved silhouette features a striking black finish on rounded details, a mesh backer accent and tempered glass shelving. Whether it&amp;#x27;s for ...</p>
-              <p class="card-text">Price: $99.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/shopping/product/17384727751847651734?q=television&tbas=0&biw=1920&bih=966&prds=paur:ClkAsKraX9H0_Nc4Wo0YyksS7w63fj-ZLBrYWcLEN9LC-gnJ2NNqtGLMcl_LpJFMzLYuJGn5YXiXg8IPZpYlLY1J2J3iQ0tSsnyEQM4jRnGqbno3up0sIVP0xRIZAFPVH70c35McWjCPtDpbrx_5skbgXjPArw&sa=X&ved=0ahUKEwjQ4vGSuNPfAhWLUhUIHbSwDbgQ8wII0gY">RCA RT3205 - 32" LED TV - 720p - Black</a>
-              </h4>
-              <p class="card-text"></p>
-              <p class="card-text">Price: $99.99</p>
-              <p class="card-text">Shop: GOOGLE</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/shopping/product/9553923594219077282?q=television&tbas=0&biw=1920&bih=966&prds=paur:ClkAsKraX1-w8cBRoWFJZRO-4h4hPxco_ZLOn227nkObR2jLtaXzQLDiS5ujKYi6IqvVSr3Y-HloUeW7KI-tQaH-hPn6qQjzMQn_SJ481qGoDB6qL7QYBjX6exIZAFPVH71nQQg1KoweSiJfLA3Eg3Wkk0_2uw&sa=X&ved=0ahUKEwjQ4vGSuNPfAhWLUhUIHbSwDbgQ8wIIxQY">Trexonic 970103850M - 12" LED TV</a>
-              </h4>
-              <p class="card-text"></p>
-              <p class="card-text">Price: $99.49</p>
-              <p class="card-text">Shop: GOOGLE</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.walmart.com/ip/RCA-32-Class-HD-720P-LED-TV-RLDED3258A/54898730">RCA 32" Class HD (720P) LED TV (RLDED3258A)</a>
-              </h4>
-              <p class="card-text">Screeen Size (Diag.): 32"Backlight Type: LEDRefresh Rate: 60HzSmart Functionality: no</p>
-              <p class="card-text">Price: $99</p>
-              <p class="card-text">Shop: WALMART</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.walmart.com/ip/Sceptre-32-Class-HD-720P-LED-TV-X322BV-SR/55427159">Sceptre 32" Class HD (720P) LED TV (X322BV-SR)</a>
-              </h4>
-              <p class="card-text">Diagonal screen size: 31.5"Refresh rate: 60HzBacklight: LEDSmart Functionality: NoInputs: (HDMI/USB): 2/1</p>
-              <p class="card-text">Price: $99</p>
-              <p class="card-text">Shop: WALMART</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/aclk?sa=l&ai=DChcSEwic-POSuNPfAhWOlO0KHevqBQMYABAfGgJkZw&sig=AOD64_1iwTZZF1SbzZuqoLQFrKwR0jEL_A&ctype=5&q=&ved=0ahUKEwjQ4vGSuNPfAhWLUhUIHbSwDbgQ2CkItAY&adurl=">Insignia NS32DR310NA17 32" 720p HD LED Internet TV</a>
-              </h4>
-              <p class="card-text"></p>
-              <p class="card-text">Price: $90.99</p>
-              <p class="card-text">Shop: GOOGLE</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://target.scene7.com/is/image/Target/GUEST_1f66d9e0-7616-441e-8e52-ae7b00de6c3d" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.target.com/p/element-19-class-720p-60hz-led-tv-eleft195/-/A-14715463">Element 19" Class 720p 60Hz LED TV (ELEFT195)</a>
-              </h4>
-              <p class="card-text">Versatility is the name of the game with the Element HDTV. Featuring the most advanced full-array LED back-lit technology and 720p resolution, each TV delivers a crystal-clear picture with vibrant colors and sharp contrasts. Sophisticated HDMI compat...</p>
-              <p class="card-text">Price: $89.99</p>
-              <p class="card-text">Shop: TARGET</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/shopping/product/4988577490740864747?q=television&tbas=0&biw=1920&bih=966&prds=paur:ClkAsKraXwUmRwDDp7dGKCSNY6-jJu_RyzCSKZVo7_8HYhxnf5yVNFTXUZMEK6a3hWR5MzVpqhRSe0-ayo7pFXTmlEb9059Cqxax2gLLUnRqKBm3tlrrFQVVORIZAFPVH715oD0K6aqNz7xmBILYbb4kIO2Idg&sa=X&ved=0ahUKEwjQ4vGSuNPfAhWLUhUIHbSwDbgQ8wIIowY">Sceptre 32 inch Class HD (720P) LED TV (X322BV-SR)...</a>
-              </h4>
-              <p class="card-text"></p>
-              <p class="card-text">Price: $89.99</p>
-              <p class="card-text">Shop: GOOGLE</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/shopping/product/16145190907711730817?q=television&tbas=0&biw=1920&bih=966&prds=paur:ClkAsKraXxpIF9rp0qhvOKBNk8oYK01_uRYWfSUCrx423b7X4XFyDMAVS1IVr4ntYrCDn05lacdYnXLoYfX-jFqn375aqn0mfvmC0Voz3fcOm0f32Vuh84zCWxIZAFPVH70qWmzU37owWEWw6ere7efgrYX_bg&sa=X&ved=0ahUKEwjQ4vGSuNPfAhWLUhUIHbSwDbgQ8wIIkgY">Sanyo FW32D06F - 32" LED TV - 720p</a>
-              </h4>
-              <p class="card-text"></p>
-              <p class="card-text">Price: $88.88</p>
-              <p class="card-text">Shop: GOOGLE</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/shopping/product/742654580626886665?q=television&tbas=0&biw=1920&bih=966&prds=paur:ClkAsKraX_gZAXIpi6Y7P-15POPgBv2J0haSD2FAc3ckVTREQb_xA1rkkMBsaPSQpl4H8yhSkD2YZN7QzvmfuxaVRriUWXwYGnF3xnIVuDuYmKWg1TsJILsvvxIZAFPVH70Lpb0TDv6l0itqpzFgBZupcYYitQ&sa=X&ved=0ahUKEwjQ4vGSuNPfAhWLUhUIHbSwDbgQ8wIIhQY">Rca Home And Travel 19 inch Led Hd Tv - With Ac/Dc...</a>
-              </h4>
-              <p class="card-text"></p>
-              <p class="card-text">Price: $87.00</p>
-              <p class="card-text">Shop: GOOGLE</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/shopping/product/13845638636048653184?q=television&tbas=0&biw=1920&bih=966&prds=paur:ClkAsKraX0OD35mWMMKoQHrwQ7wIOSWF9I9Irtt47cDWHTGFyjeO2KUzXSrAYFncCDAPbVhA-VabQtC4TV2b-KOJMQ0CCcHiTtMGloKU8QRErIYijMIeKKIkYxIZAFPVH72xFdCKnHoPJFpNvp7cwIkDysD3Fg&sa=X&ved=0ahUKEwjQ4vGSuNPfAhWLUhUIHbSwDbgQ8wII8wU">LG 24LF452B - 24" LED TV - 720p</a>
-              </h4>
-              <p class="card-text"></p>
-              <p class="card-text">Price: $85.00</p>
-              <p class="card-text">Shop: GOOGLE</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/RED+COPPER+10PC+SET?set=imageURL%5B%2Fimages%2Fproduct%2F44%2F810357712.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/red-copper-10-piece-cookware-set/p810357712?pos=1:33&Ntt=television">As Seen On TV Red Copper 10-Piece Cookware Set</a>
-              </h4>
-              <p class="card-text">Tired of scraping, scrubbing and all the scratches? This Red Copper cookware set has you covered! The non-stick cooking surfaces deliver fast and even heating for delicious food that slips right out of the pan. From whipping up your favorite fried di...</p>
-              <p class="card-text">Price: $80.00</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/shopping/product/18144747199276192582?q=television&tbas=0&biw=1920&bih=966&prds=paur:ClkAsKraXzv1CVRsbI57E8JXTHW4dNuNNo0iqD9ULYCL-teRFP2c8P27wZxN-srAz9H_x8jztqQQo08P7R2b_utvuLiJZRoc6epncV6PFpvq6R4d93iSTxDxaRIZAFPVH73v1XHkvpnPHTsd0IP_R-MN1vDPSg&sa=X&ved=0ahUKEwjQ4vGSuNPfAhWLUhUIHbSwDbgQ8wIIuwU">Insignia NS-19D310NA19 - 19" LED TV - 720p - Black</a>
-              </h4>
-              <p class="card-text"></p>
-              <p class="card-text">Price: $79.99</p>
-              <p class="card-text">Shop: GOOGLE</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/shopping/product/6146674672591357198?q=television&tbas=0&biw=1920&bih=966&prds=paur:ClkAsKraX_H_hg8rTUn-E8NeAfvY10DYpIjvTPainnyTLpcLrPw6tsZoPoEYOFZFFvRH5xxPQ9ehhuq0NU9v-toD_5gz4pdSoRhliEeYgIHYVrEBdsJ5WzvWGBIZAFPVH72fOb83rrC6FpwV7HOxal-tWJWAaA&sa=X&ved=0ahUKEwjQ4vGSuNPfAhWLUhUIHbSwDbgQ8wIIqgU">Sceptre E195BV-SR - 19" LED TV - 720p - Black</a>
-              </h4>
-              <p class="card-text"></p>
-              <p class="card-text">Price: $69.99</p>
-              <p class="card-text">Shop: GOOGLE</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/shopping/product/16746358928994537406?q=television&tbas=0&biw=1920&bih=966&prds=paur:ClkAsKraX87OylMrawz7MqdR7REy8YqtynQGpCQA7qQbuTdyPDlS-PEBqkNcEyOIk-p0jzgG1DSxts--3xIoVvUN_rPdOPD4N4qIkDmihO-YrTDeTYciiga4xRIZAFPVH73Mg0Y-PWY6XhQgybOuDAbkN3A7-Q&sa=X&ved=0ahUKEwiJoYz3yO7fAhWIjFkKHX5tABcQ8wIIzgU">Insignia NS-24D310NA17 - 24" LED TV - 720p</a>
-              </h4>
-              <p class="card-text"></p>
-              <p class="card-text">Price: $66.43</p>
-              <p class="card-text">Shop: GOOGLE</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/shopping/product/7773297008399594845?q=television&tbas=0&biw=1920&bih=966&prds=paur:ClkAsKraX6e2D7XejdhgXhRO0_2KUpqDNuEV9g_vF9MygQhmO3i9Tvv3UVw6ri6UnmBTYQSpMtuVLnBTjKWE4NLgzOA1-sKTzlyMLsAIZOFsFssAjJCVRsx0LxIZAFPVH73_l-9U51Q4xuzy5L73RcpfKHOepg&sa=X&ved=0ahUKEwiJoYz3yO7fAhWIjFkKHX5tABcQ8wIIvwU">Axess TV1703-9 - 9&amp;quot; LED TV with Rechargeable ...</a>
-              </h4>
-              <p class="card-text"></p>
-              <p class="card-text">Price: $64.75</p>
-              <p class="card-text">Shop: GOOGLE</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/aclk?sa=l&ai=DChcSEwjW6Y_3yO7fAhUBRIYKHSgnAlUYABAjGgJ2dQ&sig=AOD64_0YwTyeaVMfJY0yQNuVomy32oajcA&ctype=5&q=&ved=0ahUKEwiJoYz3yO7fAhWIjFkKHX5tABcQ2CkItwU&adurl=">Emerson EMERSON TV Good / Televisions</a>
-              </h4>
-              <p class="card-text"></p>
-              <p class="card-text">Price: $60.00</p>
-              <p class="card-text">Shop: GOOGLE</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/aclk?sa=l&ai=DChcSEwjW6Y_3yO7fAhUBRIYKHSgnAlUYABAhGgJ2dQ&sig=AOD64_0vm6JjSuUNWIAlLdXK0jdLWZD5yQ&ctype=5&q=&ved=0ahUKEwiJoYz3yO7fAhWIjFkKHX5tABcQ2CkIrwU&adurl=">Samsung Dynex 29 inch Tv New / Televisions</a>
-              </h4>
-              <p class="card-text"></p>
-              <p class="card-text">Price: $58.00</p>
-              <p class="card-text">Shop: GOOGLE</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/aclk?sa=l&ai=DChcSEwjW6Y_3yO7fAhUBRIYKHSgnAlUYABAfGgJ2dQ&sig=AOD64_3ba18fUnVdScfrIGBWlCAyMwHBhA&ctype=5&q=&ved=0ahUKEwiJoYz3yO7fAhWIjFkKHX5tABcQ2CkIpQU&adurl=">LG LG 4K HDTV Fair / Televisions</a>
-              </h4>
-              <p class="card-text"></p>
-              <p class="card-text">Price: $57.00</p>
-              <p class="card-text">Shop: GOOGLE</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/shopping/product/13351917303557919144?q=television&tbas=0&biw=1920&bih=966&prds=paur:ClkAsKraX9jqPwlKzEka80gMTdAGijEOFvBmBupQzHufNIoOnVhfMZ7DFDA2sbx53cGuTehWAYwj_iWq4odgxDJmVHgVPfgnMELana_iYfcELQdM9OZRd9WF_BIZAFPVH71doFt1pGB3j7DlaYTDGwliND_8fw&sa=X&ved=0ahUKEwiJoYz3yO7fAhWIjFkKHX5tABcQ8wIIlwU">Supersonic SC-143 - 4.3" LCD TV - Portable</a>
-              </h4>
-              <p class="card-text"></p>
-              <p class="card-text">Price: $53.59</p>
-              <p class="card-text">Shop: GOOGLE</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/shopping/product/10054591763073618208?q=television&tbas=0&biw=1920&bih=966&prds=paur:ClkAsKraXzhOdgTvqUlEpg71pSsTYu0R3mY96wQrvbbNtY3vDeYv8UmFpPznZByH-ElTdjDKTs7Iw-bmptQV4B7ALCDmK8uoYSkArcBaJSLODaCByQnNlJaMQxIZAFPVH70AtyzfN3yxe-t-Z4F_n1LDW2JbFQ&sa=X&ved=0ahUKEwiJoYz3yO7fAhWIjFkKHX5tABcQ8wII_QQ">Sceptre U650CV-UMC - 65" LED TV - 4K UltraHD</a>
-              </h4>
-              <p class="card-text"></p>
+              <p class="card-text">Oversized, polished gold-tone hardware puts a bold and modern twist on the GUESS Augustina Large Zip Around Wallet.8&amp;quot;W x 4&amp;quot;H x 1&amp;quot;D (width is measured across the bottom of wallet)7&amp;quot;L wristlet strapZip closurePale shiny gold-tone ex...</p>
               <p class="card-text">Price: $50.00</p>
-              <p class="card-text">Shop: GOOGLE</p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/2/optimized/10442762_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/aclk?sa=l&ai=DChcSEwjW6Y_3yO7fAhUBRIYKHSgnAlUYABAbGgJ2dQ&sig=AOD64_22T5r4EtW5nU0p7L0lFZMM5uN9XQ&ctype=5&q=&ved=0ahUKEwiJoYz3yO7fAhWIjFkKHX5tABcQ2CkIkAU&adurl=">Phillips TV Good / Televisions</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/guess-affair-signature-zip-around-wallet?ID=7046980&CategoryID=26846&isDlp=true">GUESSAffair Signature Zip Around Wallet</a>
               </h4>
-              <p class="card-text"></p>
+              <p class="card-text">When you wish upon a star, you might find the wallet you&amp;#x27;ve always been looking for. The GUESS Affair Zip Around Wallet features and organized silhouette accented with a logo print and star details.8&amp;quot;W x 4&amp;quot;H x 1/2&amp;quot;D6&amp;quot;L wristl...</p>
               <p class="card-text">Price: $50.00</p>
-              <p class="card-text">Shop: GOOGLE</p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Queen+My+Pillow+In+Package+Silo+Image?set=imageURL%5B%2Fimages%2Fproduct%2F36%2F810331272-2.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/5/optimized/10433895_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/my-pillow/p810331272?pos=1:9&Ntt=television">As Seen On TV My Pillow</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/tommy-hilfiger-mens-rfid-pebbled-leather-wallet?ID=6548896&CategoryID=47665&isDlp=true">Tommy HilfigerMen's RFID Pebbled Leather Wallet</a>
               </h4>
-              <p class="card-text">This super comfortable pillow delivers ultimate support for a relaxing night&amp;#x27;s sleep. Filled with soft and conforming material, it adjusts to your body while providing a cooling touch. Featuring medium fill on a classic straight edge pillow and ...</p>
-              <p class="card-text">Price: $49.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
+              <p class="card-text">Organize your financial essentials inside this Tommy Hilfiger wallet, with eight card slots and RFID technology that protects their data. An embossed logo enhances the pebbled leather.Exterior Approx. Dimensions: 4.33&amp;quot; x 0.78&amp;quot; x 3.5&amp;quot;In...</p>
+              <p class="card-text">Price: $49.50</p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/5/optimized/1660395_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/shopping/product/5827740401577136112?q=television&tbas=0&biw=1920&bih=966&prds=paur:ClkAsKraX5J58-0f9P6cBt1sDP_MokfMR-9E6GvycKobX02h0SQIMUACJrCUTEZedi-uCy1_F_ikSM4mNZ3qYREqoTwl1_z0rviTCkmxkv9PjetdGDsYGO12yBIZAFPVH719Ow4gg-HKJZt-onHLHPPHHShFNQ&sa=X&ved=0ahUKEwiJoYz3yO7fAhWIjFkKHX5tABcQ8wII6gQ">Toshiba REGZA SL Series 19SL410U - 19&amp;quot; LED TV...</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/giani-bernini-sandalwood-leather-index-wallet-created-for-macys?ID=2925260&CategoryID=26846&isDlp=true">Giani BerniniSandalwood Leather Index Wallet, Crea...</a>
               </h4>
-              <p class="card-text"></p>
-              <p class="card-text">Price: $49.97</p>
-              <p class="card-text">Shop: GOOGLE</p>
+              <p class="card-text">A poised piece for every girl on-the-go, this indexer from Giani Bernini keeps essentials organized. Fashioned in soft Sandalwood leather with pockets aplenty, it pairs perfectly with your everyday carryall.Giani Bernini walletSandalwood leatherSnap ...</p>
+              <p class="card-text">Price: $49.50</p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/1/optimized/9546661_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/aclk?sa=l&ai=DChcSEwjW6Y_3yO7fAhUBRIYKHSgnAlUYABAVGgJ2dQ&sig=AOD64_0h3VOBSGlx7cDuZ-LtMYafmG84Jw&ctype=5&q=&ved=0ahUKEwiJoYz3yO7fAhWIjFkKHX5tABcQ2CkI4gQ&adurl=">Axess Flat Panel Television Tv 1702-13cl</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/fossil-mens-wilder-bifold-leather-wallet?ID=6190247&CategoryID=47665&isDlp=true">FossilMen's Wilder Bifold Leather Wallet</a>
               </h4>
-              <p class="card-text"></p>
-              <p class="card-text">Price: $49.95</p>
-              <p class="card-text">Shop: GOOGLE</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/shopping/product/11772936796951530204?q=television&tbas=0&biw=1920&bih=966&prds=paur:ClkAsKraX8BCpngCq3NpO2PD6tnsbrweobQAeRYZFSMH7e9jM7TvW0Tk1Y5oTX2ij6kpmUS8JAo4HPOZsYytHLKAG4LN_o7IhtHgv44TJvjDYh2JctTNxRCb7hIZAFPVH70KsuveVf0WIJ4hhsJi0nCmbiuGPw&sa=X&ved=0ahUKEwiJoYz3yO7fAhWIjFkKHX5tABcQ8wIIxgQ">TCL S Series 65S401 - 65&amp;quot; LED Smart TV - 4K U...</a>
-              </h4>
-              <p class="card-text"></p>
+              <p class="card-text">Cash, cards and more are at your finger tips in this stylish bifold wallet from Fossil. The rich pebble leather is accented with matte leather trim for a handsome look.Exterior dimensions: 4.38&amp;quot;L x 0.75&amp;quot;W x 3.38&amp;quot;HInterior: lined; six c...</p>
               <p class="card-text">Price: $48.00</p>
-              <p class="card-text">Shop: GOOGLE</p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/8/optimized/1685808_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/shopping/product/6099530220646625195?q=television&tbas=0&biw=1920&bih=966&prds=paur:ClkAsKraX6Bs_3Vf5cCVMNhkw_eL_KWmHIFBDWpT0YBGSbVDQrtfIvHCavZcejZ0RD7MjAaAGQlKPT1LA9riPEQvi91QPeFBY_MywWSmaisrkxEFSy7DlypO5RIZAFPVH73T44Cw9k3NlN5nkVVBib6J0tVuiw&sa=X&ved=0ahUKEwiJoYz3yO7fAhWIjFkKHX5tABcQ8wIIugQ">Sansui HDLCD185W Flat Panel Television, 19", 720p</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/guess-mesa-billfold-mens-leather-wallet?ID=961693&CategoryID=47665&isDlp=true">GUESSMesa Billfold Men's Leather Wallet</a>
               </h4>
-              <p class="card-text"></p>
-              <p class="card-text">Price: $42.88</p>
-              <p class="card-text">Shop: GOOGLE</p>
+              <p class="card-text">A repeating logo design and contrasting red stripe make this leather wallet from GUESS a bold choice.Capacity: 4 credit card slots, 1 clear ID slot with thumbhole, 2 hidden slip pockets, double billfold to store cashDimensions: 4 3/8-in L x 7/16-in W...</p>
+              <p class="card-text">Price: $48.00</p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/6/optimized/926026_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/aclk?sa=l&ai=DChcSEwjW6Y_3yO7fAhUBRIYKHSgnAlUYABANGgJ2dQ&sig=AOD64_1YdWkakv7j0LRNxHjJxaLePHCseg&ctype=5&q=&ved=0ahUKEwiJoYz3yO7fAhWIjFkKHX5tABcQ2CkIswQ&adurl=">Tv Like new / Televisions</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/calvin-klein-leather-bookfold-wallet-key-fob-set?ID=561587&CategoryID=47665&isDlp=true">Calvin KleinLeather Bookfold Wallet and Key Fob Se...</a>
               </h4>
-              <p class="card-text"></p>
-              <p class="card-text">Price: $42.00</p>
-              <p class="card-text">Shop: GOOGLE</p>
+              <p class="card-text">A classic combination. This sleek and sophisticated wallet and key fob set keeps all your essentials in sleek style.Embossed Calvin Klein logoWallet has eight card slots and an ID windowLeatherImportedSavings based on offering prices, not actual sale...</p>
+              <p class="card-text">Price: $48.00</p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/1/optimized/10509031_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/aclk?sa=l&ai=DChcSEwjW6Y_3yO7fAhUBRIYKHSgnAlUYABALGgJ2dQ&sig=AOD64_3Wgn8Xg0VslIpEcRwJHE-7f3WJ5g&ctype=5&q=&ved=0ahUKEwiJoYz3yO7fAhWIjFkKHX5tABcQ2CkIrAQ&adurl=">19 LED TV Fair / Televisions</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/guess-eileen-clutch-wallet?ID=7047011&CategoryID=26846&isDlp=true">GUESSEileen Clutch Wallet</a>
               </h4>
-              <p class="card-text"></p>
+              <p class="card-text">A studded belt closure brings a fresh new look to the essential GUESS Eileen Clutch Wallet.7-1/2&amp;quot;W x 4-1/2&amp;quot;H x 1/2&amp;quot;D; 0.38 lbs. approx. weightMagnetic snap closureGold-tone or silver-tone exterior hardware, varies by color; 1 zip pocke...</p>
+              <p class="card-text">Price: $48.00</p>
+              <p class="card-text">Shop: MACYS</p>
+            </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/5/optimized/10437205_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a target="_blank" href="https://www.macys.com/shop/product/nine-west-mod-continental-wallet?ID=6684402&CategoryID=26846&isDlp=true">Nine WestMod Continental Wallet</a>
+              </h4>
+              <p class="card-text">A sophisticated python-print exterior brings welcome edge to the Nine West Mod Continental Wallet.8&amp;quot;W x 4-1/4&amp;quot;H x 1-1/2&amp;quot;D; 0.75 lbs. approx. weightMagnetic snap closureLight shiny brass-tone exterior hardware1 interior zip pocket, 7 sl...</p>
+              <p class="card-text">Price: $45.00</p>
+              <p class="card-text">Shop: MACYS</p>
+            </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/8/optimized/3149508_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a target="_blank" href="https://www.macys.com/shop/product/fossil-mens-leather-wallet-derrick-rfid-blocking-bifold-with-flip-id?ID=2309024&CategoryID=47665&isDlp=true">FossilMen&amp;#x27;s Leather Wallet Derrick RFID-Block...</a>
+              </h4>
+              <p class="card-text">There&amp;#x27;s a place for everything — cards, cash and IDs — within the rich leather of the Derrick billfold by Fossil.8 card slots2 slip pockets2 ID windowsBill compartmentTwill liningDimensions: 4.5&amp;quot; L x 0.75&amp;quot; W x 3.5&amp;quot; HIncludes a spe...</p>
+              <p class="card-text">Price: <span class="regular">
+			                                                                             $45.00
+			                                                                            
+			                                                                        </span></p>
+              <p class="card-text">Shop: MACYS</p>
+            </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/7/optimized/806567_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a target="_blank" href="https://www.macys.com/shop/product/guess-leather-bifold-wallet?ID=495631&CategoryID=47665&isDlp=true">GUESSLeather Bifold Wallet</a>
+              </h4>
+              <p class="card-text">Classic sophistication for your essentials. Finish your outfit with this distinguished leather wallet from Guess.Leather wallet from GuessContrast stitching; metal Guess logoLeatherImportedCheck out the Handbag FinderSavings based on offering prices,...</p>
+              <p class="card-text">Price: $44.00</p>
+              <p class="card-text">Shop: MACYS</p>
+            </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/6/optimized/9016156_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a target="_blank" href="https://www.macys.com/shop/product/guess-cruz-trifold-leather-wallet?ID=455576&CategoryID=47665&isDlp=true">GUESSCruz Trifold Leather Wallet</a>
+              </h4>
+              <p class="card-text">Banish the bulky wallet. This trifold Guess design keeps your essentials streamlined and organized.Trifold wallet from GuessGuess logo on front and insideSingle pocket for bills, 10 credit card slots, ID window and platic slip insertIncludes valet tr...</p>
+              <p class="card-text">Price: $44.00</p>
+              <p class="card-text">Shop: MACYS</p>
+            </div>
+          </div>
+        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/1/optimized/10204461_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a target="_blank" href="https://www.macys.com/shop/product/guess-shawna-slim-clutch-wallet?ID=6663290&CategoryID=26846&isDlp=true">GUESSShawna Slim Clutch Wallet</a>
+              </h4>
+              <p class="card-text">GUESS&amp;#x27; slim clutch wallet conceals more than a dozen slots and pockets in a sleek design that complements a variety of purse styles.7&amp;quot;W x 4&amp;quot;H x 1/2&amp;quot;D; .20 lbs. approx. weightMagnetic-snap closureGold-tone or silver-tone hardware, ...</p>
               <p class="card-text">Price: $40.00</p>
-              <p class="card-text">Shop: GOOGLE</p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Flat+Screen+TV+Mount+on+White+Background?set=imageURL%5B%2Fimages%2Fproduct%2F144%2F810114503.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/0/optimized/9246820_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/flat-screen-tv-mount/p810114503?pos=1:60&Ntt=television">GE Flat Screen TV Mount</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/guess-augustina-slim-wallet-created-for-macys?ID=5537588&CategoryID=26846&isDlp=true">GUESSAugustina Slim Wallet, Created for Macy's</a>
               </h4>
-              <p class="card-text">Put your flat screen TV in perfect view with this GE wall mount. Easy to install, this mount fits TVs up to 42&amp;quot; and 55 lbs. Integrate a television into any room in your home or office without sacrificing valuable table or floor space! Features a...</p>
+              <p class="card-text">Keep cards and cash stylishly organized in this slim clutch wallet from GUESS, designed in rich Saffiano faux leather with a bold, shining metallic logo detail.6-3/4&amp;quot;W x 3-3/4&amp;quot;H x 1&amp;quot;D (width is measured across the bottom of clutch)Snap...</p>
               <p class="card-text">Price: $40.00</p>
-              <p class="card-text">Shop: BIGLOTS</p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Flat+Screen+TV+Swivel+Wall+Mount+silo+front?set=imageURL%5B%2Fimages%2Fproduct%2F90%2F810114504.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/0/optimized/8144650_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/flat-screen-tv-swivel-wall-mount/p810114504?pos=1:61&Ntt=television">GE Flat Screen TV Swivel Wall Mount</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/giani-bernini-softy-leather-trifold-wallet-created-for-macys?ID=2904485&CategoryID=26846&isDlp=true">Giani BerniniSofty Leather Trifold Wallet, Created...</a>
               </h4>
-              <p class="card-text">Put your flat screen TV on perfect display with this wall mount. Easy to install, this GE mount fits TVs up to 55 lbs. and features a pivoting frame that llows you to turn your screen when needed. The integrated bubble leveler ensures a perfect fit e...</p>
-              <p class="card-text">Price: $40.00</p>
-              <p class="card-text">Shop: BIGLOTS</p>
+              <p class="card-text">Rich pebble leather details Giani Bernini&amp;#x27;s palm-sized wallet, featuring ample card slots and pockets for financials in a compact, trifold design.4-1/4&amp;quot;W x 3-1/2&amp;quot;H x 1/2&amp;quot;DInterior features 5 cards slots, ID window, 1 large bill po...</p>
+              <p class="card-text">Price: $39.50</p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/9/optimized/9394109_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/shopping/product/114263478077240973?q=television&tbas=0&biw=1920&bih=966&prds=paur:ClkAsKraX8w8sZVC1HO3rb-8zEKD8m8f7GEan0JywaHGtUk5CHTSL3LloD2lGoBLP0f4EYkViAEseBFauRreA-MELsNp3JS5ubXzkt1TJ0S08JWj8ud8oUoBLhIZAFPVH73K_nqpF1_LhKLNes29JnGgGKkyrA&sa=X&ved=0ahUKEwiJoYz3yO7fAhWIjFkKHX5tABcQ8wIIlgQ">Sharp LC 50LBU591U - 50" LED Smart TV - 4K UltraHD</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/the-sak-iris-card-leather-wallet?ID=2690347&CategoryID=26846&isDlp=true">The SakIris Card Leather Wallet</a>
               </h4>
-              <p class="card-text"></p>
+              <p class="card-text">An ideal style for those who like to travel light. This handy card case wallet from The Sak fits your cash, cards, keys and ID.Top zip closureExterior features brass-tone hardware and split key ring with dog clip attachmentInterior features 2 slip po...</p>
               <p class="card-text">Price: $38.00</p>
-              <p class="card-text">Shop: GOOGLE</p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
           <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
+            <a href="#"><img class="card-img-top" src="https://slimages.macysassets.com/is/image/MCY/products/3/optimized/2479193_fpx.tif?op_sharpen=1&wid=500&hei=613&fit=fit,1&$filtersm$" alt=""/></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/aclk?sa=l&ai=DChcSEwjW6Y_3yO7fAhUBRIYKHSgnAlUYABAHGgJ2dQ&sig=AOD64_3zitnMO60m7mxIhRHUKIfWC_TX7Q&ctype=5&q=&ved=0ahUKEwiJoYz3yO7fAhWIjFkKHX5tABcQ2CkIjwQ&adurl=">Soyo Flat Panel Television Mt-sytpt2238ab</a>
+                <a target="_blank" href="https://www.macys.com/shop/product/kipling-new-teddi-wallet?ID=2724568&CategoryID=26846&isDlp=true">KiplingNew Teddi Wallet</a>
               </h4>
-              <p class="card-text"></p>
-              <p class="card-text">Price: $29.99</p>
-              <p class="card-text">Shop: GOOGLE</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/shopping/product/997688273435940438?q=television&tbas=0&biw=1920&bih=966&prds=paur:ClkAsKraXx0Z_eQnxvmHSCoxPlhbR1rvr7Oq8MpCVKeOWEUpOG8jOVUMoElIS0foHRDQ0Hk0DyU5AdtDr3CJ4wpfrquqHroO7AnFzbKJfTeRPhd2RvzzYmKd7BIZAFPVH71uFgzFrMVmlR7Hwjq1UxsKls0RDA&sa=X&ved=0ahUKEwiJoYz3yO7fAhWIjFkKHX5tABcQ8wIIgAQ">RCA RLDED5098-UHD - 50&amp;quot; HDMI LED TV - 2160p -...</a>
-              </h4>
-              <p class="card-text"></p>
-              <p class="card-text">Price: $27.00</p>
-              <p class="card-text">Shop: GOOGLE</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/RED+COPPER+SQUARE+5PC+SET+Box+Image?set=imageURL%5B%2Fimages%2Fproduct%2F115%2F810340462-2.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/red-copper-square-pan-5-piece-set/p810340462?pos=1:14&Ntt=television">As Seen On TV Red Copper Square Pan 5-Piece Set</a>
-              </h4>
-              <p class="card-text">The only pan you&amp;#x27;ll ever need! This Red Copper square pan cooks eight different ways and makes cooking with oil, butter or grease a thing of the past.  Perfect for broiling, baking, steaming, frying, sautéing, braising, roasting and even deep fr...</p>
-              <p class="card-text">Price: $24.00</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/RED+COPPER+12IN+ROUND+PAN+Silo?set=imageURL%5B%2Fimages%2Fproduct%2F116%2F810337097.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/12-ceramic-red-copper-frying-pan/p810337097?pos=1:43&Ntt=television">As Seen On TV 12" Ceramic Red Copper Frying Pan</a>
-              </h4>
-              <p class="card-text">No more scraping or scrubbing! This versatile pan is perfect for all your everyday cooking needs from the main course to dessert. This revolutionary pan is made with non-stick ceramic and super strong copper that allows food to slide right out - no c...</p>
-              <p class="card-text">Price: $24.00</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/+26+inch+-+55+inch+Flat+Screen+TV+Wall+Mount?set=imageURL%5B%2Fimages%2Fproduct%2F89%2F810069672.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/flat-screen-tv-thin-profile-wall-mount/p810069672?pos=1:62&Ntt=television">GE Flat Screen TV Thin Profile Wall Mount</a>
-              </h4>
-              <p class="card-text">Sleek, easy to install and mounts in minutes! This ultra-thin profile, universal flat screen wall mount for LCD and Plasma monitors supports screens up to 55&amp;quot; or 110 lbs. Thin profile allows you to mount your display less than 1&amp;quot; from the...</p>
-              <p class="card-text">Price: $20.00</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/50+feet+Pocket+Hose+Bullet+Expanding+Garden+Hose+silo+front?set=imageURL%5B%2Fimages%2Fproduct%2F115%2F810388984.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/50-pocket-hose-bullet-expanding-garden-hose/p810388984?pos=1:30&Ntt=television">As Seen On TV 50&amp;#x27; Pocket Hose® Bullet™ Expand...</a>
-              </h4>
-              <p class="card-text">The amazing expanding hose is now even tougher with an engineered inner tube and exclusive Bullet Shell™ outer casing! The Pocket Hose Bullet allows you to easily move and work around your home. Tangle and kink resistant, the hose grows up to 50&amp;#x27...</p>
-              <p class="card-text">Price: $20.00</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Bavarian+Edge+Knife+Sharpener+silo+angled?set=imageURL%5B%2Fimages%2Fproduct%2F225%2F810391489-2.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/bavarian-edge-knife-sharpener/p810391489?pos=1:59&Ntt=television">As Seen On TV Bavarian Edge™ Knife Sharpener</a>
-              </h4>
-              <p class="card-text">The Bavarian Edge is an innovative knife sharpener with two independent spring action arms that will make your dull knives sharp within seconds. Each sharpener is made of ultra-hard Tungsten Carbide that flexes and contours to any blade&amp;#x27;s design...</p>
-              <p class="card-text">Price: $20.00</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Magic+Pad+Light+Up+Drawing+Pad+silo+front?set=imageURL%5B%2Fimages%2Fproduct%2F220%2F810414407.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/magic-pad-light-up-drawing-pad/p810414407?pos=1:22&Ntt=television">As Seen On TV Magic Pad™ Light-Up Drawing Pad</a>
-              </h4>
-              <p class="card-text">Allow your creativity to shine using this amazing Magic Pad! This light-up drawing pad includes three neon pens that help spark your child&amp;#x27;s imagination through unique glowing effects. Featuring a color changing mode with eight light effects, th...</p>
-              <p class="card-text">Price: $20.00</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Silky+Straight+Ceramic+Hair+Straightening+Brush+silo+front+with+model?set=imageURL%5B%2Fimages%2Fproduct%2F24%2F810348221.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/silky-straight-ceramic-hair-straightening-brush/p810348221?pos=1:56&Ntt=television">As Seen On TV Silky Straight Ceramic Hair Straight...</a>
-              </h4>
-              <p class="card-text">Straight hair, don&amp;#x27;t care with Simply Straight Ceramic Straightening Brush. A quick and easy way to straighten hair while brushing. Plug it in, brush through dry hair and see the results of smooth, straight hair. A safer and gentler way to strai...</p>
-              <p class="card-text">Price: $19.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Finishing+Touch+Flawless+Facial+Hair+Remover+Out+of+Package+Front+View+silo+Image?set=imageURL%5B%2Fimages%2Fproduct%2F237%2F810363791.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/finishing-touch-flawless-facial-hair-remover/p810363791?pos=1:8&Ntt=television">As Seen On TV Finishing Touch Flawless Facial Hair...</a>
-              </h4>
-              <p class="card-text">Gently remove hair anywhere! Instant and painless hair removal that is gentle and safe with no redness or irritation. Wonderful for the lip, chin or cheek areas. This dermatologist approved hair remover is gentle and safe to touch. Discreet and porta...</p>
-              <p class="card-text">Price: $19.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Finishing+Touch+Flawless+Brows+silo+front?set=imageURL%5B%2Fimages%2Fproduct%2F18%2F810406087.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/finishing-touch-flawless-brows-remover/p810406087?pos=1:58&Ntt=television">As Seen On TV Finishing Touch Flawless Brows Remov...</a>
-              </h4>
-              <p class="card-text">Shape and manage your eyebrows using this pain-free As Seen on TV Finish Touch Flawless Brows eyebrow shaper. Designed with precision engineering with a built-in light that lets you see even the finest hairs, this amazing tool removes hair instantly ...</p>
-              <p class="card-text">Price: $19.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Red+Copper+Brownie+Bonanza+Baking+Pan+Set+Silo+In+Package?set=imageURL%5B%2Fimages%2Fproduct%2F123%2F810363263.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/red-copper-brownie-bonanza-baking-pan-set/p810363263?pos=1:16&Ntt=television">As Seen On TV Red Copper Brownie Bonanza Baking Pa...</a>
-              </h4>
-              <p class="card-text">Just spread the batter and bake! This Red Copper Brownie Bonanza pan delivers delicious goodies in no time. The non-stick, anti-scratch surface is conveniently dishwasher safe and constructed from durable copper infused ceramic. This 4-piece set has ...</p>
-              <p class="card-text">Price: $16.00</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Red+Copper+Flipwich+Sandwich+Maker+Out+of+Package+Lid+Up+Silo+Image?set=imageURL%5B%2Fimages%2Fproduct%2F121%2F810363262.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/red-copper-flipwich-sandwich-maker/p810363262?pos=1:40&Ntt=television">As Seen On TV Red Copper Flipwich Sandwich Maker</a>
-              </h4>
-              <p class="card-text">Make delicious hot sandwiches in just minutes with this amazing, non-stick ceramic Flipwich by Red Copper. The lightweight design is constructed of two interlocking pans - just close the lid to lock the handle and flip. Designed with twin chambers th...</p>
-              <p class="card-text">Price: $16.00</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Red+Copper+Square+Dance+Pan+Silo+Image?set=imageURL%5B%2Fimages%2Fproduct%2F96%2F810337096.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/9-5-red-copper-square-dance-pan/p810337096?pos=1:51&Ntt=television">As Seen On TV 9.5" Red Copper Square Dance Pan</a>
-              </h4>
-              <p class="card-text">Serve up a mouth-watering meal with this nonstick pan every time, perfect for frying, roasting, baking and more! Constructed with ceramic and super strong copper that provides even heating . The high sides prevent splatters and are perfect for browni...</p>
-              <p class="card-text">Price: $16.00</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://www.forever21.com/images/1_front_330/00265930-01.jpg" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.forever21.com/us/shop/catalog/product/plus/plus_size-tops-tees/2000265930">Plus Size MTV Tank Top</a>
-              </h4>
-              <p class="card-text">Plus Size MTV Tank Top</p>
-              <p class="card-text">Price: $15.9</p>
-              <p class="card-text">Shop: FOREVER21</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/8+Inch+Ceramic+Red+Copper+Frying+Pan+Front+View+Overhead+View+Silo+Image?set=imageURL%5B%2Fimages%2Fproduct%2F126%2F810363264-2.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/8-ceramic-red-copper-frying-pan/p810363264?pos=1:27&Ntt=television">As Seen On TV 8" Ceramic Red Copper Frying Pan</a>
-              </h4>
-              <p class="card-text">Create mouth-watering eggs and hashbrowns in no time with this durable Red Copper 8&amp;quot; frying pan. The ceramic copper infused construction defies scratching so you can whisk and flip directly in the pan. Non-stick surface heats up quickly and even...</p>
-              <p class="card-text">Price: $12.00</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://www.forever21.com/images/1_front_330/00267357-01.jpg" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.forever21.com/us/shop/catalog/product/f21/top_graphic-tops/2000267357">MTV Logo Graphic Bikini Top</a>
-              </h4>
-              <p class="card-text">MTV Logo Graphic Bikini Top</p>
-              <p class="card-text">Price: $11.99</p>
-              <p class="card-text">Shop: FOREVER21</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Spin+Sweeper+Genie+Angled+View+Silo+Image?set=imageURL%5B%2Fimages%2Fproduct%2F189%2F810351997-4.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/spin-sweeper-genie/p810351997?pos=1:5&Ntt=television">As Seen On TV Spin Sweeper Genie</a>
-              </h4>
-              <p class="card-text">Clean up your hardfloors in no time with this handy Spin Sweeper Genie! This lightweight, cordless sweeper uses two 360° rotating brushes to quickly pick up dirt, dust and messes in any direction with a simple push of the broom with no electricity re...</p>
-              <p class="card-text">Price: $10.00</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Veggie+Pasta+Deluxe?set=imageURL%5B%2Fimages%2Fproduct%2F165%2F810297148.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/veggie-pasta-deluxe/p810297148?pos=1:18&Ntt=television">As Seen On TV Veggie Pasta Deluxe</a>
-              </h4>
-              <p class="card-text">Curl, slice or shred your fruits and veggies in no time with the tri-blade slicer and peeler. Perfect for making coleslaw, curly fries or garnishes for salads.</p>
-              <p class="card-text">Price: $10.00</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Magic+Tracks+Xtreme+Race+Track+silo+front?set=imageURL%5B%2Fimages%2Fproduct%2F218%2F810414405.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/magic-tracks-xtreme-race-track/p810414405?pos=1:13&Ntt=television">As Seen On TV Magic Tracks® Xtreme Race Track</a>
-              </h4>
-              <p class="card-text">Race to the extreme on this awesome Magic Tracks set! These glowing pieces allow you to bend and flex your own design as the light-up LED car races along with amazing neon colors. Featuring up to 10&amp;#x27; of track, this awesome set is perfect to use ...</p>
-              <p class="card-text">Price: $10.00</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Micro+Touch+Max+Personal+Trimmer+with+Accessories+Silo+Image?set=imageURL%5B%2Fimages%2Fproduct%2F23%2F810316581-3.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/micro-touch-max-personal-trimmer/p810316581?pos=1:25&Ntt=television">As Seen On TV Micro Touch Max Personal Trimmer</a>
-              </h4>
-              <p class="card-text">Stay freshly groomed with this all-in-one personal hair trimmer, perfect for removing the unwanted hairs in those hard-to reach areas! Specially designed with a built-in light and rubber non-slip grip handle for precise trimming. The safe to the touc...</p>
-              <p class="card-text">Price: $9.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://www.forever21.com/images/1_front_330/00265296-01.jpg" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.forever21.com/us/shop/catalog/product/f21/top_graphic-tops/2000265296">MTV Graphic Tank Top</a>
-              </h4>
-              <p class="card-text">MTV Graphic Tank Top</p>
-              <p class="card-text">Price: $9.99</p>
-              <p class="card-text">Shop: FOREVER21</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Epi+Smooth+Hair+Removing+Epilator+bathroom+setting?set=imageURL%5B%2Fimages%2Fproduct%2F109%2F810376990-2.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/epi-smooth-hair-removing-epilator/p810376990?pos=1:57&Ntt=television">As Seen On TV Epi Smooth™ Hair Removing Epilator</a>
-              </h4>
-              <p class="card-text">Get rid of unwanted hair with this convenient hair removing tool! The Epi Smooth epilator removes all types of hair from the root for long lasting results while still being sensitive enough to use along your bikini line. Providing a smooth transition...</p>
-              <p class="card-text">Price: $9.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Finishing+Touch+Personal+Hair+Trimmer+with+Accessories+Overhead+Shot+Silo+Image?set=imageURL%5B%2Fimages%2Fproduct%2F20%2F810316530-3.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/finishing-touch-personal-hair-trimmer/p810316530?pos=1:37&Ntt=television">As Seen On TV Finishing Touch Personal Hair Trimme...</a>
-              </h4>
-              <p class="card-text">This detail hair trimmer removes unwanted hair with ease. The self-standing design features a pivoting head and is safe on sensitive, hard-to-reach areas. Specially constructed with a built-in light to remove even the finest hairs.</p>
-              <p class="card-text">Price: $9.99</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.google.com/aclk?sa=l&ai=DChcSEwjW6Y_3yO7fAhUBRIYKHSgnAlUYABABGgJ2dQ&sig=AOD64_2Nm1i1O9XdqW1KZv6FORD5yXp0yQ&ctype=5&q=&ved=0ahUKEwiJoYz3yO7fAhWIjFkKHX5tABcQ2CkI7gM&adurl=">Samsung SAMSUNG Good / Televisions</a>
-              </h4>
-              <p class="card-text"></p>
-              <p class="card-text">Price: $5.00</p>
-              <p class="card-text">Shop: GOOGLE</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Magic+Mesh%7F+Magnetic+Screen+Door+Cover+in+Package?set=imageURL%5B%2Fimages%2Fproduct%2F196%2F810286953.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/magic-magnet-instant-screen-door-cover/p810286953?pos=1:42&Ntt=television">As Seen On TV Magic Magnet Instant Screen Door Cov...</a>
-              </h4>
-              <p class="card-text">Enjoy the outdoors this season with the Magic Magnet screen door cover! Using the 18 magnets lining the inside panels, the cover magically opens hands free and closes behind you without worry or thought. And with the woven polyester mesh, allow fresh...</p>
-              <p class="card-text">Price: $5.00</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/TV+Armrest+6+Pocket+Organizer+lifestyle?set=imageURL%5B%2Fimages%2Fproduct%2F222%2F810409076.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/tv-armrest-6-pocket-organizer/p810409076?pos=1:62&Ntt=television">TV Armrest 6-Pocket Organizer</a>
-              </h4>
-              <p class="card-text">Never interrupt your channel surfing regimen again using this ultimate man-cave accessory! This handy armrest organizer features six side pockets that hold your remotes, TV guide, newspaper, utensils as a tray creates the perfect spot to rest your fa...</p>
-              <p class="card-text">Price: $5.00</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/COPPER+KNIFE?set=imageURL%5B%2Fimages%2Fproduct%2F94%2F810327865-2.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/copper-knife/p810327865?pos=1:49&Ntt=television">As Seen On TV Copper Knife</a>
-              </h4>
-              <p class="card-text">Save time in the kitchen by cutting down your food prep with this helpful cooper knife! Constructed with a stainless-steel core to stay forever sharp and a copper finish to prevent food sticking to the blade, it&amp;#x27;s strong enough to cut through th...</p>
-              <p class="card-text">Price: $5.00</p>
-              <p class="card-text">Shop: BIGLOTS</p>
-            </div>
-          </div>
-        </div> <div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-          <div class="card h-100">
-            <a href="#"><img class="card-img-top" src="https://images.biglots.com/Hurricane+Spin+Broom+silo+front?set=imageURL%5B%2Fimages%2Fproduct%2F158%2F810417351.jpg%5D,env%5Bprod%5D,nocache%5Btrue%5D,ver%5B1%5D,profile%5Bpdp_thumb_large%5D&call=url%5Bfile:biglots/product.chain%5D" alt=""/></a>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a target="_blank" href="https://www.biglots.com/product/hurricane-spin-broom-/p810417351?pos=1:52&Ntt=television">As Seen On TV Hurricane® Spin Broom™</a>
-              </h4>
-              <p class="card-text">The Hurricane Spin Broom kicks your old broom and dust pan to the curb! Pick up dirt, cereal, chips, pet hair and more with this amazing tool! Utilizing triple brush technology, the Spin Broom cleans up messes by rotating its bristles to capture dry ...</p>
-              <p class="card-text">Price: $5.00</p>
-              <p class="card-text">Shop: BIGLOTS</p>
+              <p class="card-text">Add a bright splash of color and fun to your daily routine with Kipling&amp;#x27;s easy-peasy, lightweight Teddi wallet, complete with  a gusseted pocket that fits a checkbook or receipts.Snap closureExterior features silver-tone hardwareInterior feature...</p>
+              <p class="card-text">Price: <span class="regular">
+			                                                                             $34.00
+			                                                                            
+			                                                                        </span></p>
+              <p class="card-text">Shop: MACYS</p>
             </div>
           </div>
         </div></div>

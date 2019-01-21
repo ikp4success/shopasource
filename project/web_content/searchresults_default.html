@@ -8,22 +8,23 @@
 <meta name="google-site-verification" content="1FzRHrFNFAtDLWm8f0xeZl8GGV_Z-9w_GZDG0Hy0IvY" />
 
 <script type="text/javascript" src="https://cdn.ywxi.net/js/1.js" async></script>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+<script
+	src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
 	integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-	crossorigin="anonymous"></script>
-<script
-	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
-	integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
-	crossorigin="anonymous"></script>
-
-<link rel="stylesheet"
-	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
-	integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
 	crossorigin="anonymous">
-<script
-	src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"
-	integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
-	crossorigin="anonymous"></script>
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+crossorigin="anonymous">
+</script>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+crossorigin="anonymous">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+crossorigin="anonymous">
+</script>
 <!-- <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
 <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
@@ -70,9 +71,15 @@
 	    </button>
 	  </div>
 	</div>
-			<div id="searchProgress" class="loading" display: none;>
-	  <div id="searchProgressBar"></div>
-		</div>
+	<div class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
+	  <strong>Invalid Search Criteria - </strong> textBox is empty or invalid.
+	  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+	    <span aria-hidden="true">&times;</span>
+	  </button>
+	</div>
+	<div id="searchProgress" class="loading progress" style="display: none;">
+<div id="searchProgressBar" class="progress-bar progress-bar-striped bg-warning" role="progressbar"></div>
+</div>
 		<div id="cont-fil" class='fil-container collapse'>
 		<div class="card bg-info text-white mb-3" style="max-width: 11rem; max-height: 18rem">
 		<div class="card-header">Refine By</div>
@@ -95,7 +102,7 @@
 	  <div class="card-header">Shops</div>
 	  <div class="card-body">
 				<div class="input-group mb-3">
-		  <input name="shop_search" type="text" class="form-control" placeholder="e.g Amazon" style="width: 24px;" aria-describedby="basic-addon2">
+		  <input name="shop_search" type="text" class="form-control" placeholder="find shop e.g Amazon" style="width: 24px;" aria-describedby="basic-addon2">
 		  <div class="input-group-append">
 		    <button class="btn btn-outline-success" type="button" onclick="find_shop()">Find</button>
 		  </div>
@@ -106,6 +113,29 @@
 			  <label class="custom-control-label" for="{shop_id}">{shop_name_friend}</label>
 		</div>
 		</div>
+		<div  id="loading_shop" style="display: none;">
+			<div class="spinner-grow text-primary card-group" role="status">
+			  <span class="sr-only">Loading...</span>
+			</div>
+			<div class="spinner-grow text-success card-group" role="status">
+			  <span class="sr-only">Loading...</span>
+			</div>
+			<div class="spinner-grow text-danger card-group" role="status">
+			  <span class="sr-only">Loading...</span>
+			</div>
+			<div class="spinner-grow text-warning card-group" role="status">
+			  <span class="sr-only">Loading...</span>
+			</div>
+			<div class="spinner-grow text-info card-group" role="status">
+			  <span class="sr-only">Loading...</span>
+			</div>
+			<div class="spinner-grow text-light card-group" role="status">
+			  <span class="sr-only">Loading...</span>
+			</div>
+			<div class="spinner-grow text-dark card-group" role="status">
+			  <span class="sr-only">Loading...</span>
+			</div>
+	</div>
 		<div id="shop_cb_place" class="card-group">
 		</div>
 	</div>

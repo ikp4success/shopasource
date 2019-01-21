@@ -4,6 +4,7 @@ current_web_url = null
 current_sk = null
 cancel_search = false
 shop_searching = false
+var regx = /^[A-Za-z0-9 _.-]+$/;
 
 $(function() {
   $(document).on('click', 'div#shopsearch', function() {
@@ -28,7 +29,7 @@ $(function(){
 });
 
 function initial_api_search(sk){
-  if(!sk || sk==null){
+  if(!validate_sk(sk)){
     return false
   }
   gs_data = get_selected_checkboxes()
@@ -63,10 +64,13 @@ function initial_api_search(sk){
 }
 
 function load_shops_cb(){
+  $(".alert").hide()
+  $("#loading_shop").show()
   shops_url = "/websearch/shops-active.json";
   $.getJSON(shops_url,
       function(data) {
         replace_shop_find(data)
+        $("#loading_shop").hide()
   });
 }
 
@@ -109,8 +113,15 @@ function friendly_name_cb(shopnamecb){
 }
 
 function find_shop(){
+  $("#loading_shop").show()
   shop_search_name = document.getElementsByName("shop_search")[0].value
-  if(shop_search_name == null){
+  if(!shop_search_name){
+    $("#loading_shop").hide()
+    return
+  }
+  if(!validate_sk(shop_search_name)){
+    $('#shop_cb_place').html("No Shop Found");
+    $("#loading_shop").hide()
     return
   }
   shops_url = "/websearch/shops-active.json";
@@ -131,6 +142,7 @@ function find_shop(){
         else{
           $('#shop_cb_place').html("No Shop Found");
         }
+        $("#loading_shop").hide()
   });
 
 }
@@ -144,9 +156,10 @@ function get_selected_checkboxes(){
 }
 
 function shop_web_search(){
+  $(".alert").hide()
   sk = get_sk_refined()
-  if(!sk){
-    alert("textbox is empty")
+  if(!validate_sk(sk)){
+    $(".alert").show()
     return false
   }
   cancel_search = !cancel_search
@@ -171,6 +184,13 @@ function shop_web_search(){
   return false
 }
 
+function validate_sk(sk){
+  if(!sk || sk == null || !sk.trim() || sk.length < 2 || !regx.test(sk)){
+    return false
+  }
+  return true
+}
+
 function reset_controls(){
   if(shop_searching){
     return
@@ -180,6 +200,7 @@ function reset_controls(){
 }
 
 function ini_reset_controls(){
+  $(".alert").hide()
   $(".loading").hide()
   restart_progress_bar()
   $("#searchButton").show()
@@ -291,18 +312,22 @@ function restart_progress_bar(){
   var container = document.getElementById("searchProgress");
   var content = container.innerHTML;
   container.innerHTML= content;
+  var elem = document.getElementById("searchProgressBar");
+  elem.style.width = 0 + '%';
 }
 
 function load_search_progress_bar() {
   var elem = document.getElementById("searchProgressBar");
   var width = 1;
-  var id = setInterval(frame, 4500);
+  var id = setInterval(frame, 3000);
   function frame() {
     if (width >= 100) {
       clearInterval(id);
     } else {
       width++;
       elem.style.width = width + '%';
+      elem.attributes["aria-valuenow"] = width
+      // elem.aria-valuenow = "25"
     }
   }
   return false
