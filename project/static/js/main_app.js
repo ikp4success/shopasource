@@ -5,6 +5,7 @@ current_sk = null
 cancel_search = false
 shop_searching = false
 var regx = /^[A-Za-z0-9 _.-]+$/;
+shop_loaded_data = {}
 
 $(function() {
   $(document).on('click', 'div#shopsearch', function() {
@@ -44,6 +45,10 @@ function initial_api_search(sk){
             sk_url = "/api/shop/" + shop_name + "/search=" + sk;
             $.getJSON(sk_url,
                 function(data) {
+                  l_s_name = data[0]["sk"]["shop_name"]
+                  if(l_s_name){
+                    shop_loaded_data[l_s_name] = data
+                  }
             });
           }
     });
@@ -294,6 +299,10 @@ function dynamic_content(data, refresh_shop_search){
   return
 }
 
+function consume_l_data(json_data){
+  
+}
+
 
 function refresh_shop_data(){
   if(current_web_url != null){
@@ -327,7 +336,6 @@ function load_search_progress_bar() {
       width++;
       elem.style.width = width + '%';
       elem.attributes["aria-valuenow"] = width
-      // elem.aria-valuenow = "25"
     }
   }
   return false
