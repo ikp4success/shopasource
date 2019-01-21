@@ -45,9 +45,14 @@ function initial_api_search(sk){
             sk_url = "/api/shop/" + shop_name + "/search=" + sk;
             $.getJSON(sk_url,
                 function(data) {
-                  l_s_name = data[0]["sk"]["shop_name"]
-                  if(l_s_name){
-                    shop_loaded_data[l_s_name] = data
+                  if(!data["message"]){
+                    d_shop_data = JSON.parse(data[0])
+                    if(d_shop_data || d_shop_data.length > 0){
+                      l_s_name = d_shop_data[sk]["shop_name"]
+                      if(l_s_name){
+                        shop_loaded_data[l_s_name] = data
+                      }
+                    }
                   }
             });
           }
@@ -178,7 +183,7 @@ function shop_web_search(){
     $("#err_msg").hide()
     current_sk = sk
     $(".loading").show()
-    restart_progress_bar()
+    // restart_progress_bar()
     load_search_progress_bar()
     set_search_time_out()
   }else{
@@ -231,11 +236,13 @@ function load_shop_search(){
     web_search_url = "/websearch/shop/search?" + search_params + "&shops=" + shops_list_names;
   }
 
-  $.get(web_search_url,
-      function(data) {
-        current_web_url = web_search_url
-        dynamic_content(data, true)
-  });
+  consume_l_data(sk)
+  // $.get(web_search_url,
+  //     function(data) {
+  //       current_web_url = web_search_url
+  //       consume_l_data()
+  //       // dynamic_content(data, true)
+  // });
   return false
 }
 
@@ -299,8 +306,36 @@ function dynamic_content(data, refresh_shop_search){
   return
 }
 
-function consume_l_data(json_data){
-  
+function consume_l_data(sk){
+  res_react_bucket = []
+  var shop_index_k;
+  for (shop_index_k in shop_loaded_data){
+    shop_loaded_data_v = shop_loaded_data[shop_index_k]
+    var shop_each_index_k;
+    for(shop_each_index_k in shop_loaded_data_v){
+      shop_each_d_v = JSON.parse(shop_loaded_data_v[shop_each_index_k])
+      if(!shop_each_d_v){
+        continue
+      }
+      sk_shop_each_d_v = shop_each_d_v[sk]
+      if (!sk_shop_each_d_v){
+        continue
+      }
+      res_react = $('#resultreact_default').html();
+      res_react = res_react.replace(/{PRODUCTIMAGESOURCE}/g, sk_shop_each_d_v["image_url"])
+      res_react = res_react.replace(/{PRODUCTLINK}/g, sk_shop_each_d_v["shop_link"])
+      res_react = res_react.replace(/{PRODUCTTITLE}/g, sk_shop_each_d_v["title"])
+      res_react = res_react.replace(/{PRODUCTDESCRIPTION}/g, sk_shop_each_d_v["content_description"])
+      res_react = res_react.replace(/{PRODUCTPRICE}/g, sk_shop_each_d_v["price"])
+      res_react = res_react.replace(/{PRODUCTSHOPNAME}/g, sk_shop_each_d_v["shop_name"])
+      res_react_bucket.push(res_react)
+    }
+  }
+  reactelem = res_react_bucket.join("")
+  $('#resultreact').html(reactelem)
+  shop_searching = false
+  reset_controls()
+  // load_time_out = setTimeout(refresh_shop_data, 3000)
 }
 
 
@@ -311,7 +346,7 @@ function refresh_shop_data(){
           if(shop_searching){
             return
           }
-          dynamic_content(data)
+          // dynamic_content(data)
         });
   }
   return false
