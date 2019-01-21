@@ -57,7 +57,7 @@ def match_sk(search_keyword, searched_item, match_sk_set):
     return False
 
 
-def run_api_search(shop_names_list, search_keyword):
+def run_api_search(shop_names_list, search_keyword, match_acc, low_to_high, high_to_low):
     results = {}
     try:
         if shop_names_list is None or len(shop_names_list) == 0:
@@ -69,7 +69,7 @@ def run_api_search(shop_names_list, search_keyword):
                 return results
             search_keyword = truncate_data(search_keyword, 50)
 
-            results = get_json_db_results(shop_names_list, search_keyword, check=True)
+            results = get_json_db_results(shop_names_list, search_keyword, match_acc, low_to_high, high_to_low)
             if results is None or len(results) == 0:
                 results = {"message": "Sorry, no products found"}
             return results
@@ -81,44 +81,44 @@ def run_api_search(shop_names_list, search_keyword):
     return results
 
 
-def run_web_search(search_keyword, match_acc, low_to_high, high_to_low, shop_list_names):
-    try:
-        if search_keyword is None or search_keyword.strip() == "":
-            update_results_row_error("Search keyword is empty or invalid")
+# def run_web_search(search_keyword, match_acc, low_to_high, high_to_low, shop_list_names):
+#     try:
+#         if search_keyword is None or search_keyword.strip() == "":
+#             update_results_row_error("Search keyword is empty or invalid")
+#
+#         if len(search_keyword) < 2:
+#             update_results_row_error("Sorry, no products found")
+#             return
+#
+#         search_keyword = truncate_data(search_keyword, 50)
+#
+#         # DEBUG url = "http://127.0.0.1:5000/api/shop/search={}".format(search_keyword)
+#         # url = "http://shopasource.herokuapp.com/api/shop/search={}".format(search_keyword)
+#         # session = requests.Session()
+#         # json_data = session.get(url, timeout=60)
+#         # results = safe_json(json_data.text)
+#
+#         results = web_get_data_from_db(search_keyword, match_acc, low_to_high, high_to_low, shop_list_names)
+#
+#         if results is None or len(results) == 0:
+#             update_results_row_error("Sorry, no products found")
+#         else:
+#             update_search_view_with_db_results(search_keyword, results)
+#         return
+#     except Exception as e:
+#         update_results_row_error("Sorry, error encountered during search, try again or contact admin if error persist")
+#         print(e)
+#         print(traceback.format_exc())
+#     return
 
-        if len(search_keyword) < 2:
-            update_results_row_error("Sorry, no products found")
-            return
 
-        search_keyword = truncate_data(search_keyword, 50)
-
-        # DEBUG url = "http://127.0.0.1:5000/api/shop/search={}".format(search_keyword)
-        # url = "http://shopasource.herokuapp.com/api/shop/search={}".format(search_keyword)
-        # session = requests.Session()
-        # json_data = session.get(url, timeout=60)
-        # results = safe_json(json_data.text)
-
-        results = web_get_data_from_db(search_keyword, match_acc, low_to_high, high_to_low, shop_list_names)
-
-        if results is None or len(results) == 0:
-            update_results_row_error("Sorry, no products found")
-        else:
-            update_search_view_with_db_results(search_keyword, results)
-        return
-    except Exception as e:
-        update_results_row_error("Sorry, error encountered during search, try again or contact admin if error persist")
-        print(e)
-        print(traceback.format_exc())
-    return
-
-
-def web_get_data_from_db(search_keyword, match_acc, low_to_high, high_to_low, shop_names_list):
-    results = get_data_from_db(searched_keyword=search_keyword,
-                               match_acc=match_acc,
-                               low_to_high=low_to_high,
-                               high_to_low=high_to_low,
-                               shop_names_list=shop_names_list)
-    return results
+# def web_get_data_from_db(search_keyword, match_acc, low_to_high, high_to_low, shop_names_list):
+#     results = get_data_from_db(searched_keyword=search_keyword,
+#                                match_acc=match_acc,
+#                                low_to_high=low_to_high,
+#                                high_to_low=high_to_low,
+#                                shop_names_list=shop_names_list)
+#     return results
 
 
 def ignite_thread_timeout(shop_name, search_keyword):
@@ -242,20 +242,29 @@ def update_db_results(results):
     return False
 
 
-def get_json_db_results(shop_names_list, search_keyword, check=False):
-    results = get_data_from_db(shop_names_list=shop_names_list, searched_keyword=search_keyword)
+def get_json_db_results(shop_names_list, search_keyword, match_acc, low_to_high, high_to_low):
+    results = get_data_from_db(shop_names_list=shop_names_list,
+                               searched_keyword=search_keyword,
+                               match_acc=match_acc,
+                               low_to_high=low_to_high,
+                               high_to_low=high_to_low)
     if results:
-        if check:
-            if is_new_data(results, search_keyword):
-                return results
-            else:
-                ignite_thread_timeout(shop_names_list[0], search_keyword)
-                return get_data_from_db(shop_names_list=shop_names_list, searched_keyword=search_keyword)
-        else:
+        if is_new_data(results, search_keyword):
             return results
+        else:
+            ignite_thread_timeout(shop_names_list[0], search_keyword)
+            return get_data_from_db(shop_names_list=shop_names_list,
+                                    searched_keyword=search_keyword,
+                                    match_acc=match_acc,
+                                    low_to_high=low_to_high,
+                                    high_to_low=high_to_low)
     else:
         ignite_thread_timeout(shop_names_list[0], search_keyword)
-        return get_data_from_db(shop_names_list=shop_names_list, searched_keyword=search_keyword)
+        return get_data_from_db(shop_names_list=shop_names_list,
+                                searched_keyword=search_keyword,
+                                match_acc=match_acc,
+                                low_to_high=low_to_high,
+                                high_to_low=high_to_low)
     return results
 
 

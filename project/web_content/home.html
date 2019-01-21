@@ -58,7 +58,7 @@ crossorigin="anonymous">
 			</div>
 		</div>
 	</div>
-	<div id="shopsearch" class="Search">
+	<div id="shopsearch" class="Search" onclick="this.className='ResultSearch'">
 		<div id="search_form" class="input-group">
   	<input id="searchbar" type="text" class="form-control input-large" aria-label="Text input with segmented dropdown button" placeholder="e.g television" style="width: 85%;" name="search">
   <div class="input-group-append">
@@ -137,6 +137,11 @@ crossorigin="anonymous">
   </div>
 </div>
 </div>
+<div class='container results'>
+	<div id="resultreact">
+	</div>
+</div>
+
 <div id="resultreact_default" style="display: none;">
 	<div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
 		<div class="card h-100">
@@ -154,10 +159,7 @@ crossorigin="anonymous">
 
 </div>
 
-	<div class='container results'>
-		<div id="resultreact">
-		</div>
-</div>
+
 
 	<footer class="py-5 bg-light">
 	<div class="container">

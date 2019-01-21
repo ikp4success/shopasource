@@ -1,8 +1,9 @@
+import json
 from flask import render_template
 from flask import jsonify
 from flask import request
 
-from utilities.results_factory import run_web_search, run_api_search
+from utilities.results_factory import run_api_search
 from project import db, app
 
 
@@ -30,14 +31,39 @@ def about():
     return render_template('about.html')
 
 
-# @app.route("/robots.txt", methods=['GET'])
-# def robots():
-#     return render_template('robots.txt')
+@app.route("/robots.txt", methods=['GET'])
+def robots():
+    return render_template('robots.txt')
 
 
-@app.route("/api/shop/<shop_name>/search=<search_keyword>", methods=['GET'])
-def api_search(shop_name, search_keyword):
-    results = run_api_search([shop_name], search_keyword)
+@app.route("/api/shop/search", methods=['GET'])
+def api_search():
+    # http://127.0.0.1:8000/api/shop/search?sk=drones&smatch=50&shl=false&slh=false&shops=TARGET
+    shop_list_names = []
+    search_keyword = None
+    match_acc = 0
+    low_to_high = False
+    high_to_low = True
+
+    try:
+        search_keyword = request.args.get("sk")
+        shop_list_names = request.args.get("shops")
+        if shop_list_names:
+            if "," in shop_list_names:
+                shop_list_names = shop_list_names.split(",")
+            else:
+                shop_list_names = [shop_list_names]
+        match_acc = int(request.args.get("smatch"))
+        low_to_high = json.JSONDecoder().decode(request.args.get("slh") or "false")
+        high_to_low = json.JSONDecoder().decode(request.args.get("shl") or "false")
+
+        if not low_to_high:  # fail safe
+            high_to_low = True
+    except Exception:
+        results = {"message": "Sorry, error encountered during search, try again or contact admin if error persist"}
+        return (results, 404)
+
+    results = run_api_search(shop_list_names, search_keyword, match_acc, low_to_high, high_to_low)
     results = jsonify(results)
     return (results, 200)
 
@@ -52,39 +78,39 @@ def shop_list_active():
     return render_template('shops-active.json')
 
 
-@app.route("/websearch/shop/search", methods=['GET'])
-def web_search():
-    search_keyword = request.args.get("sk")
-    match_acc = 0
-    low_to_high = False
-    high_to_low = True
-    shop_list_names = request.args.get("shops")
-    if shop_list_names:
-        shop_list_names = shop_list_names.split(",")
-    try:
-        match_acc = int(request.args.get("smatch"))
-        low_to_high = request.args.get("slh")
-        high_to_low = request.args.get("shl")
-        if low_to_high == "true":
-            high_to_low = False
-            low_to_high = True
-        elif low_to_high == "false":
-            high_to_low = True
-            low_to_high = False
-        else:
-            low_to_high = False
-            high_to_low = True
+# @app.route("/websearch/shop/search", methods=['GET'])
+# def web_search():
+#     search_keyword = request.args.get("sk")
+#     match_acc = 0
+#     low_to_high = False
+#     high_to_low = True
+#     shop_list_names = request.args.get("shops")
+#     if shop_list_names:
+#         shop_list_names = shop_list_names.split(",")
+#     try:
+#         match_acc = int(request.args.get("smatch"))
+#         low_to_high = request.args.get("slh")
+#         high_to_low = request.args.get("shl")
+#         if low_to_high == "true":
+#             high_to_low = False
+#             low_to_high = True
+#         elif low_to_high == "false":
+#             high_to_low = True
+#             low_to_high = False
+#         else:
+#             low_to_high = False
+#             high_to_low = True
+#
+#     except Exception:
+#         match_acc = 0
+#         low_to_high = False
+#         high_to_low = True
+#     return get_search_results(search_keyword, match_acc, low_to_high, high_to_low, shop_list_names)
 
-    except Exception:
-        match_acc = 0
-        low_to_high = False
-        high_to_low = True
-    return get_search_results(search_keyword, match_acc, low_to_high, high_to_low, shop_list_names)
 
-
-def get_search_results(search_keyword, match_acc, low_to_high, high_to_low, shop_list_names):
-    run_web_search(search_keyword, match_acc, low_to_high, high_to_low, shop_list_names)
-    return render_template('searchresults.html')
+# def get_search_results(search_keyword, match_acc, low_to_high, high_to_low, shop_list_names):
+#     run_web_search(search_keyword, match_acc, low_to_high, high_to_low, shop_list_names)
+#     return render_template('searchresults.html')
 
 
 def home():

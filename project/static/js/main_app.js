@@ -36,13 +36,18 @@ function initial_api_search(sk){
   gs_data = get_selected_checkboxes()
   if(gs_data.length == 0){
     shops_url = "/websearch/shops.json";
+    s_match = document.getElementById("rangeacc").value
+    s_hl =  document.getElementById("highlow").checked
+    s_lh =  document.getElementById("lowhigh").checked
     $.getJSON(shops_url,
         function(data) {
           data.sort(() => Math.random() - 0.5)
           var shop_index;
           for(shop_index in data){
             shop_name = data[shop_index]
-            sk_url = "/api/shop/" + shop_name + "/search=" + sk;
+            // sk_url = "/api/shop/" + shop_name + "/search=" + sk;
+            search_params = "sk=" + sk + "&smatch=" + s_match + "&shl=" + s_hl + "&slh=" + s_lh + "&shops=" + shop_name
+            sk_url = "/api/shop/search?" + search_params;
             $.getJSON(sk_url,
                 function(data) {
                   if(!data["message"]){
@@ -62,14 +67,13 @@ function initial_api_search(sk){
     var shop_index;
     for(shop_index in gs_data){
       shop_name = gs_data[shop_index]
-      sk_url = "/api/shop/" + shop_name + "/search=" + sk;
+      search_params = "sk=" + sk + "&smatch=" + s_match + "&shl=" + s_hl + "&slh=" + s_lh + "&shops=" + shop_name
+      sk_url = "/api/shop/search?" + search_params;
       $.getJSON(sk_url,
           function(gs_data) {
       });
     }
   }
-
-
   return false
 }
 
@@ -174,6 +178,7 @@ function shop_web_search(){
   }
   cancel_search = !cancel_search
   if(cancel_search){
+    shop_loaded_data = []
     shop_searching = true
     document.getElementById("searchButton").disabled = true;
     document.getElementById("searchbar").disabled = true;
@@ -210,6 +215,7 @@ function reset_controls(){
 }
 
 function ini_reset_controls(){
+  shop_loaded_data = []
   $(".alert").hide()
   $(".loading").hide()
   restart_progress_bar()
@@ -225,24 +231,7 @@ function ini_reset_controls(){
 
 function load_shop_search(){
   sk = get_sk_refined()
-  s_match = document.getElementById("rangeacc").value
-  s_hl =  document.getElementById("highlow").checked
-  s_lh =  document.getElementById("lowhigh").checked
-  search_params = "sk=" + sk + "&smatch=" + s_match + "&shl=" + s_hl + "&slh=" + s_lh
-  web_search_url = "/websearch/shop/search?" + search_params;
-  gs_check = get_selected_checkboxes()
-  if(gs_check.length > 0){
-    shops_list_names = gs_check.join(",")
-    web_search_url = "/websearch/shop/search?" + search_params + "&shops=" + shops_list_names;
-  }
-
   consume_l_data(sk)
-  // $.get(web_search_url,
-  //     function(data) {
-  //       current_web_url = web_search_url
-  //       consume_l_data()
-  //       // dynamic_content(data, true)
-  // });
   return false
 }
 
@@ -269,44 +258,21 @@ function set_search_time_out(obj_so, refresh_api){
     sk = get_sk_refined()
   }
 
-  obj_so = obj_so || 3000
+  obj_so = obj_so || 1500
   refresh_time_out()
   load_time_out = setTimeout(load_shop_search, obj_so)
   return
 }
 
-function dynamic_content(data, refresh_shop_search){
-  if(!data.includes("{REACT_RESULT_ROW}")){
-    if(refresh_shop_search){
-      var shopsearchelem = $(data).filter("#shopsearch")
-      $("#shopsearch").replaceWith(shopsearchelem)
-    }
-    var reactelem = $(data).find("#resultreact")
-    $("#resultreact").replaceWith(reactelem)
-    shop_searching = false
-    reset_controls()
-    load_time_out = setTimeout(refresh_shop_data, 3000)
-  }else{
+function consume_l_data(sk){
+  if(Object.keys(shop_loaded_data).length == 0){
     if(time_check_default != 50){
       shop_searching = true
       time_check_default = time_check_default + 10
-      set_search_time_out(5000, true)
-    }else{
-      var shopsearchelem = $(data).filter("#shopsearch")
-      $("#shopsearch").replaceWith(shopsearchelem)
-      var result = $(data).filter(".results")
-      $(".results").replaceWith(result)
-      $("#resultreact").hide()
-      shop_searching = false
-      reset_controls()
+      set_search_time_out(3000, true)
     }
-
+    return
   }
-
-  return
-}
-
-function consume_l_data(sk){
   res_react_bucket = []
   var shop_index_k;
   for (shop_index_k in shop_loaded_data){
@@ -331,24 +297,20 @@ function consume_l_data(sk){
       res_react_bucket.push(res_react)
     }
   }
-  reactelem = res_react_bucket.join("")
+  reactelem = $("<div class=\"row\">" + res_react_bucket.join("") + "</div>")
   $('#resultreact').html(reactelem)
   shop_searching = false
   reset_controls()
-  // load_time_out = setTimeout(refresh_shop_data, 3000)
+  load_time_out = setTimeout(refresh_shop_data, 3000)
 }
 
 
 function refresh_shop_data(){
-  if(current_web_url != null){
-    $.get(current_web_url,
-        function(data) {
-          if(shop_searching){
-            return
-          }
-          // dynamic_content(data)
-        });
+  if(shop_searching){
+    return
   }
+  sk = get_sk_refined()
+  consume_l_data(sk)
   return false
 }
 
