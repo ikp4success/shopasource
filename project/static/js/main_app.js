@@ -197,6 +197,7 @@ function shop_web_search(){
     $(".alert").show()
     return false
   }
+
   cancel_search = !cancel_search
   shop_loaded_data = clear_dict_obj(shop_loaded_data)
   if(cancel_search){
@@ -230,6 +231,7 @@ function clear_dict_obj(obj_dict){
 }
 
 function validate_sk(sk){
+  sk = decodeURIComponent(sk)
   if(!sk || sk == null || !sk.trim() || sk.length < 2 || !regx.test(sk)){
     return false
   }
