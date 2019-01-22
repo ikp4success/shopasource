@@ -322,7 +322,7 @@ function consume_l_data(){
     }
   }
   if(res_react_bucket.length == 0){
-    if(time_check_default != 50){
+    if(time_check_default != 100){
       shop_searching = true
       time_check_default = time_check_default + 10
       set_search_time_out(3000, true)
