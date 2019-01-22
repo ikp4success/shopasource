@@ -302,7 +302,7 @@ def is_new_data(results, search_keyword):
         if date_searched is not None:
             date_searched_parse = parser.parse(date_searched)
             dt_time_diff = datetime.now(timezone.utc) - date_searched_parse
-            if dt_time_diff.days < 7:
+            if dt_time_diff.days < 30:
                 return True
     return False
 

@@ -30,7 +30,7 @@ class Newegg(scrapy.Spider):
             if "areyouahuman" in item_url:
                 break
 
-            prize = "{}{}".format(item.css(".price-current strong").extract_first(), item.css(".price-current sup").extract_first())
+            prize = "${}{}".format(item.css(".price-current strong ::text").extract_first(), item.css(".price-current sup ::text").extract_first())
             meta = {
                 "p": prize,
                 "t": item_text,
@@ -42,7 +42,6 @@ class Newegg(scrapy.Spider):
 
     def parse_data(self, response):
         price = safe_grab(response.meta, ["p"])
-        price = "${}".format(price)
         title = safe_grab(response.meta, ["t"])
         image_url = safe_grab(response.meta, ["img"])
         if "areyouahuman" not in response.url:

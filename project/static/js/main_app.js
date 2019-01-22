@@ -352,6 +352,7 @@ function consume_l_data(){
       res_react_html.querySelectorAll("#p_link")[0].href = sk_shop_each_d_v["shop_link"] || ""
       res_react_html.querySelector("#p_img_link").src = sk_shop_each_d_v["image_url"] || ""
       res_react_html.querySelector("#p_img_link").alt = sk_shop_each_d_v["title"] || ""
+      res_react_html.querySelectorAll("#p_link")[1].href = sk_shop_each_d_v["shop_link"] || ""
       res_react_html.querySelectorAll("#p_link")[1].innerText=(sk_shop_each_d_v["title"] || "")
       res_react_html.querySelector("#p_description").innerText=(sk_shop_each_d_v["content_description"] || "")
       res_react_html.querySelector("#p_price").innerText=("Price: " + sk_shop_each_d_v["price"] || "")
