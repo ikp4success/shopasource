@@ -67,7 +67,7 @@ def run_api_search(shop_names_list, search_keyword, match_acc, low_to_high, high
             if len(search_keyword) < 2:
                 results = {"message": "Sorry, no products found"}
                 return results
-            search_keyword = truncate_data(search_keyword, 50)
+            search_keyword = truncate_data(search_keyword, 75)
 
             results = get_json_db_results(shop_names_list, search_keyword, match_acc, low_to_high, high_to_low)
             if results is None or len(results) == 0:
@@ -90,7 +90,7 @@ def run_api_search(shop_names_list, search_keyword, match_acc, low_to_high, high
 #             update_results_row_error("Sorry, no products found")
 #             return
 #
-#         search_keyword = truncate_data(search_keyword, 50)
+#         search_keyword = truncate_data(search_keyword, 75)
 #
 #         # DEBUG url = "http://127.0.0.1:5000/api/shop/search={}".format(search_keyword)
 #         # url = "http://shopasource.herokuapp.com/api/shop/search={}".format(search_keyword)

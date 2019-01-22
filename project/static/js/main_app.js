@@ -6,8 +6,11 @@ cancel_search = false
 shop_searching = false
 var $api_request = null
 var $shop_request = null
+var $shop_active_request = null
 var regx = /^[A-Za-z0-9 _.-]+$/;
 shop_loaded_data = {}
+shop_size = 0
+shops_completed = 0
 
 $(function(){
   $(document).on("submit", "#search_form", function(e){
@@ -41,6 +44,8 @@ function initial_api_search(sk){
     shops_url = "/websearch/shops.json";
     $shop_request = $.getJSON(shops_url,
         function(data) {
+          shops_completed = 0
+          shop_size = data.length
           data.sort(() => Math.random() - 0.5)
           var shop_index;
           for(shop_index in data){
@@ -49,11 +54,14 @@ function initial_api_search(sk){
             sk_url = "/api/shop/search?" + search_params;
             api_request = $.getJSON(sk_url,
                 function(data) {
+                  shops_completed++
                   load_data_container(data, sk)
             });
           }
     });
   }else{
+    shops_completed = 0
+    shop_size = gs_data.length
     gs_data.sort(() => Math.random() - 0.5)
     var shop_index;
     for(shop_index in gs_data){
@@ -62,6 +70,7 @@ function initial_api_search(sk){
       sk_url = "/api/shop/search?" + search_params;
       $api_request = $.getJSON(sk_url,
           function(gs_data) {
+            shops_completed++
             load_data_container(gs_data, sk)
       });
     }
@@ -91,6 +100,7 @@ function load_data_container(data, sk){
     d_shop_data = JSON.parse(data[0])
     if(d_shop_data || d_shop_data.length > 0){
       sk = decodeURIComponent(sk)
+      sk = truncate_str(sk, 75)
       l_s_name = d_shop_data[sk]["shop_name"]
       if(l_s_name){
         shop_loaded_data[l_s_name] = data
@@ -103,7 +113,11 @@ function load_shops_cb(){
   $(".alert").hide()
   $("#loading_shop").show()
   shops_url = "/websearch/shops-active.json";
-  $.getJSON(shops_url,
+  if($shop_active_request != null) {
+    $shop_active_request.abort()
+    $shop_active_request = null
+  }
+  $shop_active_request = $.getJSON(shops_url,
       function(data) {
         replace_shop_find(data)
         $("#loading_shop").hide()
@@ -148,6 +162,17 @@ function friendly_name_cb(shopnamecb){
   return shopnamecb
 }
 
+function truncate_str(str_val, ln_cnt){
+  if(!str_val){
+    return str_val
+  }
+  if(str_val.length > ln_cnt){
+    return str_val.slice(0, ln_cnt) + "..."
+  }
+
+  return str_val
+}
+
 function find_shop(){
   $("#loading_shop").show()
   shop_search_name = document.getElementsByName("shop_search")[0].value
@@ -161,7 +186,11 @@ function find_shop(){
     return
   }
   shops_url = "/websearch/shops-active.json";
-  $.getJSON(shops_url,
+  if($shop_active_request != null) {
+    $shop_active_request.abort()
+    $shop_active_request = null
+  }
+  $shop_active_request = $.getJSON(shops_url,
       function(data) {
         shop_search_name = shop_search_name.toUpperCase()
         found_shop = []
@@ -311,18 +340,23 @@ function consume_l_data(){
         continue
       }
       sk = decodeURIComponent(sk)
+      sk = truncate_str(sk, 75)
       sk_shop_each_d_v = shop_each_d_v[sk]
       if (!sk_shop_each_d_v){
         continue
       }
+
       res_react = $('#resultreact_default').html();
-      res_react = res_react.replace(/{PRODUCTIMAGESOURCE}/g, sk_shop_each_d_v["image_url"] || "")
-      res_react = res_react.replace(/{PRODUCTLINK}/g, sk_shop_each_d_v["shop_link"] || "")
-      res_react = res_react.replace(/{PRODUCTTITLE}/g, sk_shop_each_d_v["title"] || "")
-      res_react = res_react.replace(/{PRODUCTDESCRIPTION}/g, sk_shop_each_d_v["content_description"] || "")
-      res_react = res_react.replace(/{PRODUCTPRICE}/g, sk_shop_each_d_v["price"] || "")
-      res_react = res_react.replace(/{PRODUCTSHOPNAME}/g, sk_shop_each_d_v["shop_name"] || "")
-      res_react_bucket.push(res_react)
+      res_react_html = document.createElement("div")
+      res_react_html.innerHTML = res_react
+      res_react_html.querySelectorAll("#p_link")[0].href = sk_shop_each_d_v["shop_link"] || ""
+      res_react_html.querySelector("#p_img_link").src = sk_shop_each_d_v["image_url"] || ""
+      res_react_html.querySelector("#p_img_link").alt = sk_shop_each_d_v["title"] || ""
+      res_react_html.querySelectorAll("#p_link")[1].innerText=(sk_shop_each_d_v["title"] || "")
+      res_react_html.querySelector("#p_description").innerText=(sk_shop_each_d_v["content_description"] || "")
+      res_react_html.querySelector("#p_price").innerText=("Price: " + sk_shop_each_d_v["price"] || "")
+      res_react_html.querySelector("#p_shopname").innerText=("Shop: " + sk_shop_each_d_v["shop_name"] || "")
+      res_react_bucket.push($(res_react_html).html())
     }
   }
   if(res_react_bucket.length == 0){
@@ -344,7 +378,12 @@ function consume_l_data(){
   $('#resultreact').html(reactelem)
   shop_searching = false
   reset_controls()
-  load_time_out = setTimeout(refresh_shop_data, 3000)
+  if (shops_completed != shop_size){
+    load_time_out = setTimeout(refresh_shop_data, 3000)
+  }else{
+    refresh_time_out()
+    $("#spin_shop").hide()
+  }
 }
 
 

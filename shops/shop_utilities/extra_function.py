@@ -68,7 +68,7 @@ def generate_result_meta(shop_link, searched_keyword, image_url, shop_name, pric
             "shop_name": shop_name,
             "shop_link": shop_link,
             "price": format_price(price),
-            "title": truncate_data(title, 50),
+            "title": truncate_data(title, 75),
             "searched_keyword": searched_keyword,
             "content_description": truncate_data(content_description, 250),
             "date_searched": date_searched,
