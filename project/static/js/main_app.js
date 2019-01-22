@@ -90,6 +90,7 @@ function load_data_container(data, sk){
   if(!data["message"]){
     d_shop_data = JSON.parse(data[0])
     if(d_shop_data || d_shop_data.length > 0){
+      sk = decodeURIComponent(sk)
       l_s_name = d_shop_data[sk]["shop_name"]
       if(l_s_name){
         shop_loaded_data[l_s_name] = data
@@ -309,6 +310,7 @@ function consume_l_data(){
       if(!shop_each_d_v){
         continue
       }
+      sk = decodeURIComponent(sk)
       sk_shop_each_d_v = shop_each_d_v[sk]
       if (!sk_shop_each_d_v){
         continue
