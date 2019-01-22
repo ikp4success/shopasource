@@ -32,13 +32,13 @@ function initial_api_search(sk){
     $shop_request = null
   }
 
+  s_match = document.getElementById("rangeacc").value
+  s_hl =  document.getElementById("highlow").checked
+  s_lh =  document.getElementById("lowhigh").checked
+
   gs_data = get_selected_checkboxes()
   if(gs_data.length == 0){
     shops_url = "/websearch/shops.json";
-    s_match = document.getElementById("rangeacc").value
-    s_hl =  document.getElementById("highlow").checked
-    s_lh =  document.getElementById("lowhigh").checked
-
     $shop_request = $.getJSON(shops_url,
         function(data) {
           data.sort(() => Math.random() - 0.5)
@@ -49,32 +49,7 @@ function initial_api_search(sk){
             sk_url = "/api/shop/search?" + search_params;
             api_request = $.getJSON(sk_url,
                 function(data) {
-                  if(current_sk != sk){
-                    if(time_check_default != 0){
-                      time_check_default = time_check_default - 10
-                    }
-                    if($api_request != null){
-                      $api_request.abort()
-                      $api_request = null
-                    }
-
-                    if($shop_request != null) {
-                      $shop_request.abort()
-                      $shop_request = null
-                    }
-                    shop_loaded_data = clear_dict_obj(shop_loaded_data)
-                    initial_api_search(current_sk)
-                    return false
-                  }
-                  if(!data["message"]){
-                    d_shop_data = JSON.parse(data[0])
-                    if(d_shop_data || d_shop_data.length > 0){
-                      l_s_name = d_shop_data[sk]["shop_name"]
-                      if(l_s_name){
-                        shop_loaded_data[l_s_name] = data
-                      }
-                    }
-                  }
+                  load_data_container(data, sk)
             });
           }
     });
@@ -85,12 +60,42 @@ function initial_api_search(sk){
       shop_name = gs_data[shop_index]
       search_params = "sk=" + sk + "&smatch=" + s_match + "&shl=" + s_hl + "&slh=" + s_lh + "&shops=" + shop_name
       sk_url = "/api/shop/search?" + search_params;
-      $.getJSON(sk_url,
+      $api_request = $.getJSON(sk_url,
           function(gs_data) {
+            load_data_container(gs_data, sk)
       });
     }
   }
   return false
+}
+
+function load_data_container(data, sk){
+  if(current_sk != sk){
+    if(time_check_default != 0){
+      time_check_default = time_check_default - 10
+    }
+    if($api_request != null){
+      $api_request.abort()
+      $api_request = null
+    }
+
+    if($shop_request != null) {
+      $shop_request.abort()
+      $shop_request = null
+    }
+    shop_loaded_data = clear_dict_obj(shop_loaded_data)
+    initial_api_search(current_sk)
+    return false
+  }
+  if(!data["message"]){
+    d_shop_data = JSON.parse(data[0])
+    if(d_shop_data || d_shop_data.length > 0){
+      l_s_name = d_shop_data[sk]["shop_name"]
+      if(l_s_name){
+        shop_loaded_data[l_s_name] = data
+      }
+    }
+  }
 }
 
 function load_shops_cb(){
@@ -239,8 +244,11 @@ function reset_controls(){
   return
 }
 
-function ini_reset_controls(){
-  $(".alert").hide()
+function ini_reset_controls(is_alert=false){
+  if(!is_alert){
+    $(".alert").hide()
+  }
+
   $(".loading").hide()
   restart_progress_bar()
   $("#searchButton").show()
@@ -319,8 +327,10 @@ function consume_l_data(){
       time_check_default = time_check_default + 10
       set_search_time_out(3000, true)
     }else{
-      $("alert").html("Sorry, no products found")
-      $("alert").show()
+      $(".alert").html("<strong>Sorry, no products found</strong>, refine search criteria.")
+      $(".alert").show()
+      shop_searching = false
+      ini_reset_controls(true)
     }
     return
   }

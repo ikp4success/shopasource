@@ -198,9 +198,9 @@ def update_results_row_error(data):
     update_search_results(_errorMessage.replace("{Message}", data), "{error_message}")
 
 
-def get_data_from_db(searched_keyword, match_acc=0, low_to_high=False, high_to_low=True, shop_names_list=None):
+def get_data_from_db(searched_keyword, low_to_high=False, high_to_low=True, shop_names_list=None):
     results_db = []
-    mk_results = []
+    results = []
     if shop_names_list is not None:
         for shop_name_l in shop_names_list:
             if high_to_low:
@@ -220,10 +220,16 @@ def get_data_from_db(searched_keyword, match_acc=0, low_to_high=False, high_to_l
     for results in results_db:
         if results is not None and len(results) > 0:
             results = [res.__str__() for res in results]
-            for item_r in results:
-                item_r = safe_json(item_r)
-                if match_sk(searched_keyword, safe_grab(item_r, [searched_keyword, "title"]), match_acc):
-                    mk_results.append(json.dumps(item_r))
+
+    return results
+
+
+def match_results_by_sk(results, searched_keyword, match_acc=0):
+    mk_results = []
+    for item_r in results:
+        item_r = safe_json(item_r)
+        if match_sk(searched_keyword, safe_grab(item_r, [searched_keyword, "title"]), match_acc):
+            mk_results.append(json.dumps(item_r))
     return mk_results
 
 
@@ -245,24 +251,22 @@ def update_db_results(results):
 def get_json_db_results(shop_names_list, search_keyword, match_acc, low_to_high, high_to_low):
     results = get_data_from_db(shop_names_list=shop_names_list,
                                searched_keyword=search_keyword,
-                               match_acc=match_acc,
                                low_to_high=low_to_high,
                                high_to_low=high_to_low)
     if results:
         if is_new_data(results, search_keyword):
+            results = match_results_by_sk(results, search_keyword, match_acc)
             return results
         else:
             ignite_thread_timeout(shop_names_list[0], search_keyword)
             return get_data_from_db(shop_names_list=shop_names_list,
                                     searched_keyword=search_keyword,
-                                    match_acc=match_acc,
                                     low_to_high=low_to_high,
                                     high_to_low=high_to_low)
     else:
         ignite_thread_timeout(shop_names_list[0], search_keyword)
         return get_data_from_db(shop_names_list=shop_names_list,
                                 searched_keyword=search_keyword,
-                                match_acc=match_acc,
                                 low_to_high=low_to_high,
                                 high_to_low=high_to_low)
     return results

@@ -19,17 +19,35 @@ class Newegg(scrapy.Spider):
         yield get_request(shop_url, self.get_best_link)
 
     def get_best_link(self, response):
-        items = response.css(".item-container a")
+        if "areyouahuman" in response.text.lower():
+            yield None
+            return
+        items = response.css(".item-container")
         for item in items:
-            item_text = item.css("::text").extract_first()
-            item_url = item.css("::attr(href)").extract_first()
-            prize = "{}{}".format(response.css(".price-current strong").extract_first(), response.css(".price-current sup").extract_first())
-            yield get_request(url=item_url, callback=self.parse_data, domain_url=response.url, meta={"p": prize, "t": item_text})
+            item_text = item.css("a ::text").extract_first()
+            item_url = item.css("a ::attr(href)").extract_first()
+
+            if "areyouahuman" in item_url:
+                break
+
+            prize = "{}{}".format(item.css(".price-current strong").extract_first(), item.css(".price-current sup").extract_first())
+            meta = {
+                "p": prize,
+                "t": item_text,
+                "img": item.css("img ::attr(src)").extract_first()
+            }
+            yield get_request(url=item_url,
+                              callback=self.parse_data,
+                              domain_url=response.url, meta=meta)
 
     def parse_data(self, response):
-        image_url = response.css(".mainSlide img ::attr(src)").extract_first()
-        title = response.css("#grpDescrip_h ::text").extract_first() or safe_grab(response.meta, ["t"])
-        description = "{}\n{}".format(extract_items(response.css(".itemDesc ::text").extract()), extract_items(response.css(".itemColumn ::text").extract())).rstrip().strip()
         price = safe_grab(response.meta, ["p"])
         price = "${}".format(price)
+        title = safe_grab(response.meta, ["t"])
+        image_url = safe_grab(response.meta, ["img"])
+        if "areyouahuman" not in response.url:
+            image_url = response.css(".mainSlide img ::attr(src)").extract_first()
+            title = extract_items(response.css("#grpDescrip_h ::text").extract()) or title
+            description = "{}\n{}".format(extract_items(response.css(".itemDesc ::text").extract()), extract_items(response.css(".itemColumn ::text").extract())).rstrip().strip()
+
         yield generate_result_meta(shop_link=response.url, image_url=image_url, shop_name=self.name, price=price, title=title, searched_keyword=self._search_keyword, content_description=description)
