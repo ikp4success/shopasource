@@ -334,7 +334,9 @@ function consume_l_data(){
     }
     return
   }
-  reactelem = $("<div class=\"row\">" + res_react_bucket.join("") + "</div>")
+  spin_shop_default_htm = $("#spin_shop_default").html()
+  res_rock_spinner = res_react_bucket.join("") + spin_shop_default_htm
+  reactelem = $("<div class=\"row\">" + res_rock_spinner + "</div>")
   $('#resultreact').html(reactelem)
   shop_searching = false
   reset_controls()

@@ -110,6 +110,21 @@ crossorigin="anonymous">
 			  <label class="custom-control-label" for="{shop_id}">{shop_name_friend}</label>
 		</div>
 		</div>
+		<div id="spin_shop_default" style="display: none;">
+			<div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+				<div class="card h-100">
+						<a href="#"><img class="card-img-top" src="" alt=""/></a>
+						<div class="card-body">
+							<h4 class="card-title">
+								<a target="_blank" href="">Loading...</a>
+							</h4>
+							<div class="spinner-border text-warning sp_spinner" role="status">
+							  <span class="sr-only">Loading...</span>
+							</div>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div  id="loading_shop" style="display: none;">
 			<div class="spinner-grow text-primary card-group" role="status">
 			  <span class="sr-only">Loading...</span>
@@ -141,7 +156,7 @@ crossorigin="anonymous">
 	</div>
 
 
-	<div class='container results'>
+	<div class='container results_low'>
 		<div id="resultreact">
 		</div>
 	</div>
