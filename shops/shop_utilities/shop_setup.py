@@ -217,6 +217,12 @@ shop_configurations = [
             "active": True,
             "name": "STYLERUNNER"
         }
+    },
+    {
+        "SPIRITUALGANGSTER": {
+            "active": True,
+            "name": "SPIRITUALGANGSTER"
+        }
     }
 ]
 

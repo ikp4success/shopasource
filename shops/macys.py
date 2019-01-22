@@ -16,7 +16,9 @@ class Macys(scrapy.Spider):
         "Accept-Encoding": "gzip, deflate, br",
         "Connection": "keep-alive",
         "Upgrade-Insecure-Requests": "1",
-        "If-None-Match": 'W/"1a0905-84p23IFmm2k/vykK/3NpICzo2N8"',
+        "TE": "Trailers",
+        "USER-AGENT": "Mozilla/5.0 (X11; Linux x86_64; rv:65.0) Gecko/20100101 Firefox/65.0"
+        # "If-None-Match": 'W/"1a0905-84p23IFmm2k/vykK/3NpICzo2N8"',
     }
 
     def __init__(self, search_keyword):

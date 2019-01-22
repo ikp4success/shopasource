@@ -7,7 +7,7 @@ shop_searching = false
 var $api_request = null
 var $shop_request = null
 var $shop_active_request = null
-var regx = /^[A-Za-z0-9 _.-]+$/;
+var regx = /^[A-Za-z0-9 _.-\\'\\,]+$/;
 shop_loaded_data = {}
 shop_size = 0
 shops_completed = 0
@@ -41,7 +41,7 @@ function initial_api_search(sk){
 
   gs_data = get_selected_checkboxes()
   if(gs_data.length == 0){
-    shops_url = "/websearch/shops.json";
+    shops_url = "/websearch/shops-active.json";
     $shop_request = $.getJSON(shops_url,
         function(data) {
           shops_completed = 0
@@ -152,7 +152,11 @@ function replace_shop_find(data){
 function friendly_name_cb(shopnamecb){
   friend_name = {
     "SIXPM": "6PM",
-    "HM": "H&M"
+    "HM": "H&M",
+    "MVMTWATCHES": "MVMT WATCHES",
+    "SPIRITUALGANGSTER": "SPIRITUAL GANGSTER",
+    "MACYS": "MACY'S"
+
   }
   name_friend = friend_name[shopnamecb]
   if(name_friend){
@@ -178,6 +182,7 @@ function find_shop(){
   shop_search_name = document.getElementsByName("shop_search")[0].value
   if(!shop_search_name){
     $("#loading_shop").hide()
+    load_shops_cb()
     return
   }
   if(!validate_sk(shop_search_name)){
