@@ -1,25 +1,13 @@
 load_time_out = null
 time_check_default = 0
-current_web_url = null
+// current_web_url = null
 current_sk = null
 cancel_search = false
 shop_searching = false
+var $api_request = null
+var $shop_request = null
 var regx = /^[A-Za-z0-9 _.-]+$/;
 shop_loaded_data = {}
-
-$(function() {
-  $(document).on('click', 'div#shopsearch', function() {
-    sk = get_sk_refined()
-    initial_api_search(sk)
-  });
-});
-
-$(function() {
-  $(document).on('blur', '.mr-sm-2', function() {
-    sk = get_sk_refined()
-    initial_api_search(sk)
-  });
-});
 
 $(function(){
   $(document).on("submit", "#search_form", function(e){
@@ -33,23 +21,51 @@ function initial_api_search(sk){
   if(!validate_sk(sk)){
     return false
   }
+
+  if($api_request != null){
+    $api_request.abort()
+    $api_request = null
+  }
+
+  if($shop_request != null) {
+    $shop_request.abort()
+    $shop_request = null
+  }
+
   gs_data = get_selected_checkboxes()
   if(gs_data.length == 0){
     shops_url = "/websearch/shops.json";
     s_match = document.getElementById("rangeacc").value
     s_hl =  document.getElementById("highlow").checked
     s_lh =  document.getElementById("lowhigh").checked
-    $.getJSON(shops_url,
+
+    $shop_request = $.getJSON(shops_url,
         function(data) {
           data.sort(() => Math.random() - 0.5)
           var shop_index;
           for(shop_index in data){
             shop_name = data[shop_index]
-            // sk_url = "/api/shop/" + shop_name + "/search=" + sk;
             search_params = "sk=" + sk + "&smatch=" + s_match + "&shl=" + s_hl + "&slh=" + s_lh + "&shops=" + shop_name
             sk_url = "/api/shop/search?" + search_params;
-            $.getJSON(sk_url,
+            api_request = $.getJSON(sk_url,
                 function(data) {
+                  if(current_sk != sk){
+                    if(time_check_default != 0){
+                      time_check_default = time_check_default - 10
+                    }
+                    if($api_request != null){
+                      $api_request.abort()
+                      $api_request = null
+                    }
+
+                    if($shop_request != null) {
+                      $shop_request.abort()
+                      $shop_request = null
+                    }
+                    shop_loaded_data = clear_dict_obj(shop_loaded_data)
+                    initial_api_search(current_sk)
+                    return false
+                  }
                   if(!data["message"]){
                     d_shop_data = JSON.parse(data[0])
                     if(d_shop_data || d_shop_data.length > 0){
@@ -177,8 +193,10 @@ function shop_web_search(){
     return false
   }
   cancel_search = !cancel_search
+  shop_loaded_data = clear_dict_obj(shop_loaded_data)
   if(cancel_search){
-    shop_loaded_data = []
+    current_sk = sk
+    initial_api_search(current_sk)
     shop_searching = true
     document.getElementById("searchButton").disabled = true;
     document.getElementById("searchbar").disabled = true;
@@ -186,9 +204,7 @@ function shop_web_search(){
     $("#cancelSearchButton").show()
     time_check_default = 0
     $("#err_msg").hide()
-    current_sk = sk
     $(".loading").show()
-    // restart_progress_bar()
     load_search_progress_bar()
     set_search_time_out()
   }else{
@@ -197,6 +213,15 @@ function shop_web_search(){
   }
 
   return false
+}
+
+function clear_dict_obj(obj_dict){
+  for (var objKey in obj_dict){
+    if (obj_dict.hasOwnProperty(objKey)){
+        delete obj_dict[objKey];
+    }
+}
+  return {}
 }
 
 function validate_sk(sk){
@@ -215,7 +240,6 @@ function reset_controls(){
 }
 
 function ini_reset_controls(){
-  shop_loaded_data = []
   $(".alert").hide()
   $(".loading").hide()
   restart_progress_bar()
@@ -230,8 +254,7 @@ function ini_reset_controls(){
 }
 
 function load_shop_search(){
-  sk = get_sk_refined()
-  consume_l_data(sk)
+  consume_l_data()
   return false
 }
 
@@ -264,15 +287,8 @@ function set_search_time_out(obj_so, refresh_api){
   return
 }
 
-function consume_l_data(sk){
-  if(Object.keys(shop_loaded_data).length == 0){
-    if(time_check_default != 50){
-      shop_searching = true
-      time_check_default = time_check_default + 10
-      set_search_time_out(3000, true)
-    }
-    return
-  }
+function consume_l_data(){
+  sk = current_sk
   res_react_bucket = []
   var shop_index_k;
   for (shop_index_k in shop_loaded_data){
@@ -288,14 +304,25 @@ function consume_l_data(sk){
         continue
       }
       res_react = $('#resultreact_default').html();
-      res_react = res_react.replace(/{PRODUCTIMAGESOURCE}/g, sk_shop_each_d_v["image_url"])
-      res_react = res_react.replace(/{PRODUCTLINK}/g, sk_shop_each_d_v["shop_link"])
-      res_react = res_react.replace(/{PRODUCTTITLE}/g, sk_shop_each_d_v["title"])
-      res_react = res_react.replace(/{PRODUCTDESCRIPTION}/g, sk_shop_each_d_v["content_description"])
-      res_react = res_react.replace(/{PRODUCTPRICE}/g, sk_shop_each_d_v["price"])
-      res_react = res_react.replace(/{PRODUCTSHOPNAME}/g, sk_shop_each_d_v["shop_name"])
+      res_react = res_react.replace(/{PRODUCTIMAGESOURCE}/g, sk_shop_each_d_v["image_url"] || "")
+      res_react = res_react.replace(/{PRODUCTLINK}/g, sk_shop_each_d_v["shop_link"] || "")
+      res_react = res_react.replace(/{PRODUCTTITLE}/g, sk_shop_each_d_v["title"] || "")
+      res_react = res_react.replace(/{PRODUCTDESCRIPTION}/g, sk_shop_each_d_v["content_description"] || "")
+      res_react = res_react.replace(/{PRODUCTPRICE}/g, sk_shop_each_d_v["price"] || "")
+      res_react = res_react.replace(/{PRODUCTSHOPNAME}/g, sk_shop_each_d_v["shop_name"] || "")
       res_react_bucket.push(res_react)
     }
+  }
+  if(res_react_bucket.length == 0){
+    if(time_check_default != 50){
+      shop_searching = true
+      time_check_default = time_check_default + 10
+      set_search_time_out(3000, true)
+    }else{
+      $("alert").html("Sorry, no products found")
+      $("alert").show()
+    }
+    return
   }
   reactelem = $("<div class=\"row\">" + res_react_bucket.join("") + "</div>")
   $('#resultreact').html(reactelem)
@@ -309,8 +336,7 @@ function refresh_shop_data(){
   if(shop_searching){
     return
   }
-  sk = get_sk_refined()
-  consume_l_data(sk)
+  consume_l_data()
   return false
 }
 
@@ -319,7 +345,7 @@ function restart_progress_bar(){
   var content = container.innerHTML;
   container.innerHTML= content;
   var elem = document.getElementById("searchProgressBar");
-  elem.style.width = 0 + '%';
+  elem.style.width = 1 + '%';
 }
 
 function load_search_progress_bar() {
