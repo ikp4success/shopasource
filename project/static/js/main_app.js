@@ -471,7 +471,7 @@ function consume_l_data(){
   $('#resultreact').html(reactelem)
   shop_searching = false
   reset_controls()
-  if (shops_completed == shop_size){
+  if (shops_completed >= shop_size){
       refresh_time_out()
       $("#spin_shop").hide()
   }else{
