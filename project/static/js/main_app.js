@@ -13,7 +13,7 @@ var scraped_shops = []
 shop_loaded_data = {}
 shop_size = 0
 shops_completed = 0
-rd_clicked = false
+is_filter = false
 
 $(function(){
   $(document).on("submit", "#search_form", function(e){
@@ -49,15 +49,26 @@ $(function(){
       radiobtn = document.getElementById("highlow");
       radiobtn.checked = true;
     }
-    else if (scraped_shops.length > 0){
-      rd_clicked = true
+    else if(scraped_shops.length > 0 && get_selected_checkboxes().length > 0){
+      is_filter = true
       refresh_time_out()
       $("#spin_shop").hide()
       c_match = document.getElementById("rangeacc").value
       c_hl =  document.getElementById("highlow").checked
       c_lh =  document.getElementById("lowhigh").checked
       shop_size = get_selected_checkboxes().length
-      initial_api_search(sk, get_selected_checkboxes()[0], c_match, c_hl, c_lh)
+      initial_api_search(sk, get_selected_checkboxes().join(","), c_match, c_hl, c_lh)
+      load_time_out = setTimeout(refresh_shop_data, 1000)
+    }
+    else if (scraped_shops.length > 0){
+      is_filter = true
+      refresh_time_out()
+      $("#spin_shop").hide()
+      c_match = document.getElementById("rangeacc").value
+      c_hl =  document.getElementById("highlow").checked
+      c_lh =  document.getElementById("lowhigh").checked
+      shop_size = scraped_shops.length
+      initial_api_search(sk, scraped_shops.join(""), c_match, c_hl, c_lh)
       load_time_out = setTimeout(refresh_shop_data, 1000)
     }
   });
@@ -95,7 +106,9 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
     shop_loaded_data = clear_dict_obj(shop_loaded_data)
     api_request = $.getJSON(sk_url,
         function(data) {
-          load_data_container(data, sk)
+          if(!data["message"]){
+            shop_loaded_data = data
+          }
           shops_completed = shop_size
     });
   }
@@ -321,7 +334,7 @@ function shop_web_search(){
   cancel_search = !cancel_search
   shop_loaded_data = clear_dict_obj(shop_loaded_data)
   if(cancel_search){
-    rd_clicked = false
+    is_filter = false
     scraped_shops = []
     current_sk = sk
     initial_api_search(current_sk)
@@ -419,41 +432,54 @@ function set_search_time_out(obj_so, refresh_api){
   return
 }
 
+function consume_l_data_child(shop_loaded_data_v, sk){
+  res_react_bucket_child = []
+  var shop_each_index_k;
+  for(shop_each_index_k in shop_loaded_data_v){
+    shop_each_d_v = JSON.parse(shop_loaded_data_v[shop_each_index_k])
+    if(!shop_each_d_v){
+      continue
+    }
+    sk = decodeURIComponent(sk)
+    sk = truncate_str(sk, 75)
+    sk_shop_each_d_v = shop_each_d_v[sk]
+    if (!sk_shop_each_d_v){
+      continue
+    }
+
+    res_react = $('#resultreact_default').html();
+    res_react_html = document.createElement("div")
+    res_react_html.innerHTML = res_react
+    res_react_html.querySelectorAll("#p_link")[0].href = sk_shop_each_d_v["shop_link"] || ""
+    res_react_html.querySelector("#p_img_link").src = sk_shop_each_d_v["image_url"] || ""
+    res_react_html.querySelector("#p_img_link").alt = sk_shop_each_d_v["title"] || ""
+    res_react_html.querySelectorAll("#p_link")[1].href = sk_shop_each_d_v["shop_link"] || ""
+    res_react_html.querySelectorAll("#p_link")[1].innerText=(sk_shop_each_d_v["title"] || "")
+    res_react_html.querySelector("#p_description").innerText=(sk_shop_each_d_v["content_description"] || "")
+    res_react_html.querySelector("#p_price").innerText=("Price: " + sk_shop_each_d_v["price"] || "")
+    res_react_html.querySelector("#p_shopname").innerText=("Shop: " + sk_shop_each_d_v["shop_name"] || "")
+    res_react_bucket_child.push($(res_react_html).html())
+  }
+
+  return res_react_bucket_child
+
+}
+
 function consume_l_data(){
   sk = current_sk
   res_react_bucket = []
   var shop_index_k;
-  for (shop_index_k in shop_loaded_data){
-    shop_loaded_data_v = shop_loaded_data[shop_index_k]
-    var shop_each_index_k;
-    for(shop_each_index_k in shop_loaded_data_v){
-      shop_each_d_v = JSON.parse(shop_loaded_data_v[shop_each_index_k])
-      if(!shop_each_d_v){
-        continue
-      }
-      sk = decodeURIComponent(sk)
-      sk = truncate_str(sk, 75)
-      sk_shop_each_d_v = shop_each_d_v[sk]
-      if (!sk_shop_each_d_v){
-        continue
-      }
-
-      res_react = $('#resultreact_default').html();
-      res_react_html = document.createElement("div")
-      res_react_html.innerHTML = res_react
-      res_react_html.querySelectorAll("#p_link")[0].href = sk_shop_each_d_v["shop_link"] || ""
-      res_react_html.querySelector("#p_img_link").src = sk_shop_each_d_v["image_url"] || ""
-      res_react_html.querySelector("#p_img_link").alt = sk_shop_each_d_v["title"] || ""
-      res_react_html.querySelectorAll("#p_link")[1].href = sk_shop_each_d_v["shop_link"] || ""
-      res_react_html.querySelectorAll("#p_link")[1].innerText=(sk_shop_each_d_v["title"] || "")
-      res_react_html.querySelector("#p_description").innerText=(sk_shop_each_d_v["content_description"] || "")
-      res_react_html.querySelector("#p_price").innerText=("Price: " + sk_shop_each_d_v["price"] || "")
-      res_react_html.querySelector("#p_shopname").innerText=("Shop: " + sk_shop_each_d_v["shop_name"] || "")
-      res_react_bucket.push($(res_react_html).html())
+  if(!is_filter){
+    for (shop_index_k in shop_loaded_data){
+      shop_loaded_data_v = shop_loaded_data[shop_index_k]
+      res_react_bucket.push.apply(res_react_bucket, consume_l_data_child(shop_loaded_data_v, sk))
     }
+  }else{
+    res_react_bucket.push.apply(res_react_bucket, consume_l_data_child(shop_loaded_data, sk))
   }
+
   if(res_react_bucket.length == 0){
-    if(!rd_clicked && time_check_default != 100){
+    if(!is_filter && time_check_default != 100){
       shop_searching = true
       time_check_default = time_check_default + 10
       set_search_time_out(3000, true)
@@ -471,7 +497,7 @@ function consume_l_data(){
   $('#resultreact').html(reactelem)
   shop_searching = false
   reset_controls()
-  if (shops_completed == shop_size){
+  if (shops_completed >= shop_size){
       refresh_time_out()
       $("#spin_shop").hide()
   }else{
