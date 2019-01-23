@@ -13,6 +13,7 @@ var scraped_shops = []
 shop_loaded_data = {}
 shop_size = 0
 shops_completed = 0
+rd_clicked = false
 
 $(function(){
   $(document).on("submit", "#search_form", function(e){
@@ -49,6 +50,7 @@ $(function(){
       radiobtn.checked = true;
     }
     else if (scraped_shops.length > 0){
+      rd_clicked = true
       refresh_time_out()
       $("#spin_shop").hide()
       c_match = document.getElementById("rangeacc").value
@@ -319,6 +321,7 @@ function shop_web_search(){
   cancel_search = !cancel_search
   shop_loaded_data = clear_dict_obj(shop_loaded_data)
   if(cancel_search){
+    rd_clicked = false
     scraped_shops = []
     current_sk = sk
     initial_api_search(current_sk)
@@ -450,7 +453,7 @@ function consume_l_data(){
     }
   }
   if(res_react_bucket.length == 0){
-    if(time_check_default != 100){
+    if(!rd_clicked && time_check_default != 100){
       shop_searching = true
       time_check_default = time_check_default + 10
       set_search_time_out(3000, true)
