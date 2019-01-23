@@ -49,11 +49,12 @@ def api_search():
         search_keyword = request.args.get("sk")
         shop_list_names = request.args.get("shops")
         if shop_list_names:
+            shop_list_names = shop_list_names.strip()
             if "," in shop_list_names:
-                shop_list_names = shop_list_names.split(",")
+                shop_list_names = [shn.strip().upper() for shn in shop_list_names.split(",") if shn.strip()]
             else:
-                shop_list_names = [shop_list_names]
-        match_acc = int(request.args.get("smatch"))
+                shop_list_names = [shop_list_names.upper()]
+        match_acc = int(request.args.get("smatch") or 0)
         low_to_high = json.JSONDecoder().decode(request.args.get("slh") or "false")
         high_to_low = json.JSONDecoder().decode(request.args.get("shl") or "false")
 

@@ -2,12 +2,15 @@ load_time_out = null
 time_check_default = 0
 // current_web_url = null
 current_sk = null
+final_refresh = false
 cancel_search = false
 shop_searching = false
 var $api_request = null
 var $shop_request = null
 var $shop_active_request = null
-var regx = /^[A-Za-z0-9 _.-\\'\\,]+$/;
+var regx = /^[A-Za-z0-9 _.-\\'\\,\\-]+$/;
+var shops_drop = null
+var scraped_shops = []
 shop_loaded_data = {}
 shop_size = 0
 shops_completed = 0
@@ -20,7 +23,7 @@ $(function(){
   });
 });
 
-function initial_api_search(sk){
+function initial_api_search(sk, all_shop=null){
   if(!validate_sk(sk)){
     return false
   }
@@ -40,37 +43,35 @@ function initial_api_search(sk){
   s_lh =  document.getElementById("lowhigh").checked
 
   gs_data = get_selected_checkboxes()
+  shops_completed = 0
   if(gs_data.length == 0){
     shops_url = "/websearch/shops-active.json";
     $shop_request = $.getJSON(shops_url,
         function(data) {
-          shops_completed = 0
+          shops_drop = data
           shop_size = data.length
           data.sort(() => Math.random() - 0.5)
           var shop_index;
           for(shop_index in data){
             shop_name = data[shop_index]
-            search_params = "sk=" + sk + "&smatch=" + s_match + "&shl=" + s_hl + "&slh=" + s_lh + "&shops=" + shop_name
+            search_params = "sk=" + sk + "&smatch=" + s_match + "&shl=" + s_hl + "&slh=" + s_lh + "&shops=" + (all_shop || shop_name)
             sk_url = "/api/shop/search?" + search_params;
             api_request = $.getJSON(sk_url,
                 function(data) {
-                  shops_completed++
                   load_data_container(data, sk)
             });
           }
     });
   }else{
-    shops_completed = 0
     shop_size = gs_data.length
     gs_data.sort(() => Math.random() - 0.5)
     var shop_index;
     for(shop_index in gs_data){
       shop_name = gs_data[shop_index]
-      search_params = "sk=" + sk + "&smatch=" + s_match + "&shl=" + s_hl + "&slh=" + s_lh + "&shops=" + shop_name
+      search_params = "sk=" + sk + "&smatch=" + s_match + "&shl=" + s_hl + "&slh=" + s_lh + "&shops=" + (all_shop || shop_name)
       sk_url = "/api/shop/search?" + search_params;
       $api_request = $.getJSON(sk_url,
           function(gs_data) {
-            shops_completed++
             load_data_container(gs_data, sk)
       });
     }
@@ -97,21 +98,36 @@ function load_data_container(data, sk){
     return false
   }
   if(!data["message"]){
-    d_shop_data = JSON.parse(data[0])
+    d_shop_data = data
     if(d_shop_data || d_shop_data.length > 0){
       sk = decodeURIComponent(sk)
       sk = truncate_str(sk, 75)
-      l_s_name = d_shop_data[sk]["shop_name"]
-      if(l_s_name){
-        shop_loaded_data[l_s_name] = data
+      var shop_sk_index
+      for(shop_sk_index in d_shop_data){
+        dshjson = JSON.parse(d_shop_data[shop_sk_index])
+        l_s_name = dshjson[sk]["shop_name"]
+        if(l_s_name){
+          if(!scraped_shops.includes(l_s_name)){
+            scraped_shops.push(l_s_name)
+          }
+
+          shop_loaded_data[l_s_name] = data
+        }
       }
+
     }
   }
+  shops_completed++
 }
 
 function load_shops_cb(){
   $(".alert").hide()
   $("#loading_shop").show()
+  if(shops_drop){
+    replace_shop_find(shops_drop)
+    $("#loading_shop").hide()
+    return
+  }
   shops_url = "/websearch/shops-active.json";
   if($shop_active_request != null) {
     $shop_active_request.abort()
@@ -119,6 +135,7 @@ function load_shops_cb(){
   }
   $shop_active_request = $.getJSON(shops_url,
       function(data) {
+        shops_drop = data
         replace_shop_find(data)
         $("#loading_shop").hide()
   });
@@ -190,6 +207,10 @@ function find_shop(){
     $("#loading_shop").hide()
     return
   }
+  if(shops_drop){
+    exe_find_shop(shops_drop)
+    return
+  }
   shops_url = "/websearch/shops-active.json";
   if($shop_active_request != null) {
     $shop_active_request.abort()
@@ -197,24 +218,29 @@ function find_shop(){
   }
   $shop_active_request = $.getJSON(shops_url,
       function(data) {
-        shop_search_name = shop_search_name.toUpperCase()
-        found_shop = []
-        for(shop_index in data){
-          shop_name = data[shop_index]
-          shop_name = friendly_name_cb(shop_name)
-          if(shop_name.includes(shop_search_name)){
-            found_shop.push(shop_name)
-          }
-        }
-        if(found_shop.length > 0){
-          replace_shop_find(found_shop)
-        }
-        else{
-          $('#shop_cb_place').html("No Shop Found");
-        }
-        $("#loading_shop").hide()
+        shops_drop = data
+        exe_find_shop(data)
   });
 
+}
+
+function exe_find_shop(data){
+  shop_search_name = shop_search_name.toUpperCase()
+  found_shop = []
+  for(shop_index in data){
+    shop_name = data[shop_index]
+    shop_name = friendly_name_cb(shop_name)
+    if(shop_name.includes(shop_search_name)){
+      found_shop.push(shop_name)
+    }
+  }
+  if(found_shop.length > 0){
+    replace_shop_find(found_shop)
+  }
+  else{
+    $('#shop_cb_place').html("No Shop Found");
+  }
+  $("#loading_shop").hide()
 }
 
 function get_selected_checkboxes(){
@@ -236,6 +262,7 @@ function shop_web_search(){
   cancel_search = !cancel_search
   shop_loaded_data = clear_dict_obj(shop_loaded_data)
   if(cancel_search){
+    final_refresh = false
     current_sk = sk
     initial_api_search(current_sk)
     shop_searching = true
@@ -384,11 +411,20 @@ function consume_l_data(){
   $('#resultreact').html(reactelem)
   shop_searching = false
   reset_controls()
-  if (shops_completed != shop_size){
-    load_time_out = setTimeout(refresh_shop_data, 3000)
+  if (shops_completed == shop_size){
+    if(!final_refresh){
+      initial_api_search(sk, scraped_shops.join(","))
+      final_refresh = true
+      scraped_shops = null
+      scraped_shops = []
+      load_time_out = setTimeout(refresh_shop_data, 3000)
+    }else{
+      refresh_time_out()
+      $("#spin_shop").hide()
+    }
+
   }else{
-    refresh_time_out()
-    $("#spin_shop").hide()
+    load_time_out = setTimeout(refresh_shop_data, 3000)
   }
 }
 

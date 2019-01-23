@@ -51,12 +51,38 @@ def safe_json(data):
     return {}
 
 
+def safe_float(fl_str, safeon=True):
+    try:
+        return float(fl_str)
+    except Exception:
+        if safeon:
+            return 0
+        else:
+            return None
+
+
+def price_round(price_str, round_num):
+    try:
+        price_str = price_str.replace("$", "").replace("USD", "").replace("US", "").strip()
+        price_str = str(round(safe_float(price_str, safeon=False), round_num))
+        return format_price(price_str)
+    except Exception:
+        return format_price(price_str)
+
+
 def generate_result_meta(shop_link, searched_keyword, image_url, shop_name, price, title, content_description, date_searched=None):
     if not validate_data(image_url, price, title):
         return None
     price = str(price)
     numeric_price = re.findall("\d+\.+\d+", price) or re.findall("\d+", price)
     if numeric_price is None or len(numeric_price) == 0:
+        return None
+
+    numeric_price = safe_float(numeric_price[0], safeon=False)
+    if numeric_price is None:
+        return None
+    price = price_round(price, 2)
+    if price is None:
         return None
 
     if date_searched is None:
@@ -67,12 +93,12 @@ def generate_result_meta(shop_link, searched_keyword, image_url, shop_name, pric
             "image_url": prepend_domain(image_url, shop_link),
             "shop_name": shop_name,
             "shop_link": shop_link,
-            "price": format_price(price),
+            "price": price,
             "title": truncate_data(title, 75),
             "searched_keyword": searched_keyword,
             "content_description": truncate_data(content_description, 250),
             "date_searched": date_searched,
-            "numeric_price": numeric_price[0]
+            "numeric_price": str(round(numeric_price, 2))
         }
     }
     return result_meta

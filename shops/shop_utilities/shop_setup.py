@@ -236,6 +236,16 @@ def find_shop_configuration(shop_key):
     return {}
 
 
+def find_shop(shop_list):
+    if shop_list is None:
+        return False
+
+    for shop in shop_list:
+        if not find_shop_configuration(shop):
+            return False
+    return True
+
+
 def get_shops(active=None):
     shop_names_list = []
     for shop_setting in shop_configurations:

@@ -17,7 +17,9 @@ from functools import partial
 from utilities.DefaultResources import _resultRow
 from utilities.DefaultResources import _errorMessage
 from project.models import ShoppedData
+from shops.shop_utilities.shop_setup import find_shop
 from shops.shop_utilities.extra_function import truncate_data, safe_json, safe_grab
+from shops.scrapy_settings.shop_settings import SHOP_CACHE_LOOKUP_SET, SHOP_CACHE_MAX_EXPIRY_TIME
 
 
 possible_match_abbrev = {
@@ -63,6 +65,13 @@ def run_api_search(shop_names_list, search_keyword, match_acc, low_to_high, high
         if shop_names_list is None or len(shop_names_list) == 0:
             results = {"message": "Shop name is required"}
             return results
+        if not find_shop(shop_names_list):
+            results = {"message": "Invalid shop name present in parameters"}
+            return results
+        if len(shop_names_list) == 1 and not is_shop_active(shop_names_list[0]):
+            results = {"message": "Shop is inactive at the moment, check back again"}
+            return results
+
         if search_keyword is not None and search_keyword.strip() != "":
             if len(search_keyword) < 2:
                 results = {"message": "Sorry, no products found"}
@@ -198,19 +207,28 @@ def update_results_row_error(data):
     update_search_results(_errorMessage.replace("{Message}", data), "{error_message}")
 
 
+def get_data_from_db_by_date_asc(searched_keyword, shop_name=None):
+    results_db = []
+    if not shop_name:
+        results_db.append(ShoppedData.query.filter(ShoppedData.searched_keyword == searched_keyword).order_by(ShoppedData.date_searched.asc()).first())
+    results_db.append(ShoppedData.query.filter(
+                      ShoppedData.searched_keyword == searched_keyword,
+                      ShoppedData.shop_name == shop_name).order_by(ShoppedData.date_searched.asc()).first())
+    return [res.__str__() for res in results_db]
+
+
 def get_data_from_db(searched_keyword, low_to_high=False, high_to_low=True, shop_names_list=None):
     results_db = []
-    results = []
+    results_centre = []
     if shop_names_list is not None:
-        for shop_name_l in shop_names_list:
-            if high_to_low:
-                results_db.append(ShoppedData.query.filter(
-                                  ShoppedData.searched_keyword == searched_keyword,
-                                  ShoppedData.shop_name == shop_name_l).order_by(ShoppedData.numeric_price.desc()).all())
-            elif low_to_high:
-                results_db.append(ShoppedData.query.filter(
-                                  ShoppedData.searched_keyword == searched_keyword,
-                                  ShoppedData.shop_name == shop_name_l).order_by(ShoppedData.numeric_price.asc()).all())
+        if high_to_low:
+            results_db.append(ShoppedData.query.filter(
+                              ShoppedData.searched_keyword == searched_keyword,
+                              ShoppedData.shop_name.in_(shop_names_list)).order_by(ShoppedData.numeric_price.desc()).all())
+        elif low_to_high:
+            results_db.append(ShoppedData.query.filter(
+                              ShoppedData.searched_keyword == searched_keyword,
+                              ShoppedData.shop_name.in_(shop_names_list)).order_by(ShoppedData.numeric_price.asc()).all())
     else:
         if high_to_low:
             results_db.append(ShoppedData.query.filter(ShoppedData.searched_keyword == searched_keyword).order_by(ShoppedData.numeric_price.desc()).all())
@@ -219,9 +237,8 @@ def get_data_from_db(searched_keyword, low_to_high=False, high_to_low=True, shop
 
     for results in results_db:
         if results is not None and len(results) > 0:
-            results = [res.__str__() for res in results]
-
-    return results
+            results_centre = ([res.__str__() for res in results])
+    return results_centre
 
 
 def match_results_by_sk(results, searched_keyword, match_acc=0):
@@ -248,23 +265,47 @@ def update_db_results(results):
     return False
 
 
+def delete_data_by_shop_sk(shop_name, search_keyword):
+    ShoppedData.query.\
+        filter(ShoppedData.searched_keyword == search_keyword, ShoppedData.shop_name == shop_name).delete()
+    db.session.commit()
+    return
+
+
 def get_json_db_results(shop_names_list, search_keyword, match_acc, low_to_high, high_to_low):
+
     results = get_data_from_db(shop_names_list=shop_names_list,
                                searched_keyword=search_keyword,
                                low_to_high=low_to_high,
                                high_to_low=high_to_low)
     if results:
-        if is_new_data(results, search_keyword):
-            results = match_results_by_sk(results, search_keyword, match_acc)
-            return results
+        new_result = []
+        for shop_name in shop_names_list:
+            results_by_date = get_data_from_db_by_date_asc(shop_name=shop_name,
+                                                           searched_keyword=search_keyword)
+            if results_by_date and is_new_data(results_by_date, search_keyword):
+                new_result.extend(results)
+            else:
+                delete_data_by_shop_sk(shop_name, search_keyword)
+                ignite_thread_timeout(shop_name, search_keyword)
+
+        if new_result:
+            if len(shop_names_list) == 1:
+                results = match_results_by_sk(new_result, search_keyword, match_acc)
+                return results
+            else:
+                return get_data_from_db(shop_names_list=shop_names_list,
+                                        searched_keyword=search_keyword,
+                                        low_to_high=low_to_high,
+                                        high_to_low=high_to_low)
         else:
-            ignite_thread_timeout(shop_names_list[0], search_keyword)
             return get_data_from_db(shop_names_list=shop_names_list,
                                     searched_keyword=search_keyword,
                                     low_to_high=low_to_high,
                                     high_to_low=high_to_low)
     else:
-        ignite_thread_timeout(shop_names_list[0], search_keyword)
+        for shop_name in shop_names_list:
+            ignite_thread_timeout(shop_names_list[0], search_keyword)
         return get_data_from_db(shop_names_list=shop_names_list,
                                 searched_keyword=search_keyword,
                                 low_to_high=low_to_high,
@@ -302,8 +343,8 @@ def is_new_data(results, search_keyword):
         if date_searched is not None:
             date_searched_parse = parser.parse(date_searched)
             dt_time_diff = datetime.now(timezone.utc) - date_searched_parse
-            if dt_time_diff.days < 30:
-                return True
+            if dt_time_diff.days < SHOP_CACHE_MAX_EXPIRY_TIME:
+                return SHOP_CACHE_LOOKUP_SET
     return False
 
 

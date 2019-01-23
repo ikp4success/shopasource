@@ -19,10 +19,10 @@ class Google(scrapy.Spider):
         yield get_request(shop_url, self.parse_data)
 
     def parse_data(self, response):
-        items = response.css(".sh-dlr__list-result")
+        items = response.css(".sh-dlr__list-result, .sh-pr__product-results-grid .sh-dgr__grid-result")
         for item in items:
-            title = item.css(".eIuuYe a ::text").extract_first()
-            link = prepend_domain(item.css(".eIuuYe a ::attr(href)").extract_first(), "https://www.google.com/")
+            title = item.css(".eIuuYe a ::text, .EI11Pd ::text").extract_first()
+            link = prepend_domain(item.css(".eIuuYe a ::attr(href), .EI11Pd ::attr(href)").extract_first(), "https://www.google.com/")
             image_url = item.css(".MUQY0 img ::attr(src)").extract_first()
             description = ""
             price = item.css("span.O8U6h ::text").extract_first()
