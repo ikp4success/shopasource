@@ -2,7 +2,6 @@ load_time_out = null
 time_check_default = 0
 // current_web_url = null
 current_sk = null
-final_refresh = false
 cancel_search = false
 shop_searching = false
 var $api_request = null
@@ -23,7 +22,47 @@ $(function(){
   });
 });
 
-function initial_api_search(sk, all_shop=null){
+$(function(){
+  $(document).on("click", "input:radio[name=pricerefine]", function(e){
+    if (scraped_shops.length == 0){
+      $(".alert").html("<strong>No Data to filter</strong>, search and then filter.")
+      $(".alert").show()
+      radiobtn = document.getElementById("highlow");
+      radiobtn.checked = true;
+    }
+    else if (shop_searching){
+      $(".alert").html("<strong>Cannot Filter During Search</strong>, cancel search and then filter, if results returned.")
+      $(".alert").show()
+      radiobtn = document.getElementById("highlow");
+      radiobtn.checked = true;
+    }
+    else if (get_selected_checkboxes().length == 0){
+      $(".alert").html("<strong>A Shop has to be selected to filter.</strong>")
+      $(".alert").show()
+      radiobtn = document.getElementById("highlow");
+      radiobtn.checked = true;
+    }
+    else if (get_selected_checkboxes().length != 1){
+      $(".alert").html("<strong>Can only filter on one shop selection.</strong>")
+      $(".alert").show()
+      radiobtn = document.getElementById("highlow");
+      radiobtn.checked = true;
+    }
+    else if (scraped_shops.length > 0){
+      refresh_time_out()
+      $("#spin_shop").hide()
+      c_match = document.getElementById("rangeacc").value
+      c_hl =  document.getElementById("highlow").checked
+      c_lh =  document.getElementById("lowhigh").checked
+      shop_size = get_selected_checkboxes().length
+      initial_api_search(sk, get_selected_checkboxes()[0], c_match, c_hl, c_lh)
+      load_time_out = setTimeout(refresh_shop_data, 1000)
+    }
+  });
+});
+
+
+function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_lh=null){
   if(!validate_sk(sk)){
     return false
   }
@@ -38,13 +77,27 @@ function initial_api_search(sk, all_shop=null){
     $shop_request = null
   }
 
-  s_match = document.getElementById("rangeacc").value
-  s_hl =  document.getElementById("highlow").checked
-  s_lh =  document.getElementById("lowhigh").checked
+  $.ajaxSetup({
+    async: true
+  });
 
+  s_match = c_match || document.getElementById("rangeacc").value
+  s_hl =  c_hl || document.getElementById("highlow").checked
+  s_lh =  c_lh || document.getElementById("lowhigh").checked
   gs_data = get_selected_checkboxes()
   shops_completed = 0
-  if(gs_data.length == 0){
+
+  if(fil_shop_name){
+    search_params = "sk=" + sk + "&smatch=" + s_match + "&shl=" + s_hl + "&slh=" + s_lh + "&shops=" + fil_shop_name
+    sk_url = "/api/shop/search?" + search_params;
+    shop_loaded_data = clear_dict_obj(shop_loaded_data)
+    api_request = $.getJSON(sk_url,
+        function(data) {
+          load_data_container(data, sk)
+          shops_completed = shop_size
+    });
+  }
+  else if(gs_data.length == 0){
     shops_url = "/websearch/shops-active.json";
     $shop_request = $.getJSON(shops_url,
         function(data) {
@@ -54,8 +107,9 @@ function initial_api_search(sk, all_shop=null){
           var shop_index;
           for(shop_index in data){
             shop_name = data[shop_index]
-            search_params = "sk=" + sk + "&smatch=" + s_match + "&shl=" + s_hl + "&slh=" + s_lh + "&shops=" + (all_shop || shop_name)
+            search_params = "sk=" + sk + "&smatch=" + s_match + "&shl=" + s_hl + "&slh=" + s_lh + "&shops=" + shop_name
             sk_url = "/api/shop/search?" + search_params;
+
             api_request = $.getJSON(sk_url,
                 function(data) {
                   load_data_container(data, sk)
@@ -68,8 +122,9 @@ function initial_api_search(sk, all_shop=null){
     var shop_index;
     for(shop_index in gs_data){
       shop_name = gs_data[shop_index]
-      search_params = "sk=" + sk + "&smatch=" + s_match + "&shl=" + s_hl + "&slh=" + s_lh + "&shops=" + (all_shop || shop_name)
+      search_params = "sk=" + sk + "&smatch=" + s_match + "&shl=" + s_hl + "&slh=" + s_lh + "&shops=" +  shop_name
       sk_url = "/api/shop/search?" + search_params;
+
       $api_request = $.getJSON(sk_url,
           function(gs_data) {
             load_data_container(gs_data, sk)
@@ -100,8 +155,10 @@ function load_data_container(data, sk){
   if(!data["message"]){
     d_shop_data = data
     if(d_shop_data || d_shop_data.length > 0){
+      var shop_sk_index
       sk = decodeURIComponent(sk)
       sk = truncate_str(sk, 75)
+
       var shop_sk_index
       for(shop_sk_index in d_shop_data){
         dshjson = JSON.parse(d_shop_data[shop_sk_index])
@@ -262,7 +319,7 @@ function shop_web_search(){
   cancel_search = !cancel_search
   shop_loaded_data = clear_dict_obj(shop_loaded_data)
   if(cancel_search){
-    final_refresh = false
+    scraped_shops = []
     current_sk = sk
     initial_api_search(current_sk)
     shop_searching = true
@@ -412,17 +469,8 @@ function consume_l_data(){
   shop_searching = false
   reset_controls()
   if (shops_completed == shop_size){
-    if(!final_refresh){
-      initial_api_search(sk, scraped_shops.join(","))
-      final_refresh = true
-      scraped_shops = null
-      scraped_shops = []
-      load_time_out = setTimeout(refresh_shop_data, 3000)
-    }else{
       refresh_time_out()
       $("#spin_shop").hide()
-    }
-
   }else{
     load_time_out = setTimeout(refresh_shop_data, 3000)
   }
