@@ -26,7 +26,14 @@ $(function(){
 $(function(){
   $(document).on("click", "input[type=checkbox]", function(e){
     if(get_selected_checkboxes().length > 0){
-      disable_controls(false)
+      if(scraped_shops.length > 0){
+        disable_controls(false)
+      }else if(get_selected_checkboxes().length == 1){
+        disable_controls(false)
+      }
+      else{
+        disable_controls()
+      }
     }else{
       if(scraped_shops.length > 0){
         disable_controls(false)
@@ -88,7 +95,7 @@ function exe_filter(){
       c_hl =  document.getElementById("highlow").checked
       c_lh =  document.getElementById("lowhigh").checked
       shop_size = scraped_shops.length
-      initial_api_search(sk, sshp, c_match, c_hl, c_lh)
+      initial_api_search(current_sk, sshp, c_match, c_hl, c_lh)
       load_time_out = setTimeout(refresh_shop_data, 1000)
       $("#err_msg").hide()
       $(".loading").show()
