@@ -1,3 +1,8 @@
+@viewport {
+  width: device-width ;
+  zoom: 1.0 ;
+}
+
 .Search {
     width: 55%;
     margin:0 auto;

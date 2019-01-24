@@ -130,7 +130,7 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
     async: true
   });
 
-  s_match = c_match || document.getElementById("rangeacc").value || 0
+  s_match = c_match || document.getElementById("rangeacc").value
   s_hl = document.getElementById("highlow").checked
   if(c_hl != null){
     s_hl = c_hl
@@ -589,7 +589,7 @@ function consume_l_data(){
     if(!is_filter){
       $("#filterButton").hide()
       $("#cancelFilterButton").hide()
-      $(".alert").html("filter not available at the moment.")
+      $(".alert").html("<strong>filter not available at the moment<strong>, refine search if filter taking to long to show")
       $(".alert").show()
     }
     load_time_out = setTimeout(refresh_shop_data, 3000)
