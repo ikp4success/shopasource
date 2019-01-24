@@ -24,55 +24,84 @@ $(function(){
 });
 
 $(function(){
-  $(document).on("click", "input:radio[name=pricerefine]", function(e){
-    if (scraped_shops.length == 0){
-      $(".alert").html("<strong>No Data to filter</strong>, search and then filter.")
-      $(".alert").show()
-      radiobtn = document.getElementById("highlow");
-      radiobtn.checked = true;
+  $(document).on("click", "input[type=checkbox]", function(e){
+    if(get_selected_checkboxes().length > 0){
+      disable_controls(false)
+    }else{
+      if(scraped_shops.length > 0){
+        disable_controls(false)
+      }else{
+        disable_controls()
+      }
     }
-    else if (shop_searching){
-      $(".alert").html("<strong>Cannot Filter During Search</strong>, cancel search and then filter, if results returned.")
-      $(".alert").show()
-      radiobtn = document.getElementById("highlow");
-      radiobtn.checked = true;
+  });
+});
+
+function disable_controls(disabled=true){
+  if(disabled){
+    document.getElementById("highlow").disabled = disabled;
+    document.getElementById("lowhigh").disabled = disabled;
+  }
+  document.getElementById("highlow").disabled = disabled;
+  document.getElementById("lowhigh").disabled = disabled;
+}
+
+
+function exe_filter(){
+  if (scraped_shops.length <= 0){
+        $(".alert").html("<strong>No Data to filter</strong>, search and then filter.")
+        $(".alert").show()
+        radiobtn = document.getElementById("highlow");
+        radiobtn.checked = true;
+        $("#filterButton").hide()
+        $("#cancelFilterButton").hide()
+        if(get_selected_checkboxes().length > 0){
+          disable_controls()
+        }
+        return
+  }else{
+    disable_controls(false)
+    sshp = scraped_shops.join(",")
+    if(get_selected_checkboxes().length > 0){
+      n_sshp = []
+      var shp_index;
+      for(shp_index in get_selected_checkboxes()){
+        sel_name = get_selected_checkboxes()[shp_index]
+        if(scraped_shops.includes(sel_name)){
+          n_sshp.push(sel_name)
+        }
+      }
+      if(n_sshp.length > 0){
+        sshp = n_sshp.join(",")
+      }else{
+        $(".alert").html("<strong>Sorry, no products found</strong>, refine search criteria.")
+        $(".alert").show()
+        return
+      }
+
     }
-    else if (get_selected_checkboxes().length == 0){
-      $(".alert").html("<strong>A Shop has to be selected to filter.</strong>")
-      $(".alert").show()
-      radiobtn = document.getElementById("highlow");
-      radiobtn.checked = true;
-    }
-    else if (get_selected_checkboxes().length != 1){
-      $(".alert").html("<strong>Can only filter on one shop selection.</strong>")
-      $(".alert").show()
-      radiobtn = document.getElementById("highlow");
-      radiobtn.checked = true;
-    }
-    else if(scraped_shops.length > 0 && get_selected_checkboxes().length > 0){
       is_filter = true
       refresh_time_out()
-      $("#spin_shop").hide()
-      c_match = document.getElementById("rangeacc").value
-      c_hl =  document.getElementById("highlow").checked
-      c_lh =  document.getElementById("lowhigh").checked
-      shop_size = get_selected_checkboxes().length
-      initial_api_search(sk, get_selected_checkboxes().join(","), c_match, c_hl, c_lh)
-      load_time_out = setTimeout(refresh_shop_data, 1000)
-    }
-    else if (scraped_shops.length > 0){
-      is_filter = true
-      refresh_time_out()
-      $("#spin_shop").hide()
+      $("#filterButton").hide()
+      $("#cancelFilterButton").show()
       c_match = document.getElementById("rangeacc").value
       c_hl =  document.getElementById("highlow").checked
       c_lh =  document.getElementById("lowhigh").checked
       shop_size = scraped_shops.length
-      initial_api_search(sk, scraped_shops.join(""), c_match, c_hl, c_lh)
+      initial_api_search(sk, sshp, c_match, c_hl, c_lh)
       load_time_out = setTimeout(refresh_shop_data, 1000)
-    }
-  });
-});
+      $("#err_msg").hide()
+      $(".loading").show()
+      restart_progress_bar()
+      load_search_progress_bar()
+  }
+
+}
+
+function ini_filter_reset_controls(){
+  $("#cancelFilterButton").hide()
+  ini_reset_controls()
+}
 
 
 function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_lh=null){
@@ -94,9 +123,21 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
     async: true
   });
 
-  s_match = c_match || document.getElementById("rangeacc").value
-  s_hl =  c_hl || document.getElementById("highlow").checked
-  s_lh =  c_lh || document.getElementById("lowhigh").checked
+  s_match = c_match || document.getElementById("rangeacc").value || 0
+  s_hl = document.getElementById("highlow").checked
+  if(c_hl != null){
+    s_hl = c_hl
+  }
+
+  s_lh = document.getElementById("lowhigh").checked
+  if(c_lh != null){
+    s_lh = c_lh
+  }
+
+  if(!s_lh && !s_hl){
+    s_hl = true
+  }
+
   gs_data = get_selected_checkboxes()
   shops_completed = 0
 
@@ -334,6 +375,9 @@ function shop_web_search(){
   cancel_search = !cancel_search
   shop_loaded_data = clear_dict_obj(shop_loaded_data)
   if(cancel_search){
+    $("#filterButton").hide()
+    $("#cancelFilterButton").hide()
+    disable_controls()
     is_filter = false
     scraped_shops = []
     current_sk = sk
@@ -436,6 +480,9 @@ function consume_l_data_child(shop_loaded_data_v, sk){
   res_react_bucket_child = []
   var shop_each_index_k;
   for(shop_each_index_k in shop_loaded_data_v){
+    try{
+      shop_each_d_v = JSON.parse(shop_loaded_data_v[shop_each_index_k])
+
     shop_each_d_v = JSON.parse(shop_loaded_data_v[shop_each_index_k])
     if(!shop_each_d_v){
       continue
@@ -459,6 +506,9 @@ function consume_l_data_child(shop_loaded_data_v, sk){
     res_react_html.querySelector("#p_price").innerText=("Price: " + sk_shop_each_d_v["price"] || "")
     res_react_html.querySelector("#p_shopname").innerText=("Shop: " + sk_shop_each_d_v["shop_name"] || "")
     res_react_bucket_child.push($(res_react_html).html())
+    }catch(err){
+      continue
+    }
   }
 
   return res_react_bucket_child
@@ -479,7 +529,15 @@ function consume_l_data(){
   }
 
   if(res_react_bucket.length == 0){
-    if(!is_filter && time_check_default != 100){
+    max_t_chk_def = 100
+    if(is_filter){
+      if($('#spin_shop').css('display') != 'none'){
+          max_t_chk_def = 80
+      }else{
+        max_t_chk_def = 30
+      }
+    }
+    if(time_check_default != max_t_chk_def){
       shop_searching = true
       time_check_default = time_check_default + 10
       set_search_time_out(3000, true)
@@ -488,9 +546,26 @@ function consume_l_data(){
       $(".alert").show()
       shop_searching = false
       ini_reset_controls(true)
+      if(!is_filter){
+        $("#filterButton").hide()
+        $("#cancelFilterButton").hide()
+      }else{
+        $("#filterButton").show()
+        $("#cancelFilterButton").hide()
+      }
     }
     return
   }
+
+  if(!is_filter){
+    $("#filterButton").show()
+    disable_controls(false)
+    if($('#spin_shop').css('display') == 'none'){
+      radiobtn = document.getElementById("highlow");
+      radiobtn.checked = true;
+    }
+  }
+
   spin_shop_default_htm = $("#spin_shop_default").html()
   res_rock_spinner = res_react_bucket.join("") + spin_shop_default_htm
   reactelem = $("<div class=\"row\">" + res_rock_spinner + "</div>")
@@ -500,7 +575,16 @@ function consume_l_data(){
   if (shops_completed >= shop_size){
       refresh_time_out()
       $("#spin_shop").hide()
+      $(".loading").hide()
+      $("#filterButton").show()
+      $("#cancelFilterButton").hide()
   }else{
+    if(!is_filter){
+      $("#filterButton").hide()
+      $("#cancelFilterButton").hide()
+      $(".alert").html("filter not available at the moment.")
+      $(".alert").show()
+    }
     load_time_out = setTimeout(refresh_shop_data, 3000)
   }
 }
