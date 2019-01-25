@@ -290,26 +290,23 @@ def get_json_db_results(shop_names_list, search_keyword, match_acc, low_to_high,
                 ignite_thread_timeout(shop_name, search_keyword)
 
         if new_result:
-            if len(shop_names_list) == 1:
-                results = match_results_by_sk(new_result, search_keyword, match_acc)
-                return results
-            else:
-                return get_data_from_db(shop_names_list=shop_names_list,
-                                        searched_keyword=search_keyword,
-                                        low_to_high=low_to_high,
-                                        high_to_low=high_to_low)
+            results = match_results_by_sk(new_result, search_keyword, match_acc)
+            return results
         else:
-            return get_data_from_db(shop_names_list=shop_names_list,
-                                    searched_keyword=search_keyword,
-                                    low_to_high=low_to_high,
-                                    high_to_low=high_to_low)
+            results = get_data_from_db(shop_names_list=shop_names_list,
+                                       searched_keyword=search_keyword,
+                                       low_to_high=low_to_high,
+                                       high_to_low=high_to_low)
+
+            return match_results_by_sk(results, search_keyword, match_acc)
     else:
         for shop_name in shop_names_list:
             ignite_thread_timeout(shop_names_list[0], search_keyword)
-        return get_data_from_db(shop_names_list=shop_names_list,
-                                searched_keyword=search_keyword,
-                                low_to_high=low_to_high,
-                                high_to_low=high_to_low)
+        results = get_data_from_db(shop_names_list=shop_names_list,
+                                   searched_keyword=search_keyword,
+                                   low_to_high=low_to_high,
+                                   high_to_low=high_to_low)
+        return match_results_by_sk(results, search_keyword, match_acc)
     return results
 
 
