@@ -22,6 +22,8 @@ class NordStrom(scrapy.Spider):
         "Upgrade-Insecure-Requests": "1"
     }
 
+    image_url = "https://n.nordstrommedia.com/ImageGallery/store/product/Zoom{}?h=365&w=240&dpr=2&quality=45&fit=fill&fm=jpg"
+
     def __init__(self, search_keyword):
         self._search_keyword = search_keyword
 
@@ -46,12 +48,11 @@ class NordStrom(scrapy.Spider):
     def parse_data(self, response):
         json_data = safe_json(response.text)
         t_data = safe_grab(json_data, ["Products"], default=[])
-        image_url = "https://n.nordstrommedia.com/ImageGallery/store/product/Zoom{}?h=365&w=240&dpr=2&quality=45&fit=fill&fm=jpg"
         for item in t_data:
             title = safe_grab(item, ["Name"])
             media = safe_grab(item, ["Media"])
             if media and len(media) > 0:
-                image_url = image_url.format(safe_grab(media[0], ["Path"]))
+                image_url = self.image_url.format(safe_grab(media[0], ["Path"]))
             else:
                 image_url = None
             description = safe_grab(item, ["BrandLabelName"])
