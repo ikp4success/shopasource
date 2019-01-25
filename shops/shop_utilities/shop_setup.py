@@ -27,7 +27,9 @@ class TestShopNames(Enum):
     MVMTWATCHES = "MVMTWATCHES",
     BOOHOO = "BOOHOO",
     FOREVER21 = "FOREVER21",
-    STYLERUNNER = "STYLERUNNER"
+    STYLERUNNER = "STYLERUNNER",
+    LEVI = "LEVI",
+    ZARA = "ZARA"
 
 
 shop_configurations = [
@@ -223,7 +225,19 @@ shop_configurations = [
             "active": True,
             "name": "SPIRITUALGANGSTER"
         }
-    }
+    },
+    {
+        "LEVI": {
+            "active": True,
+            "name": "LEVI"
+        }
+    },
+    {
+        "ZARA": {
+            "active": True,
+            "name": "ZARA"
+        }
+    },
 ]
 
 

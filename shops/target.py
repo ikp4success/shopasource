@@ -1,9 +1,9 @@
 import scrapy
 
-from shops.shop_connect.shop_request import get_request, prepend_domain
+from shops.shop_connect.shop_request import get_request
 from shops.shop_connect.shoplinks import _targeturl
 from shops.shop_utilities.shop_setup import find_shop_configuration
-from shops.shop_utilities.extra_function import generate_result_meta, safe_json, safe_grab
+from shops.shop_utilities.extra_function import generate_result_meta, safe_json, safe_grab, prepend_domain
 # from debug_app.manual_debug_funcs import printHtmlToFile
 
 
