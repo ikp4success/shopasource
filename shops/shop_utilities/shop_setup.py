@@ -29,7 +29,8 @@ class TestShopNames(Enum):
     FOREVER21 = "FOREVER21",
     STYLERUNNER = "STYLERUNNER",
     LEVI = "LEVI",
-    ZARA = "ZARA"
+    ZARA = "ZARA",
+    NORDSTROM = "NORDSTROM"
 
 
 shop_configurations = [
@@ -236,6 +237,12 @@ shop_configurations = [
         "ZARA": {
             "active": True,
             "name": "ZARA"
+        }
+    },
+    {
+        "NORDSTROM": {
+            "active": True,
+            "name": "NORDSTROM"
         }
     },
 ]
