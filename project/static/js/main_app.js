@@ -1,3 +1,13 @@
+friend_name = {
+  "SIXPM": "6PM",
+  "HM": "H&M",
+  "MVMTWATCHES": "MVMT WATCHES",
+  "SPIRITUALGANGSTER": "SPIRITUAL GANGSTER",
+  "MACYS": "MACY'S",
+  "SAKSFIFTHAVENUE": "SAKS FIFTH AVENUE",
+  "NORDSTROMRACK": "NORDSTROM RACK",
+
+}
 load_time_out = null
 time_check_default = 0
 // current_web_url = null
@@ -287,14 +297,6 @@ function replace_shop_find(data){
 }
 
 function friendly_name_cb(shopnamecb){
-  friend_name = {
-    "SIXPM": "6PM",
-    "HM": "H&M",
-    "MVMTWATCHES": "MVMT WATCHES",
-    "SPIRITUALGANGSTER": "SPIRITUAL GANGSTER",
-    "MACYS": "MACY'S"
-
-  }
   name_friend = friend_name[shopnamecb]
   if(name_friend){
       return name_friend

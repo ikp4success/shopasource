@@ -33,6 +33,7 @@ class TestShopNames(Enum):
     NORDSTROM = "NORDSTROM"
     NORDSTROMRACK = "NORDSTROMRACK"
     HAUTELOOK = "HAUTELOOK"
+    SAKSFIFTHAVENUE = "SAKSFIFTHAVENUE"
 
 
 shop_configurations = [
@@ -257,6 +258,12 @@ shop_configurations = [
         "HAUTELOOK": {
             "active": True,
             "name": "HAUTELOOK"
+        }
+    },
+    {
+        "SAKSFIFTHAVENUE": {
+            "active": True,
+            "name": "SAKSFIFTHAVENUE"
         }
     },
 ]

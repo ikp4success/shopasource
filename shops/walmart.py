@@ -27,7 +27,7 @@ class Walmart(scrapy.Spider):
             yield get_request(url=item_url, callback=self.parse_data, domain_url=response.url)
 
     def parse_data(self, response):
-        image_url = response.css(".prod-hero-image-image ::attr(src)").extract_first()
+        image_url = response.css(".prod-hero-image img ::attr(src)").extract_first()
         title = response.css(".ProductTitle div ::text").extract_first()
         description = extract_items(response.css(".about-desc ::text").extract())
         price = response.css(".prod-PriceHero .price-characteristic ::text").extract_first() or ""

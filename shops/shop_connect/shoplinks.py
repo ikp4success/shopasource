@@ -31,3 +31,4 @@ _zaraurl = "https://api.empathybroker.com/search/v1/query/zara/search?o=json&m=2
 _nordstormurl = "https://shop.nordstrom.com/sr?origin=keywordsearch&keyword={}"
 _nordstormrackurl = "https://www.nordstromrack.com/api/search2/catalog/search?includeFlash=false&includePersistent=true&query={}&sort=relevancy&limit=99"
 _hautelookurl = "https://www.hautelook.com/api/search2/catalog/search?includeFlash=true&includePersistent=false&limit=99&page=1&query={}&sort=relevancy"
+_saksfifthavenueurl = "https://www.saksfifthavenue.com/search/EndecaSearch.jsp?bmArch=bmForm&bmForm=endeca_search_form_one&bmArch=bmIsForm&bmIsForm=true&bmHidden=submit-search&submit-search=&bmArch=bmSingle&bmSingle=N_Dim&bmHidden=N_Dim&N_Dim=0&bmArch=bmHidden&bmHidden=Ntk&bmHidden=Ntk&Ntk=Entire+Site&bmArch=bmHidden&bmHidden=Ntx&bmHidden=Ntx&Ntx=mode%2Bmatchpartialmax&bmHidden=PA&PA=TRUE&SearchString=+{}"
