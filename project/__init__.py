@@ -12,7 +12,7 @@ hk_pr_db_uri = "postgres://prlmhendyzlyjc:0bbb3d230e4f9b0c6e0ab7762c4598eaafc635
 # app.secret_key = os.environ["SECRET_KEY"]
 # app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
 # app.config['SQLALCHEMY_DATABASE_URI'] = hk_dev_db_uri
-if len(sys.argv) > 3 and sys.argv[2] == "debug=True":
+if sys.argv and len(sys.argv) > 0 and "debug=True" in sys.argv:
     app.config['SQLALCHEMY_DATABASE_URI'] = hk_dev_db_uri
     app.config['DEBUG'] = True
 else:
