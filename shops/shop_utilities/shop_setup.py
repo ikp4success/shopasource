@@ -31,6 +31,8 @@ class TestShopNames(Enum):
     LEVI = "LEVI",
     ZARA = "ZARA",
     NORDSTROM = "NORDSTROM"
+    NORDSTROMRACK = "NORDSTROMRACK"
+    HAUTELOOK = "HAUTELOOK"
 
 
 shop_configurations = [
@@ -243,6 +245,18 @@ shop_configurations = [
         "NORDSTROM": {
             "active": True,
             "name": "NORDSTROM"
+        }
+    },
+    {
+        "NORDSTROMRACK": {
+            "active": True,
+            "name": "NORDSTROMRACK"
+        }
+    },
+    {
+        "HAUTELOOK": {
+            "active": True,
+            "name": "HAUTELOOK"
         }
     },
 ]

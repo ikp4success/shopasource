@@ -107,8 +107,8 @@ def generate_result_meta(shop_link, searched_keyword, image_url, shop_name, pric
 def extract_items(items):
     item_r = ""
     for item in items:
-        item_r += item.rstrip().strip()
-    return item_r
+        item_r += " " + item.rstrip().strip()
+    return item_r.strip()
 
 
 def format_price(price):
