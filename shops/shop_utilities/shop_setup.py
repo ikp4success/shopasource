@@ -34,6 +34,7 @@ class TestShopNames(Enum):
     NORDSTROMRACK = "NORDSTROMRACK"
     HAUTELOOK = "HAUTELOOK"
     SAKSFIFTHAVENUE = "SAKSFIFTHAVENUE"
+    EXPRESS = "EXPRESS"
 
 
 shop_configurations = [
@@ -264,6 +265,12 @@ shop_configurations = [
         "SAKSFIFTHAVENUE": {
             "active": True,
             "name": "SAKSFIFTHAVENUE"
+        }
+    },
+    {
+        "EXPRESS": {
+            "active": True,
+            "name": "EXPRESS"
         }
     },
 ]
