@@ -6,6 +6,7 @@ friend_name = {
   "MACYS": "MACY'S",
   "SAKSFIFTHAVENUE": "SAKS FIFTH AVENUE",
   "NORDSTROMRACK": "NORDSTROM RACK",
+  "CHARLOTTERUSSE": "CHARLOTTE RUSSE"
 
 }
 load_time_out = null
