@@ -169,7 +169,11 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
             shop_loaded_data = data
           }
           shops_completed = shop_size
-    });
+    }).fail(
+      function()
+      {
+        shops_completed = shop_size
+      });
   }
   else if(gs_data.length == 0){
     shops_url = "/websearch/shops-active.json";
