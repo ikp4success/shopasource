@@ -187,7 +187,11 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
             api_request = $.getJSON(sk_url,
                 function(data) {
                   load_data_container(data, sk)
-            });
+            }).fail(
+              function()
+              {
+                shops_completed++
+              });
           }
     });
   }else{
@@ -202,7 +206,11 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
       $api_request = $.getJSON(sk_url,
           function(gs_data) {
             load_data_container(gs_data, sk)
-      });
+      }).fail(
+        function()
+        {
+          shops_completed++
+        });
     }
   }
   return false
