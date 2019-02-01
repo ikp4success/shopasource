@@ -41,6 +41,12 @@ $(window).scroll(function() {
     // if (shops_completed >= shop_size){
     //   return false
     // }
+    if(shop_size == 0){
+      return false
+    }
+    if($('#spin_shop').css('display') == 'none'){
+      $('#spin_shop').show()
+    }
     max_item_size = max_item_size + 30
     refresh_time_out()
     load_time_out = setTimeout(refresh_shop_data, 500)
