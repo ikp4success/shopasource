@@ -25,6 +25,7 @@ shop_loaded_data = {}
 shop_size = 0
 shops_completed = 0
 is_filter = false
+item_size = 0
 
 $(function(){
   $(document).on("submit", "#search_form", function(e){
@@ -32,6 +33,17 @@ $(function(){
     e.preventDefault();
     return false;
   });
+});
+
+$(window).scroll(function() {
+  if($(window).scrollTop() + $(window).height() == $(document).height()) {
+    if (shops_completed >= shop_size){
+      return false
+    }
+    item_size = 0
+    load_time_out = setTimeout(refresh_shop_data, 500)
+  }
+  return false;
 });
 
 $(function(){
@@ -78,6 +90,7 @@ function exe_filter(){
         }
         return
   }else{
+    item_size = 0
     disable_controls(false)
     sshp = scraped_shops.join(",")
     if(get_selected_checkboxes().length > 0){
@@ -397,6 +410,7 @@ function shop_web_search(){
   cancel_search = !cancel_search
   shop_loaded_data = clear_dict_obj(shop_loaded_data)
   if(cancel_search){
+    item_size = 0
     $("#filterButton").hide()
     $("#cancelFilterButton").hide()
     disable_controls()
@@ -502,6 +516,9 @@ function consume_l_data_child(shop_loaded_data_v, sk){
   res_react_bucket_child = []
   var shop_each_index_k;
   for(shop_each_index_k in shop_loaded_data_v){
+    if(item_size == 30){
+      break;
+    }
     try{
       shop_each_d_v = JSON.parse(shop_loaded_data_v[shop_each_index_k])
 
@@ -516,6 +533,7 @@ function consume_l_data_child(shop_loaded_data_v, sk){
       continue
     }
 
+    item_size++
     res_react = $('#resultreact_default').html();
     res_react_html = document.createElement("div")
     res_react_html.innerHTML = res_react
@@ -607,7 +625,16 @@ function consume_l_data(){
       $(".alert").html("<strong>filter not available at the moment<strong>, refine search if filter taking to long to show")
       $(".alert").show()
     }
-    load_time_out = setTimeout(refresh_shop_data, 3000)
+    if(item_size =< 30){
+      load_time_out = setTimeout(refresh_shop_data, 3000)
+    }else{
+      refresh_time_out()
+      $("#spin_shop").hide()
+      $(".loading").hide()
+      $("#filterButton").show()
+      $("#cancelFilterButton").hide()
+      $(".alert").hide()
+    }
   }
 }
 
