@@ -234,7 +234,6 @@ def get_data_from_db(searched_keyword, low_to_high=False, high_to_low=True, shop
             results_db.append(ShoppedData.query.filter(ShoppedData.searched_keyword == searched_keyword).order_by(ShoppedData.numeric_price.desc()).all())
         elif low_to_high:
             results_db.append(ShoppedData.query.filter(ShoppedData.searched_keyword == searched_keyword).order_by(ShoppedData.numeric_price.asc()).all())
-
     for results in results_db:
         if results is not None and len(results) > 0:
             results_centre = ([res.__str__() for res in results])
@@ -280,14 +279,17 @@ def get_json_db_results(shop_names_list, search_keyword, match_acc, low_to_high,
                                high_to_low=high_to_low)
     if results:
         new_result = []
-        for shop_name in shop_names_list:
-            results_by_date = get_data_from_db_by_date_asc(shop_name=shop_name,
-                                                           searched_keyword=search_keyword)
-            if results_by_date and is_new_data(results_by_date, search_keyword):
-                new_result.extend(results)
-            else:
-                delete_data_by_shop_sk(shop_name, search_keyword)
-                ignite_thread_timeout(shop_name, search_keyword)
+        if shop_names_list and len(shop_names_list) == 1:
+            for shop_name in shop_names_list:
+                results_by_date = get_data_from_db_by_date_asc(shop_name=shop_name,
+                                                               searched_keyword=search_keyword)
+                if results_by_date and is_new_data(results_by_date, search_keyword):
+                    new_result.extend(results)
+                else:
+                    delete_data_by_shop_sk(shop_name, search_keyword)
+                    ignite_thread_timeout(shop_name, search_keyword)
+        else:
+            new_result.extend(results)
 
         if new_result:
             results = match_results_by_sk(new_result, search_keyword, match_acc)

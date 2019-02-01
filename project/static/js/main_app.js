@@ -25,6 +25,9 @@ shop_loaded_data = {}
 shop_size = 0
 shops_completed = 0
 is_filter = false
+item_size = 0
+max_item_size = 30
+returned_item_size = max_item_size
 
 $(function(){
   $(document).on("submit", "#search_form", function(e){
@@ -78,6 +81,9 @@ function exe_filter(){
         }
         return
   }else{
+    item_size = 0
+    max_item_size = 30
+    $("#load_next").hide()
     disable_controls(false)
     sshp = scraped_shops.join(",")
     if(get_selected_checkboxes().length > 0){
@@ -397,6 +403,9 @@ function shop_web_search(){
   cancel_search = !cancel_search
   shop_loaded_data = clear_dict_obj(shop_loaded_data)
   if(cancel_search){
+    item_size = 0
+    max_item_size = 30
+    $("#load_next").hide()
     $("#filterButton").hide()
     $("#cancelFilterButton").hide()
     disable_controls()
@@ -420,6 +429,24 @@ function shop_web_search(){
   }
 
   return false
+}
+
+function load_next(){
+    if(shop_searching){
+      $('#spin_shop').hide()
+      return false
+    }
+    if(shop_size == 0){
+      $('#spin_shop').hide()
+      return false
+    }
+    if($('#spin_shop').css('display') == 'none'){
+        $('#spin_shop').show()
+    }
+    item_size = 0
+    max_item_size = max_item_size + 30
+    refresh_time_out()
+    load_time_out = setTimeout(refresh_shop_data, 500)
 }
 
 function clear_dict_obj(obj_dict){
@@ -498,36 +525,97 @@ function set_search_time_out(obj_so, refresh_api){
   return
 }
 
+function count_returned_item(re_item){
+  count = 0
+  if(!is_filter){
+    for (shop_index_k in shop_loaded_data){
+      re_item = shop_loaded_data[shop_index_k]
+      for(shop_each_index_k in re_item){
+        try{
+          shop_each_d_v = JSON.parse(shop_loaded_data_v[shop_each_index_k])
+
+          shop_each_d_v = JSON.parse(shop_loaded_data_v[shop_each_index_k])
+          if(!shop_each_d_v){
+            continue
+          }
+          sk = decodeURIComponent(sk)
+          sk = truncate_str(sk, 75)
+          sk_shop_each_d_v = shop_each_d_v[sk]
+          if (!sk_shop_each_d_v){
+            continue
+          }
+
+          count++
+        }catch(err){
+          count++
+          continue
+        }
+      }
+    }
+  }else{
+    for(shop_each_index_k in re_item){
+      try{
+        shop_each_d_v = JSON.parse(shop_loaded_data_v[shop_each_index_k])
+
+        shop_each_d_v = JSON.parse(shop_loaded_data_v[shop_each_index_k])
+        if(!shop_each_d_v){
+          continue
+        }
+        sk = decodeURIComponent(sk)
+        sk = truncate_str(sk, 75)
+        sk_shop_each_d_v = shop_each_d_v[sk]
+        if (!sk_shop_each_d_v){
+          continue
+        }
+
+        count++
+      }catch(err){
+        count++
+        continue
+      }
+    }
+  }
+
+  return count
+}
+
 function consume_l_data_child(shop_loaded_data_v, sk){
   res_react_bucket_child = []
   var shop_each_index_k;
   for(shop_each_index_k in shop_loaded_data_v){
     try{
+      if(item_size == max_item_size){
+        break;
+      }
       shop_each_d_v = JSON.parse(shop_loaded_data_v[shop_each_index_k])
 
-    shop_each_d_v = JSON.parse(shop_loaded_data_v[shop_each_index_k])
-    if(!shop_each_d_v){
-      continue
-    }
-    sk = decodeURIComponent(sk)
-    sk = truncate_str(sk, 75)
-    sk_shop_each_d_v = shop_each_d_v[sk]
-    if (!sk_shop_each_d_v){
-      continue
-    }
+      shop_each_d_v = JSON.parse(shop_loaded_data_v[shop_each_index_k])
+      if(!shop_each_d_v){
+        continue
+      }
+      sk = decodeURIComponent(sk)
+      sk = truncate_str(sk, 75)
+      sk_shop_each_d_v = shop_each_d_v[sk]
+      if (!sk_shop_each_d_v){
+        continue
+      }
 
-    res_react = $('#resultreact_default').html();
-    res_react_html = document.createElement("div")
-    res_react_html.innerHTML = res_react
-    res_react_html.querySelectorAll("#p_link")[0].href = sk_shop_each_d_v["shop_link"] || ""
-    res_react_html.querySelector("#p_img_link").src = sk_shop_each_d_v["image_url"] || ""
-    res_react_html.querySelector("#p_img_link").alt = sk_shop_each_d_v["title"] || ""
-    res_react_html.querySelectorAll("#p_link")[1].href = sk_shop_each_d_v["shop_link"] || ""
-    res_react_html.querySelectorAll("#p_link")[1].innerText=(sk_shop_each_d_v["title"] || "")
-    res_react_html.querySelector("#p_description").innerText=(sk_shop_each_d_v["content_description"] || "")
-    res_react_html.querySelector("#p_price").innerText=("Price: " + sk_shop_each_d_v["price"] || "")
-    res_react_html.querySelector("#p_shopname").innerText=("Shop: " + sk_shop_each_d_v["shop_name"] || "")
-    res_react_bucket_child.push($(res_react_html).html())
+      res_react = $('#resultreact_default').html();
+      res_react_html = document.createElement("div")
+      res_react_html.innerHTML = res_react
+      res_react_html.querySelectorAll("#p_link")[0].href = sk_shop_each_d_v["shop_link"] || ""
+      res_react_html.querySelector("#p_img_link").src = sk_shop_each_d_v["image_url"] || ""
+      res_react_html.querySelector("#p_img_link").alt = sk_shop_each_d_v["title"] || ""
+      res_react_html.querySelectorAll("#p_link")[1].href = sk_shop_each_d_v["shop_link"] || ""
+      res_react_html.querySelectorAll("#p_link")[1].innerText=(sk_shop_each_d_v["title"] || "")
+      res_react_html.querySelector("#p_description").innerText=(sk_shop_each_d_v["content_description"] || "")
+      res_react_html.querySelector("#p_price").innerText=("Price: " + sk_shop_each_d_v["price"] || "")
+      res_react_html.querySelector("#p_shopname").innerText=("Shop: " + sk_shop_each_d_v["shop_name"] || "")
+      if(res_react_bucket_child.includes($(res_react_html).html())){
+        continue
+      }
+      item_size++
+      res_react_bucket_child.push($(res_react_html).html())
     }catch(err){
       continue
     }
@@ -541,6 +629,7 @@ function consume_l_data(){
   sk = current_sk
   res_react_bucket = []
   var shop_index_k;
+  sld = shop_loaded_data
   if(!is_filter){
     for (shop_index_k in shop_loaded_data){
       shop_loaded_data_v = shop_loaded_data[shop_index_k]
@@ -589,17 +678,26 @@ function consume_l_data(){
   }
 
   spin_shop_default_htm = $("#spin_shop_default").html()
-  res_rock_spinner = res_react_bucket.join("") + spin_shop_default_htm
-  reactelem = $("<div class=\"row\">" + res_rock_spinner + "</div>")
+  load_next_default_htm = $("#load_next_default").html()
+  res_rock_spinner_next = res_react_bucket.join("") + spin_shop_default_htm + load_next_default_htm
+
+  reactelem = $("<div class=\"row\">" + res_rock_spinner_next + "</div>")
+  $('#resultreact').empty()
   $('#resultreact').html(reactelem)
   shop_searching = false
   reset_controls()
   if (shops_completed >= shop_size){
+      returned_item_size = count_returned_item(sld)
       refresh_time_out()
       $("#spin_shop").hide()
       $(".loading").hide()
       $("#filterButton").show()
       $("#cancelFilterButton").hide()
+      if (max_item_size > returned_item_size){
+         $("#load_next").hide()
+      }else{
+         $("#load_next").show()
+      }
   }else{
     if(!is_filter){
       $("#filterButton").hide()
@@ -607,7 +705,21 @@ function consume_l_data(){
       $(".alert").html("<strong>filter not available at the moment<strong>, refine search if filter taking to long to show")
       $(".alert").show()
     }
-    load_time_out = setTimeout(refresh_shop_data, 3000)
+    if(item_size < 30){
+     load_time_out = setTimeout(refresh_shop_data, 3000)
+   }else{
+     if (max_item_size > returned_item_size){
+        $("#load_next").hide()
+     }else{
+        $("#load_next").show()
+     }
+      refresh_time_out()
+     $("#spin_shop").hide()
+     $(".loading").hide()
+     $("#filterButton").show()
+     $("#cancelFilterButton").hide()
+     $(".alert").hide()
+   }
   }
 }
 
