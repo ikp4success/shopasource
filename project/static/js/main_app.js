@@ -70,6 +70,9 @@ function disable_controls(disabled=true){
 
 function exe_filter(){
   if (scraped_shops.length <= 0){
+        item_size = 0
+        max_item_size = 30
+        returned_item_size = max_item_size
         $(".alert").html("<strong>No Data to filter</strong>, search and then filter.")
         $(".alert").show()
         radiobtn = document.getElementById("highlow");
@@ -83,6 +86,7 @@ function exe_filter(){
   }else{
     item_size = 0
     max_item_size = 30
+    returned_item_size = max_item_size
     $("#load_next").hide()
     disable_controls(false)
     sshp = scraped_shops.join(",")
@@ -405,6 +409,7 @@ function shop_web_search(){
   if(cancel_search){
     item_size = 0
     max_item_size = 30
+    returned_item_size = max_item_size
     $("#load_next").hide()
     $("#filterButton").hide()
     $("#cancelFilterButton").hide()

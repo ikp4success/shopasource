@@ -1,0 +1,41 @@
+@viewport {
+  width: device-width ;
+  zoom: 1.0 ;
+}
+
+@-ms-viewport {
+  width: device-width ;
+}
+
+@media screen and (min-width:320px) and (max-width:800px){
+  /* for screens that are at least 320 pixels wide but less than or equal to 800 pixels wide */
+  .input-group-append {
+      margin: 0 auto;
+  }
+
+  .shops-cont {
+    max-width: 20rem;
+    max-height: 200rem;
+    position: relative;
+    left: 0px;
+    top: 0px;
+  }
+
+  .ResultSearch{
+  	width: 55%;
+    margin:0 auto;
+    padding-top: 100px;
+    padding-bottom: 100%;
+  }
+}
+
+/* @media screen and (orientation:portrait) {
+  .shops-cont {
+    max-width: 20rem;
+    max-height: 200rem;
+    position: relative;
+  }
+}
+@media screen and (orientation: landscape) {
+  /* ... */
+/* }  */
