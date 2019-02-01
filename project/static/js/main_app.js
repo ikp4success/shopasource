@@ -26,6 +26,7 @@ shop_size = 0
 shops_completed = 0
 is_filter = false
 item_size = 0
+max_item_size = 30
 
 $(function(){
   $(document).on("submit", "#search_form", function(e){
@@ -37,10 +38,11 @@ $(function(){
 
 $(window).scroll(function() {
   if($(window).scrollTop() + $(window).height() == $(document).height()) {
-    if (shops_completed >= shop_size){
-      return false
-    }
-    item_size = 0
+    // if (shops_completed >= shop_size){
+    //   return false
+    // }
+    max_item_size = max_item_size + 30
+    refresh_time_out()
     load_time_out = setTimeout(refresh_shop_data, 500)
   }
   return false;
@@ -91,6 +93,7 @@ function exe_filter(){
         return
   }else{
     item_size = 0
+    max_item_size = 30
     disable_controls(false)
     sshp = scraped_shops.join(",")
     if(get_selected_checkboxes().length > 0){
@@ -411,6 +414,7 @@ function shop_web_search(){
   shop_loaded_data = clear_dict_obj(shop_loaded_data)
   if(cancel_search){
     item_size = 0
+    max_item_size = 30
     $("#filterButton").hide()
     $("#cancelFilterButton").hide()
     disable_controls()
@@ -516,7 +520,7 @@ function consume_l_data_child(shop_loaded_data_v, sk){
   res_react_bucket_child = []
   var shop_each_index_k;
   for(shop_each_index_k in shop_loaded_data_v){
-    if(item_size == 30){
+    if(item_size == max_item_size){
       break;
     }
     try{
@@ -625,7 +629,7 @@ function consume_l_data(){
       $(".alert").html("<strong>filter not available at the moment<strong>, refine search if filter taking to long to show")
       $(".alert").show()
     }
-    if(item_size =< 30){
+    if(item_size < 30){
       load_time_out = setTimeout(refresh_shop_data, 3000)
     }else{
       refresh_time_out()
