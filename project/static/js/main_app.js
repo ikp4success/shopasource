@@ -6,8 +6,8 @@ friend_name = {
   "MACYS": "MACY'S",
   "SAKSFIFTHAVENUE": "SAKS FIFTH AVENUE",
   "NORDSTROMRACK": "NORDSTROM RACK",
-  "CHARLOTTERUSSE": "CHARLOTTE RUSSE"
-
+  "CHARLOTTERUSSE": "CHARLOTTE RUSSE",
+  "SHOPQUEEN": "SHOP QUEEN"
 }
 load_time_out = null
 time_check_default = 0
