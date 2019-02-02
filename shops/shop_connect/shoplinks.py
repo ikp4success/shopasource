@@ -35,3 +35,6 @@ _saksfifthavenueurl = "https://www.saksfifthavenue.com/search/EndecaSearch.jsp?b
 # _expressurl = "https://www.express.com"
 _expressurl = "https://search.unbxdapi.com/{}/express_com-u1456154309768/search?&q={}&rows=70&start=0&format=json&fields=unbxd_color_mapping,title,uniqueId,productUrl,displayPrice,selling_price,displaySalePrice,color,promoMessage,imageUrl,colorImageMap,imageMap,colorSwatch&facet.multiselect=true&indent=off&device-type=Desktop&unbxd-url=https%3A%2F%2Fwww.express.com%2Fexp%2Fsearch%3Fq%3Dwallet&unbxd-referrer=https%3A%2F%2Fwww.express.com%2F&user-type=new&api-key={}"
 _charlotterusseurl = "https://www.charlotterusse.com/search/?q={}&lang=default"
+_aldourl = "https://www.aldoshoes.com/us/en_US/search?q={}"
+_bassourl = "https://basso.co/search?q={}"
+_shopqueenurl = "https://www.shopqueen.com/search?q={}*&type=product"

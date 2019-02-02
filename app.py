@@ -4,6 +4,7 @@ from flask import jsonify
 from flask import request
 
 from utilities.results_factory import run_api_search
+from shops.shop_utilities.shop_setup import get_shops
 from project import db, app
 
 
@@ -69,49 +70,9 @@ def api_search():
     return (results, 200)
 
 
-@app.route("/websearch/shops.json", methods=['GET'])
-def shop_list():
-    return render_template('shops.json')
-
-
 @app.route("/websearch/shops-active.json", methods=['GET'])
 def shop_list_active():
-    return render_template('shops-active.json')
-
-
-# @app.route("/websearch/shop/search", methods=['GET'])
-# def web_search():
-#     search_keyword = request.args.get("sk")
-#     match_acc = 0
-#     low_to_high = False
-#     high_to_low = True
-#     shop_list_names = request.args.get("shops")
-#     if shop_list_names:
-#         shop_list_names = shop_list_names.split(",")
-#     try:
-#         match_acc = int(request.args.get("smatch"))
-#         low_to_high = request.args.get("slh")
-#         high_to_low = request.args.get("shl")
-#         if low_to_high == "true":
-#             high_to_low = False
-#             low_to_high = True
-#         elif low_to_high == "false":
-#             high_to_low = True
-#             low_to_high = False
-#         else:
-#             low_to_high = False
-#             high_to_low = True
-#
-#     except Exception:
-#         match_acc = 0
-#         low_to_high = False
-#         high_to_low = True
-#     return get_search_results(search_keyword, match_acc, low_to_high, high_to_low, shop_list_names)
-
-
-# def get_search_results(search_keyword, match_acc, low_to_high, high_to_low, shop_list_names):
-#     run_web_search(search_keyword, match_acc, low_to_high, high_to_low, shop_list_names)
-#     return render_template('searchresults.html')
+    return jsonify(get_shops(active=True)), 200
 
 
 def home():

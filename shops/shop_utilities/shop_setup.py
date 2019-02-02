@@ -36,6 +36,8 @@ class TestShopNames(Enum):
     SAKSFIFTHAVENUE = "SAKSFIFTHAVENUE"
     EXPRESS = "EXPRESS"
     CHARLOTTERUSSE = "CHARLOTTERUSSE"
+    ALDO = "ALDO"
+    SHOPQUEEN = "SHOPQUEEN"
 
 
 shop_configurations = [
@@ -278,6 +280,24 @@ shop_configurations = [
         "CHARLOTTERUSSE": {
             "active": True,
             "name": "CHARLOTTERUSSE"
+        }
+    },
+    {
+        "ALDO": {
+            "active": False,
+            "name": "ALDO"
+        }
+    },
+    {
+        "BASSO": {
+            "active": True,
+            "name": "BASSO"
+        }
+    },
+    {
+        "SHOPQUEEN": {
+            "active": True,
+            "name": "SHOPQUEEN"
         }
     },
 ]

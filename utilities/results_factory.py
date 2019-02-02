@@ -7,10 +7,6 @@ from project import db
 from dateutil import parser
 from datetime import datetime, timezone
 import traceback
-import random
-import os
-# import time
-import requests
 
 from functools import partial
 
@@ -90,46 +86,6 @@ def run_api_search(shop_names_list, search_keyword, match_acc, low_to_high, high
     return results
 
 
-# def run_web_search(search_keyword, match_acc, low_to_high, high_to_low, shop_list_names):
-#     try:
-#         if search_keyword is None or search_keyword.strip() == "":
-#             update_results_row_error("Search keyword is empty or invalid")
-#
-#         if len(search_keyword) < 2:
-#             update_results_row_error("Sorry, no products found")
-#             return
-#
-#         search_keyword = truncate_data(search_keyword, 75)
-#
-#         # DEBUG url = "http://127.0.0.1:5000/api/shop/search={}".format(search_keyword)
-#         # url = "http://shopasource.herokuapp.com/api/shop/search={}".format(search_keyword)
-#         # session = requests.Session()
-#         # json_data = session.get(url, timeout=60)
-#         # results = safe_json(json_data.text)
-#
-#         results = web_get_data_from_db(search_keyword, match_acc, low_to_high, high_to_low, shop_list_names)
-#
-#         if results is None or len(results) == 0:
-#             update_results_row_error("Sorry, no products found")
-#         else:
-#             update_search_view_with_db_results(search_keyword, results)
-#         return
-#     except Exception as e:
-#         update_results_row_error("Sorry, error encountered during search, try again or contact admin if error persist")
-#         print(e)
-#         print(traceback.format_exc())
-#     return
-
-
-# def web_get_data_from_db(search_keyword, match_acc, low_to_high, high_to_low, shop_names_list):
-#     results = get_data_from_db(searched_keyword=search_keyword,
-#                                match_acc=match_acc,
-#                                low_to_high=low_to_high,
-#                                high_to_low=high_to_low,
-#                                shop_names_list=shop_names_list)
-#     return results
-
-
 def ignite_thread_timeout(shop_name, search_keyword):
     pool = multiprocessing.pool.ThreadPool(1)
     result = pool.apply_async(partial(start_thread_search, shop_name, search_keyword))
@@ -177,6 +133,7 @@ def execute_add_results_to_db(result, search_keyword):
 
 
 def build_result_row(result_data):
+    """ this function is deprecated """
     _resultRow_res = _resultRow.replace("{PRODUCTIMAGESOURCE}", safe_grab(result_data, ["image_url"], "") or "") \
         .replace("{PRODUCTLINK}", safe_grab(result_data, ["shop_link"], "") or "") \
         .replace("{PRODUCTTITLE}", safe_grab(result_data, ["title"], "") or "") \
