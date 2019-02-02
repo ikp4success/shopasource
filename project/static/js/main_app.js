@@ -493,6 +493,15 @@ function ini_reset_controls(is_alert=false){
   refresh_time_out()
   cancel_search = false
   time_check_default = 0
+  if($api_request != null){
+    $api_request.abort()
+    $api_request = null
+  }
+
+  if($shop_request != null) {
+    $shop_request.abort()
+    $shop_request = null
+  }
   return
 }
 

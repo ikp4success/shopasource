@@ -9,7 +9,7 @@ from shops.shop_utilities.extra_function import generate_result_meta, extract_it
 class Macys(scrapy.Spider):
     name = find_shop_configuration("MACYS")["name"]
     _search_keyword = None
-    headers = {
+    macys_headers = {
         "Host": "www.macys.com",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
         "Accept-Language": "en-US,en;q=0.5",
@@ -26,7 +26,7 @@ class Macys(scrapy.Spider):
 
     def start_requests(self):
         shop_url = _macysurl.format(self._search_keyword)
-        yield get_request(shop_url, self.get_best_link, headers=self.headers)
+        yield get_request(shop_url, self.get_best_link, headers=self.macys_headers)
 
     def get_best_link(self, response):
         items = response.css(".items .productThumbnailItem")
