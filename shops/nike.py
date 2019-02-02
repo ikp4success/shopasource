@@ -6,7 +6,7 @@ from shops.shop_utilities.shop_setup import find_shop_configuration
 from shops.shop_utilities.extra_function import generate_result_meta, extract_items, safe_grab
 
 
-class NIKE(scrapy.Spider):
+class Nike(scrapy.Spider):
     name = find_shop_configuration("NIKE")["name"]
     _search_keyword = None
 
