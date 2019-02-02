@@ -6,7 +6,7 @@ from shops.shop_utilities.shop_setup import find_shop_configuration
 from shops.shop_utilities.extra_function import generate_result_meta, extract_items
 
 
-class SIXPM(scrapy.Spider):
+class SixPm(scrapy.Spider):
     name = find_shop_configuration("SIXPM")["name"]
     _search_keyword = None
 

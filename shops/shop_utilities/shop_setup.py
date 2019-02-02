@@ -40,6 +40,7 @@ class TestShopNames(Enum):
     SHOPQUEEN = "SHOPQUEEN"
     NIKE = "NIKE"
     ADIDAS = "ADIDAS"
+    DICKSSPORTINGGOODS = "DICKSSPORTINGGOODS"
 
 
 shop_configurations = [
@@ -314,6 +315,12 @@ shop_configurations = [
             "name": "ADIDAS"
         }
     },
+    {
+        "DICKSSPORTINGGOODS": {
+            "active": True,
+            "name": "DICKSSPORTINGGOODS"
+        }
+    }
 ]
 
 
