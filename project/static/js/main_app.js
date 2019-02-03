@@ -12,7 +12,6 @@ friend_name = {
 }
 load_time_out = null
 time_check_default = 0
-// current_web_url = null
 current_sk = null
 cancel_search = false
 shop_searching = false
@@ -655,7 +654,7 @@ function consume_l_data(){
   }
 
   if(res_react_bucket.length == 0){
-    max_t_chk_def = 100
+    max_t_chk_def = 150
     if(is_filter){
       if($('#spin_shop').css('display') != 'none'){
           max_t_chk_def = 80
@@ -665,7 +664,7 @@ function consume_l_data(){
     }
     if(time_check_default != max_t_chk_def){
       shop_searching = true
-      time_check_default = time_check_default + 10
+      time_check_default++
       set_search_time_out(3000, true)
     }else{
       $(".alert").html("<strong>Sorry, no products found</strong>, refine search criteria.")

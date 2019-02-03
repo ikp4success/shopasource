@@ -88,10 +88,12 @@ def run_api_search(shop_names_list, search_keyword, match_acc, low_to_high, high
 
 def ignite_thread_timeout(shop_name, search_keyword):
     pool = multiprocessing.pool.ThreadPool(1)
-    result = pool.apply_async(partial(start_thread_search, shop_name, search_keyword))
+    result_send = pool.apply_async(partial(start_thread_search, shop_name, search_keyword))
     try:
-        result.get(timeout=15)
+        result_send.get(timeout=15)
     except multiprocessing.TimeoutError:
+        file_name_bk = "json_shop_results/{}_RESULTS.json".format(shop_name)
+        result_send = pr_result(search_keyword, file_name_bk)
         print("Process timed out")
     pool.terminate()
     print("Pool terminated")
@@ -113,15 +115,19 @@ def launch_spiders(sn, sk):
     file_name = "json_shop_results/{}_RESULTS.json".format(name)
     open(file_name, 'w+').close()
     call(["scrapy", "crawl", "{}".format(name), "-a", "search_keyword={}".format(search_keyword), "-o", file_name])
+    return pr_result(search_keyword, file_name)
+
+
+def pr_result(sk, fname):
     results = None
 
-    with open(file_name, "r") as items_file:
+    with open(fname, "r") as items_file:
         results = items_file.read()
 
     if results is not None and results != "":
         results = safe_json(results)
         for result in results:
-            execute_add_results_to_db(result, search_keyword)
+            execute_add_results_to_db(result, sk)
     return results
 
 

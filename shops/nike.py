@@ -9,6 +9,7 @@ from shops.shop_utilities.extra_function import generate_result_meta, extract_it
 class Nike(scrapy.Spider):
     name = find_shop_configuration("NIKE")["name"]
     _search_keyword = None
+    download_delay = 0.5
 
     nike_headers = {
         "Host": "store.nike.com",
@@ -44,6 +45,8 @@ class Nike(scrapy.Spider):
         image_url = response.css(".colorway-images .bg-medium-grey ::attr(src)").extract_first()
         if image_url:
             image_url = image_url.replace("144", "1280")
+        else:
+            image_url = response.css("picture #pdp_6up-hero ::attr(src)").extract_first()
         title = extract_items(response.css(".ncss-base ::text").extract()) or safe_grab(response.meta, ["t"])
         description = extract_items(response.css(".description-preview ::text").extract())
         price = response.css("div[data-test='product-price'] ::text").extract_first() or safe_grab(response.meta, ["p"])

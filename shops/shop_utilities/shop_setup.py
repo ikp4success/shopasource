@@ -305,7 +305,7 @@ shop_configurations = [
     },
     {
         "NIKE": {
-            "active": False,
+            "active": True,
             "name": "NIKE"
         }
     },
