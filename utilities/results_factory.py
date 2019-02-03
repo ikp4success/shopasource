@@ -92,8 +92,8 @@ def ignite_thread_timeout(shop_name, search_keyword):
     try:
         result_send.get(timeout=15)
     except multiprocessing.TimeoutError:
-        file_name_bk = "json_shop_results/{}_RESULTS.json".format(shop_name)
-        result_send = pr_result(search_keyword, file_name_bk)
+        # file_name_bk = "json_shop_results/{}_RESULTS.json".format(shop_name)
+        # result_send = pr_result(search_keyword, file_name_bk)
         print("Process timed out")
     pool.terminate()
     print("Pool terminated")
@@ -266,7 +266,7 @@ def get_json_db_results(shop_names_list, search_keyword, match_acc, low_to_high,
             return match_results_by_sk(results, search_keyword, match_acc)
     else:
         for shop_name in shop_names_list:
-            ignite_thread_timeout(shop_names_list[0], search_keyword)
+            ignite_thread_timeout(shop_name, search_keyword)
         results = get_data_from_db(shop_names_list=shop_names_list,
                                    searched_keyword=search_keyword,
                                    low_to_high=low_to_high,
