@@ -654,7 +654,7 @@ function consume_l_data(){
   }
 
   if(res_react_bucket.length == 0){
-    max_t_chk_def = 150
+    max_t_chk_def = 100
     if(is_filter){
       if($('#spin_shop').css('display') != 'none'){
           max_t_chk_def = 80
@@ -664,7 +664,7 @@ function consume_l_data(){
     }
     if(time_check_default != max_t_chk_def){
       shop_searching = true
-      time_check_default++
+      time_check_default = time_check_default + 5
       set_search_time_out(3000, true)
     }else{
       $(".alert").html("<strong>Sorry, no products found</strong>, refine search criteria.")
@@ -722,7 +722,7 @@ function consume_l_data(){
     if(item_size < 30){
      load_time_out = setTimeout(refresh_shop_data, 3000)
    }else{
-     if (max_item_size > returned_item_size){
+     if (max_item_size > returned_item_size && shops_completed >= shop_size){
         $("#load_next").hide()
      }else{
         $("#load_next").show()
