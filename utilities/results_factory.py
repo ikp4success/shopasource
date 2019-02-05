@@ -87,7 +87,7 @@ def run_api_search(shop_names_list, search_keyword, match_acc, low_to_high, high
 
 
 def ignite_thread_timeout(shop_name, search_keyword):
-    pool = multiprocessing.pool.ThreadPool(1)
+    pool = multiprocessing.pool.ThreadPool(100)
     result_send = pool.apply_async(partial(start_thread_search, shop_name, search_keyword))
     try:
         result_send.get(timeout=15)
