@@ -3,6 +3,7 @@ from shops.shop_utilities.shop_setup import is_shop_active
 from multiprocessing.dummy import Pool as ThreadPool
 import multiprocessing.pool
 import json
+import os
 from project import db
 from dateutil import parser
 from datetime import datetime, timezone
@@ -112,6 +113,8 @@ def start_thread_search(shop_name, search_keyword):
 def launch_spiders(sn, sk):
     name = sn
     search_keyword = sk
+    if not os.path.exists("json_shop_results/"):
+        os.makedirs("json_shop_results/")
     file_name = "json_shop_results/{}_RESULTS.json".format(name)
     open(file_name, 'w+').close()
     call(["scrapy", "crawl", "{}".format(name), "-a", "search_keyword={}".format(search_keyword), "-o", file_name])
