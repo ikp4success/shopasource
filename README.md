@@ -13,3 +13,13 @@ Shop A Source provide easy access to search multiple shopping websites via one s
 ![s1](https://github.com/ikp4success/shopasource/blob/master/screenshots/s1.png)
 ![s2](https://github.com/ikp4success/shopasource/blob/master/screenshots/s2.png)
 ![s3](https://github.com/ikp4success/shopasource/blob/master/screenshots/s3.png)
+
+**Technologies**
+
+Python,
+Html,
+Flask,
+Heroku,
+Postgress,
+JavaScript
+Css
