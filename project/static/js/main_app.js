@@ -722,11 +722,11 @@ function consume_l_data(){
       returned_item_size = count_returned_item(sld)
       current_count = returned_item_size
       refresh_time_out()
+      $("#spin_shop").hide()
       $(".loading").hide()
       $("#filterButton").show()
       $("#cancelFilterButton").hide()
       if (max_item_size > returned_item_size){
-         $("#spin_shop").hide()
          $("#load_next").hide()
          load_next_btn = false
       }else{
