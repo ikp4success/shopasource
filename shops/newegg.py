@@ -10,6 +10,7 @@ from shops.shop_utilities.extra_function import generate_result_meta, extract_it
 class Newegg(scrapy.Spider):
     name = find_shop_configuration("NEWEGG")["name"]
     _search_keyword = None
+    download_delay = 2.5
 
     def __init__(self, search_keyword):
         self._search_keyword = search_keyword
@@ -44,6 +45,7 @@ class Newegg(scrapy.Spider):
         price = safe_grab(response.meta, ["p"])
         title = safe_grab(response.meta, ["t"])
         image_url = safe_grab(response.meta, ["img"])
+        description = ""
         if "areyouahuman" not in response.url:
             image_url = response.css(".mainSlide img ::attr(src)").extract_first()
             title = extract_items(response.css("#grpDescrip_h ::text").extract()) or title

@@ -9,7 +9,7 @@ from shops.shop_utilities.extra_function import generate_result_meta, extract_it
 class Nike(scrapy.Spider):
     name = find_shop_configuration("NIKE")["name"]
     _search_keyword = None
-    download_delay = 0.5
+    download_delay = 2.5
 
     nike_headers = {
         "Host": "store.nike.com",

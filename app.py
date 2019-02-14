@@ -1,4 +1,7 @@
 import json
+from functools import partial
+from multiprocessing.dummy import Pool as ThreadPool
+
 from flask import render_template
 from flask import jsonify
 from flask import request
@@ -6,7 +9,6 @@ from flask import request
 from utilities.results_factory import run_api_search
 from shops.shop_utilities.shop_setup import get_shops
 from project import db, app
-
 
 db.create_all()
 
@@ -65,9 +67,25 @@ def api_search():
         results = {"message": "Sorry, error encountered during search, try again or contact admin if error persist"}
         return (results, 404)
 
-    results = run_api_search(shop_list_names, search_keyword, match_acc, low_to_high, high_to_low)
-    results = jsonify(results)
-    return (results, 200)
+    pool = ThreadPool(len(shop_list_names))
+    launch_spiders_partial = partial(
+        run_api_search,
+        shop_names_list=shop_list_names,
+        search_keyword=search_keyword,
+        match_acc=match_acc,
+        low_to_high=low_to_high,
+        high_to_low=high_to_low)
+
+    shops_thread_list = shop_list_names
+    results = pool.map(launch_spiders_partial, shops_thread_list)
+    pool.close()
+    pool.join()
+    # results = run_api_search(shops_thread_list, shop_list_names, search_keyword, match_acc, low_to_high, high_to_low)
+    if len(results) > 0:
+        results = jsonify(results[0])
+        return (results, 200)
+    results = {"message": "Sorry, no products found"}
+    return (results, 404)
 
 
 @app.route("/websearch/shops-active.json", methods=['GET'])

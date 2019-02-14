@@ -2,7 +2,7 @@ from urllib import parse as urlparse
 import datetime as dt
 import re
 import json
-# import html
+import html
 
 
 def prepend_domain(url, domain_url, ignore_domain_splice=False):
@@ -125,14 +125,15 @@ def validate_data(image_url, price, title):
     return True
 
 
-def truncate_data(data, length_cont):
+def truncate_data(data, length_cont, html_escape=False):
     if not data:
         return data
     data = data.rstrip().strip()
     if len(data) > length_cont:
         try:
+            if html_escape:
+                return html.escape("{}...".format(data[:length_cont]))
             return "{}...".format(data[:length_cont])
-            # return html.escape("{}...".format(data[:length_cont]))
         except Exception:
             return ""  # data is not good
     else:

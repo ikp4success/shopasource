@@ -8,3 +8,4 @@ requests
 python-dateutil
 user_agent
 w3lib==1.19.0
+Flask-SQLAlchemy-Session==1.1

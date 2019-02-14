@@ -11,6 +11,7 @@ friend_name = {
   "DICKSSPORTINGGOODS": "DICKS SPORTING GOODS"
 }
 load_time_out = null
+load_next_btn = false
 time_check_default = 0
 current_sk = null
 cancel_search = false
@@ -27,7 +28,9 @@ shops_completed = 0
 is_filter = false
 item_size = 0
 max_item_size = 30
+current_count = 0
 returned_item_size = max_item_size
+width_prog_check = 49
 
 $(function(){
   $(document).on("submit", "#search_form", function(e){
@@ -128,6 +131,7 @@ function exe_filter(){
 
 function ini_filter_reset_controls(){
   $("#cancelFilterButton").hide()
+  $("#filterButton").show()
   ini_reset_controls()
 }
 
@@ -450,8 +454,15 @@ function load_next(){
     }
     item_size = 0
     max_item_size = max_item_size + 30
-    refresh_time_out()
-    load_time_out = setTimeout(refresh_shop_data, 500)
+    $("#load_next").hide()
+    if(current_count == returned_item_size){
+      refresh_time_out()
+      load_time_out = setTimeout(refresh_shop_data, 10000)
+    }else{
+      refresh_time_out()
+      load_time_out = setTimeout(refresh_shop_data, 1000)
+    }
+
 }
 
 function clear_dict_obj(obj_dict){
@@ -531,6 +542,11 @@ function refresh_time_out(){
 function set_search_time_out(obj_so, refresh_api){
   if(refresh_api){
     sk = get_sk_refined()
+    width_progress = document.getElementById("searchProgressBar").style.width
+    if(parseInt(width_progress.replace("%", "")) > width_prog_check){
+      width_prog_check = width_prog_check + 50
+      kickstart_initial_api_search()
+    }
   }
 
   obj_so = obj_so || 1500
@@ -654,7 +670,7 @@ function consume_l_data(){
   }
 
   if(res_react_bucket.length == 0){
-    max_t_chk_def = 100
+    max_t_chk_def = 99999
     if(is_filter){
       if($('#spin_shop').css('display') != 'none'){
           max_t_chk_def = 80
@@ -662,9 +678,11 @@ function consume_l_data(){
         max_t_chk_def = 30
       }
     }
-    if(time_check_default != max_t_chk_def){
+    width_progress = document.getElementById("searchProgressBar").style.width
+    // if(time_check_default != max_t_chk_def){
+    if(width_progress != "100%"){
       shop_searching = true
-      time_check_default = time_check_default + 5
+      time_check_default = time_check_default + 1
       set_search_time_out(3000, true)
     }else{
       $(".alert").html("<strong>Sorry, no products found</strong>, refine search criteria.")
@@ -702,15 +720,17 @@ function consume_l_data(){
   reset_controls()
   if (shops_completed >= shop_size){
       returned_item_size = count_returned_item(sld)
+      current_count = returned_item_size
       refresh_time_out()
-      $("#spin_shop").hide()
       $(".loading").hide()
       $("#filterButton").show()
       $("#cancelFilterButton").hide()
       if (max_item_size > returned_item_size){
+         $("#spin_shop").hide()
          $("#load_next").hide()
+         load_next_btn = false
       }else{
-         $("#load_next").show()
+        $("#load_next").show()
       }
   }else{
     if(!is_filter){
@@ -720,7 +740,8 @@ function consume_l_data(){
       $(".alert").show()
     }
     if(item_size < 30){
-     load_time_out = setTimeout(refresh_shop_data, 3000)
+      refresh_time_out()
+      load_time_out = setTimeout(refresh_shop_data, 3000)
    }else{
      if (max_item_size > returned_item_size && shops_completed >= shop_size){
         $("#load_next").hide()
@@ -737,12 +758,19 @@ function consume_l_data(){
   }
 }
 
+function kickstart_initial_api_search(){
+  initial_api_search(current_sk)
+}
 
 function refresh_shop_data(){
   if(shop_searching){
     return
   }
   consume_l_data()
+  if(load_next_btn){
+    refresh_time_out()
+    load_time_out = setTimeout(kickstart_initial_api_search, 500)
+  }
   return false
 }
 

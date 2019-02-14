@@ -1,16 +1,15 @@
-from subprocess import call
-from shops.shop_utilities.shop_setup import is_shop_active
-from multiprocessing.dummy import Pool as ThreadPool
-import multiprocessing.pool
-import json
 import os
-from project import db
+import json
+import traceback
+import multiprocessing.pool
+from subprocess import call
+from multiprocessing.dummy import Pool as ThreadPool
 from dateutil import parser
 from datetime import datetime, timezone
-import traceback
-
 from functools import partial
 
+from project import db
+from shops.shop_utilities.shop_setup import is_shop_active
 from utilities.DefaultResources import _resultRow
 from utilities.DefaultResources import _errorMessage
 from project.models import ShoppedData
@@ -56,7 +55,7 @@ def match_sk(search_keyword, searched_item, match_sk_set):
     return False
 
 
-def run_api_search(shop_names_list, search_keyword, match_acc, low_to_high, high_to_low):
+def run_api_search(shops_thread_list, shop_names_list, search_keyword, match_acc, low_to_high, high_to_low):
     results = {}
     try:
         if shop_names_list is None or len(shop_names_list) == 0:
@@ -73,7 +72,7 @@ def run_api_search(shop_names_list, search_keyword, match_acc, low_to_high, high
             if len(search_keyword) < 2:
                 results = {"message": "Sorry, no products found"}
                 return results
-            search_keyword = truncate_data(search_keyword, 75)
+            search_keyword = truncate_data(search_keyword, 75, html_escape=True)
 
             results = get_json_db_results(shop_names_list, search_keyword, match_acc, low_to_high, high_to_low)
             if results is None or len(results) == 0:
@@ -88,13 +87,11 @@ def run_api_search(shop_names_list, search_keyword, match_acc, low_to_high, high
 
 
 def ignite_thread_timeout(shop_name, search_keyword):
-    pool = multiprocessing.pool.ThreadPool(100)
+    pool = multiprocessing.pool.ThreadPool(1)
     result_send = pool.apply_async(partial(start_thread_search, shop_name, search_keyword))
     try:
         result_send.get(timeout=15)
     except multiprocessing.TimeoutError:
-        # file_name_bk = "json_shop_results/{}_RESULTS.json".format(shop_name)
-        # result_send = pr_result(search_keyword, file_name_bk)
         print("Process timed out")
     pool.terminate()
     print("Pool terminated")
@@ -180,7 +177,33 @@ def get_data_from_db_by_date_asc(searched_keyword, shop_name=None):
     results_db.append(ShoppedData.query.filter(
                       ShoppedData.searched_keyword == searched_keyword,
                       ShoppedData.shop_name == shop_name).order_by(ShoppedData.date_searched.asc()).first())
+    db.session.commit()
     return [res.__str__() for res in results_db]
+
+
+def get_data_from_db_contains(searched_keyword, low_to_high=False, high_to_low=True, shop_names_list=None):
+    results_db = []
+    results_centre = []
+    if shop_names_list is not None:
+        if high_to_low:
+            results_db.append(ShoppedData.query.filter(
+                              ShoppedData.searched_keyword.contains(searched_keyword),
+                              ShoppedData.shop_name.in_(shop_names_list)).order_by(ShoppedData.numeric_price.desc()).all())
+        elif low_to_high:
+            results_db.append(ShoppedData.query.filter(
+                              ShoppedData.searched_keyword.contains(searched_keyword),
+                              ShoppedData.shop_name.in_(shop_names_list)).order_by(ShoppedData.numeric_price.asc()).all())
+    else:
+        if high_to_low:
+            results_db.append(ShoppedData.query.filter(ShoppedData.searched_keyword.contains(searched_keyword)).order_by(ShoppedData.numeric_price.desc()).all())
+        elif low_to_high:
+            results_db.append(ShoppedData.query.filter(ShoppedData.searched_keyword.contains(searched_keyword)).order_by(ShoppedData.numeric_price.asc()).all())
+    db.session.commit()
+
+    for results in results_db:
+        if results is not None and len(results) > 0:
+            results_centre = ([res.__str__() for res in results])
+    return results_centre
 
 
 def get_data_from_db(searched_keyword, low_to_high=False, high_to_low=True, shop_names_list=None):
@@ -200,6 +223,8 @@ def get_data_from_db(searched_keyword, low_to_high=False, high_to_low=True, shop
             results_db.append(ShoppedData.query.filter(ShoppedData.searched_keyword == searched_keyword).order_by(ShoppedData.numeric_price.desc()).all())
         elif low_to_high:
             results_db.append(ShoppedData.query.filter(ShoppedData.searched_keyword == searched_keyword).order_by(ShoppedData.numeric_price.asc()).all())
+    db.session.commit()
+
     for results in results_db:
         if results is not None and len(results) > 0:
             results_centre = ([res.__str__() for res in results])
@@ -226,7 +251,9 @@ def update_db_results(results):
         ShoppedData.query.\
             filter(ShoppedData.id == result_find.id).\
             update(results)
+        db.session.commit()
         return True
+    db.session.commit()
     return False
 
 
@@ -261,19 +288,21 @@ def get_json_db_results(shop_names_list, search_keyword, match_acc, low_to_high,
             results = match_results_by_sk(new_result, search_keyword, match_acc)
             return results
         else:
-            results = get_data_from_db(shop_names_list=shop_names_list,
-                                       searched_keyword=search_keyword,
-                                       low_to_high=low_to_high,
-                                       high_to_low=high_to_low)
+            results = get_data_from_db_contains(
+                shop_names_list=shop_names_list,
+                searched_keyword=search_keyword,
+                low_to_high=low_to_high,
+                high_to_low=high_to_low)
 
             return match_results_by_sk(results, search_keyword, match_acc)
     else:
         for shop_name in shop_names_list:
             ignite_thread_timeout(shop_name, search_keyword)
-        results = get_data_from_db(shop_names_list=shop_names_list,
-                                   searched_keyword=search_keyword,
-                                   low_to_high=low_to_high,
-                                   high_to_low=high_to_low)
+        results = get_data_from_db_contains(
+            shop_names_list=shop_names_list,
+            searched_keyword=search_keyword,
+            low_to_high=low_to_high,
+            high_to_low=high_to_low)
         return match_results_by_sk(results, search_keyword, match_acc)
     return results
 
