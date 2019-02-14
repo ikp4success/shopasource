@@ -190,36 +190,40 @@ def get_data_from_db_contains(searched_keyword, low_to_high=False, high_to_low=T
         if high_to_low:
             results_db.append(
                 ShoppedData.query.filter(
-                    or_(
-                        ShoppedData.searched_keyword.contains(searched_keyword),
-                        ShoppedData.content_description.contains(searched_keyword)
-                    ),
+                    ShoppedData.searched_keyword.contains(searched_keyword),
+                    # or_(
+                    #     ShoppedData.searched_keyword.contains(searched_keyword),
+                    #     ShoppedData.content_description.contains(searched_keyword)
+                    # ),
                     ShoppedData.shop_name.in_(shop_names_list)).order_by(ShoppedData.numeric_price.desc()).all())
 
         elif low_to_high:
             results_db.append(
                 ShoppedData.query.filter(
-                    or_(
-                        ShoppedData.searched_keyword.contains(searched_keyword),
-                        ShoppedData.content_description.contains(searched_keyword)
-                    ),
+                    ShoppedData.searched_keyword.contains(searched_keyword),
+                    # or_(
+                    #     ShoppedData.searched_keyword.contains(searched_keyword),
+                    #     ShoppedData.content_description.contains(searched_keyword)
+                    # ),
                     ShoppedData.shop_name.in_(shop_names_list)).order_by(ShoppedData.numeric_price.asc()).all())
     else:
         if high_to_low:
             results_db.append(
                 ShoppedData.query.filter(
-                    or_(
-                        ShoppedData.searched_keyword.contains(searched_keyword),
-                        ShoppedData.content_description.contains(searched_keyword)
-                    )
+                    ShoppedData.searched_keyword.contains(searched_keyword),
+                    # or_(
+                    #     ShoppedData.searched_keyword.contains(searched_keyword),
+                    #     ShoppedData.content_description.contains(searched_keyword)
+                    # )
                 ).order_by(ShoppedData.numeric_price.desc()).all())
         elif low_to_high:
             results_db.append(
                 ShoppedData.query.filter(
-                    or_(
-                        ShoppedData.searched_keyword.contains(searched_keyword),
-                        ShoppedData.content_description.contains(searched_keyword)
-                    )
+                    ShoppedData.searched_keyword.contains(searched_keyword),
+                    # or_(
+                    #     ShoppedData.searched_keyword.contains(searched_keyword),
+                    #     ShoppedData.content_description.contains(searched_keyword)
+                    # )
                 ).order_by(ShoppedData.numeric_price.asc()).all())
     db.session.commit()
 
