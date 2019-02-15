@@ -3,13 +3,14 @@ import scrapy
 from shops.shop_connect.shop_request import get_request
 from shops.shop_connect.shoplinks import _nikeurl
 from shops.shop_utilities.shop_setup import find_shop_configuration
-from shops.shop_utilities.extra_function import generate_result_meta, extract_items, safe_grab
+from shops.shop_utilities.extra_function import generate_result_meta, extract_items
+# , safe_grab
 
 
 class Nike(scrapy.Spider):
     name = find_shop_configuration("NIKE")["name"]
     _search_keyword = None
-    download_delay = 2.5
+    # download_delay = 2.5
 
     nike_headers = {
         "Host": "store.nike.com",
@@ -33,27 +34,39 @@ class Nike(scrapy.Spider):
         items = response.css(".grid-item-box")
         for item in items:
             item_url = item.css("a ::attr(href)").extract_first()
-            title = extract_items(response.css(".product-name ::text").extract())
-            price = response.css(".product-price span ::text").extract_first()
-            meta = {
-                "t": title,
-                "p": price
-            }
-            yield get_request(url=item_url, callback=self.parse_data, domain_url=response.url, meta=meta)
+            title = extract_items(item.css(".product-name ::text").extract())
+            price = item.css(".product-price span ::text").extract_first()
+            # def_image_url = "https://c.static-nike.com/a/images/t_PDP_1280_v1/f_auto/mnrclursmzg1muwzdgjj/{}.jpg"
+            # img_item_url = item_url.replace("https://www.nike.com/t/", "")
+            image_url = item.css("a img ::attr(src)").extract_first()
+            description = extract_items(item.css(".product-subtitle ::text").extract())
 
-    def parse_data(self, response):
-        image_url = response.css(".colorway-images .bg-medium-grey ::attr(src)").extract_first()
-        if image_url:
-            image_url = image_url.replace("144", "1280")
-        else:
-            image_url = response.css("picture #pdp_6up-hero ::attr(src)").extract_first()
-        title = extract_items(response.css(".ncss-base ::text").extract()) or safe_grab(response.meta, ["t"])
-        description = extract_items(response.css(".description-preview ::text").extract())
-        price = response.css("div[data-test='product-price'] ::text").extract_first() or safe_grab(response.meta, ["p"])
-        yield generate_result_meta(shop_link=response.url,
-                                   image_url=image_url,
-                                   shop_name=self.name,
-                                   price=price,
-                                   title=title,
-                                   searched_keyword=self._search_keyword,
-                                   content_description=description)
+            yield generate_result_meta(shop_link=item_url,
+                                       image_url=image_url,
+                                       shop_name=self.name,
+                                       price=price,
+                                       title=title,
+                                       searched_keyword=self._search_keyword,
+                                       content_description=description)
+            # meta = {
+            #     "t": title,
+            #     "p": price
+            # }
+            # yield get_request(url=item_url, callback=self.parse_data, domain_url=response.url, meta=meta)
+
+    # def parse_data(self, response):
+    #     image_url = response.css(".colorway-images .bg-medium-grey ::attr(src)").extract_first()
+    #     if image_url:
+    #         image_url = image_url.replace("144", "1280")
+    #     else:
+    #         image_url = response.css("picture #pdp_6up-hero ::attr(src)").extract_first()
+    #     title = extract_items(response.css(".ncss-base ::text").extract()) or safe_grab(response.meta, ["t"])
+    #     description = extract_items(response.css(".description-preview ::text").extract())
+    #     price = response.css("div[data-test='product-price'] ::text").extract_first() or safe_grab(response.meta, ["p"])
+    #     yield generate_result_meta(shop_link=response.url,
+    #                                image_url=image_url,
+    #                                shop_name=self.name,
+    #                                price=price,
+    #                                title=title,
+    #                                searched_keyword=self._search_keyword,
+    #                                content_description=description)

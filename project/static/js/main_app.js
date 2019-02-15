@@ -235,6 +235,9 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
 }
 
 function load_data_container(data, sk){
+  if(data==null){
+    return
+  }
   if(current_sk != sk){
     if(time_check_default != 0){
       time_check_default = time_check_default - 10
@@ -457,10 +460,10 @@ function load_next(){
     $("#load_next").hide()
     if(current_count == returned_item_size){
       refresh_time_out()
-      load_time_out = setTimeout(refresh_shop_data, 10000)
+      load_time_out = setTimeout(refresh_shop_data, 1000)
     }else{
       refresh_time_out()
-      load_time_out = setTimeout(refresh_shop_data, 1000)
+      load_time_out = setTimeout(refresh_shop_data, 10000)
     }
 
 }

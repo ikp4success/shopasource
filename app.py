@@ -81,7 +81,7 @@ def api_search():
     pool.close()
     pool.join()
     # results = run_api_search(shops_thread_list, shop_list_names, search_keyword, match_acc, low_to_high, high_to_low)
-    if len(results) > 0:
+    if len(results) > 0 and results[0] != "null":
         results = jsonify(results[0])
         return (results, 200)
     results = {"message": "Sorry, no products found"}
