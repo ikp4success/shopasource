@@ -67,25 +67,33 @@ def api_search():
         results = {"message": "Sorry, error encountered during search, try again or contact admin if error persist"}
         return (results, 404)
 
-    pool = ThreadPool(len(shop_list_names))
-    launch_spiders_partial = partial(
-        run_api_search,
-        shop_names_list=shop_list_names,
-        search_keyword=search_keyword,
-        match_acc=match_acc,
-        low_to_high=low_to_high,
-        high_to_low=high_to_low)
+    if len(shop_list_names) > 0 and len(shop_list_names) == 1:
+        pool = ThreadPool(len(shop_list_names))
+        launch_spiders_partial = partial(
+            run_api_search,
+            shop_names_list=shop_list_names,
+            search_keyword=search_keyword,
+            match_acc=match_acc,
+            low_to_high=low_to_high,
+            high_to_low=high_to_low)
 
-    shops_thread_list = shop_list_names
-    results = pool.map(launch_spiders_partial, shops_thread_list)
-    pool.close()
-    pool.join()
-    # results = run_api_search(shops_thread_list, shop_list_names, search_keyword, match_acc, low_to_high, high_to_low)
-    if len(results) > 0 and results[0] != "null":
-        results = jsonify(results[0])
-        return (results, 200)
-    results = {"message": "Sorry, no products found"}
-    return (results, 404)
+        shops_thread_list = shop_list_names
+        results = pool.map(launch_spiders_partial, shops_thread_list)
+        pool.close()
+        pool.join()
+        if results and len(results) > 0 and results[0] != "null":
+            results = jsonify(results[0])
+            return (results, 200)
+        results = {"message": "Sorry, no products found"}
+        return (results, 404)
+    else:
+        results = run_api_search([], shop_list_names, search_keyword, match_acc, low_to_high, high_to_low)
+        if results and len(results) > 0:
+            results = jsonify(results)
+            return (results, 200)
+        else:
+            results = {"message": "Sorry, no products found"}
+            return (results, 404)
 
 
 @app.route("/websearch/shops-active.json", methods=['GET'])
