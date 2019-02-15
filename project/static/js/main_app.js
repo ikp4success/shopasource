@@ -686,7 +686,7 @@ function consume_l_data(){
     if(width_progress != "100%"){
       shop_searching = true
       time_check_default = time_check_default + 1
-      set_search_time_out(3000, true)
+      set_search_time_out(1500, true)
     }else{
       $(".alert").html("<strong>Sorry, no products found</strong>, refine search criteria.")
       $(".alert").show()
