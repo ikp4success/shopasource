@@ -463,7 +463,7 @@ function load_next(){
       load_time_out = setTimeout(refresh_shop_data, 1000)
     }else{
       refresh_time_out()
-      load_time_out = setTimeout(refresh_shop_data, 10000)
+      load_time_out = setTimeout(refresh_shop_data, 12500)
     }
 
 }
@@ -686,7 +686,7 @@ function consume_l_data(){
     if(width_progress != "100%"){
       shop_searching = true
       time_check_default = time_check_default + 1
-      set_search_time_out(1500, true)
+      set_search_time_out(150, true)
     }else{
       $(".alert").html("<strong>Sorry, no products found</strong>, refine search criteria.")
       $(".alert").show()
