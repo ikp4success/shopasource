@@ -70,7 +70,16 @@ def price_round(price_str, round_num):
         return format_price(price_str)
 
 
-def generate_result_meta(shop_link, searched_keyword, image_url, shop_name, price, title, content_description, date_searched=None):
+def generate_result_meta(
+    shop_link,
+    searched_keyword,
+    image_url,
+    shop_name,
+    price,
+    title,
+    content_description,
+    date_searched=None
+):
     if not validate_data(image_url, price, title):
         return None
     price = str(price)

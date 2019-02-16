@@ -7,7 +7,7 @@ from flask import jsonify
 from flask import request
 
 from utilities.results_factory import run_api_search
-from shops.shop_utilities.shop_setup import get_shops
+from shops.shop_utilities.shop_setup_functions import get_shops
 from project import db, app
 
 db.create_all()
