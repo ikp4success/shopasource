@@ -4,7 +4,7 @@ from shops.shop_base import ShopBase
 class Biink(ShopBase):
     name = "BIINK"
 
-    def parse_data(self, response):
+    def parse_results(self, response):
         items = response.css(".product-wrap")
 
         for item in items:

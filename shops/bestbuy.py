@@ -4,7 +4,7 @@ from shops.shop_base import ShopBase
 class BestBuy(ShopBase):
     name = "BESTBUY"
 
-    def get_best_link(self, response):
+    def parse_results(self, response):
         item_url = response.css(".sku-item .sku-header a ::attr(href)").extract_first()
         yield self.get_request(
             url=item_url,

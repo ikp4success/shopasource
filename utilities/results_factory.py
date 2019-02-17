@@ -11,7 +11,7 @@ from functools import partial
 from sqlalchemy import or_
 
 from project import db
-from shops.shop_utilities.shop_setup import is_shop_active
+from shops.shop_utilities.shop_setup_functions import is_shop_active
 from utilities.DefaultResources import _resultRow
 from utilities.DefaultResources import _errorMessage
 from project.models import ShoppedData

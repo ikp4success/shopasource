@@ -8,284 +8,327 @@ class ShopSetup(ShopLinks):
             {
                 "AMAZON": {
                     "active": True,
-                    "name": "AMAZON"
+                    "name": "AMAZON",
+                    "url": self._amazonurl
                 }
 
             },
             {
                 "TARGET": {
                     "active": True,
-                    "name": "TARGET"
+                    "name": "TARGET",
+                    "url": self._targeturl
                 }
 
             },
             {
                 "WALMART": {
                     "active": True,
-                    "name": "WALMART"
+                    "name": "WALMART",
+                    "url": self._walmarturl
                 }
 
             },
             {
                 "TJMAXX": {
                     "active": True,
-                    "name": "TJMAXX"
+                    "name": "TJMAXX",
+                    "utl": self._tjmaxxurl
                 }
 
             },
             {
                 "GOOGLE": {
                     "active": True,
-                    "name": "GOOGLE"
+                    "name": "GOOGLE",
+                    "url": self._googleurl
                 }
 
             },
             {
                 "HM": {
                     "active": True,
-                    "name": "HM"
+                    "name": "HM",
+                    "url": self._hmurl
                 }
 
             },
             {
                 "NEWEGG": {
                     "active": True,
-                    "name": "NEWEGG"
+                    "name": "NEWEGG",
+                    "url": self._neweggurl
                 }
 
             },
             {
                 "MICROCENTER": {
                     "active": True,
-                    "name": "MICROCENTER"
+                    "name": "MICROCENTER",
+                    "url": self._microcenterurl
                 }
 
             },
             {
                 "FASHIONNOVA": {
                     "active": True,
-                    "name": "FASHIONNOVA"
+                    "name": "FASHIONNOVA",
+                    "url": self._fashionnovaurl
                 }
 
             },
             {
                 "SIXPM": {
                     "active": True,
-                    "name": "SIXPM"
+                    "name": "SIXPM",
+                    "url": self._6pmurl
                 }
 
             },
             {
                 "POSHMARK": {
                     "active": True,
-                    "name": "POSHMARK"
+                    "name": "POSHMARK",
+                    "url": self._poshmarkurl
                 }
 
             },
             {
                 "MACYS": {
                     "active": True,
-                    "name": "MACYS"
+                    "name": "MACYS",
+                    "url": self._macysurl
                 }
 
             },
             {
                 "ASOS": {
                     "active": True,
-                    "name": "ASOS"
+                    "name": "ASOS",
+                    "url": self._asosurl
                 }
 
             },
             {
                 "JCPENNEY": {
                     "active": True,
-                    "name": "JCPENNEY"
+                    "name": "JCPENNEY",
+                    "url": self._jcpenneyurl
                 }
 
             },
             {
                 "KOHLS": {
                     "active": False,
-                    "name": "KOHLS"
+                    "name": "KOHLS",
+                    "url": self._kohlsurl
                 }
 
             },
             {
                 "FOOTLOCKER": {
                     "active": False,
-                    "name": "FOOTLOCKER"
+                    "name": "FOOTLOCKER",
+                    "url": self._footlockerurl
                 }
 
             },
             {
                 "BESTBUY": {
                     "active": False,
-                    "name": "BESTBUY"
+                    "name": "BESTBUY",
+                    "url": self._bestbuyurl
                 }
 
             },
             {
                 "EBAY": {
                     "active": False,
-                    "name": "EBAY"
+                    "name": "EBAY",
+                    "url": self._ebayurl
                 }
 
             },
             {
                 "GROUPON": {
                     "active": False,
-                    "name": "GROUPON"
+                    "name": "GROUPON",
+                    "url": self._grouponurl
                 }
 
             },
             {
                 "KMART": {
                     "active": True,
-                    "name": "KMART"
+                    "name": "KMART",
+                    "url": self._kmarturl
                 }
 
             },
             {
                 "BIGLOTS": {
                     "active": True,
-                    "name": "BIGLOTS"
+                    "name": "BIGLOTS",
+                    "url": self._biglotsurl
                 }
 
             },
             {
                 "BURLINGTON": {
                     "active": True,
-                    "name": "BURLINGTON"
+                    "name": "BURLINGTON",
+                    "url": self._burlingtonurl
                 }
 
             },
             {
                 "MVMTWATCHES": {
                     "active": True,
-                    "name": "MVMTWATCHES"
+                    "name": "MVMTWATCHES",
+                    "url": self._mvmtwatchesurl
                 }
 
             },
             {
                 "BOOHOO": {
                     "active": True,
-                    "name": "BOOHOO"
+                    "name": "BOOHOO",
+                    "url": self._boohoourl
                 }
 
             },
             {
                 "CUSHINE": {
                     "active": True,
-                    "name": "CUSHINE"
+                    "name": "CUSHINE",
+                    "url": self._cushineurl
                 }
 
             },
             {
                 "FOREVER21": {
                     "active": True,
-                    "name": "FOREVER21"
+                    "name": "FOREVER21",
+                    "url": self._forever21url
                 }
             },
             {
                 "STYLERUNNER": {
                     "active": True,
-                    "name": "STYLERUNNER"
+                    "name": "STYLERUNNER",
+                    "url": self._stylerunnerurl
                 }
             },
             {
                 "SPIRITUALGANGSTER": {
                     "active": True,
-                    "name": "SPIRITUALGANGSTER"
+                    "name": "SPIRITUALGANGSTER",
+                    "url": self._spiritualgangsterurl
                 }
             },
             {
                 "LEVI": {
                     "active": True,
-                    "name": "LEVI"
+                    "name": "LEVI",
+                    "url": self._leviurl
                 }
             },
             {
                 "ZARA": {
                     "active": True,
-                    "name": "ZARA"
+                    "name": "ZARA",
+                    "url": self._zaraurl
                 }
             },
             {
                 "NORDSTROM": {
                     "active": True,
-                    "name": "NORDSTROM"
+                    "name": "NORDSTROM",
+                    "url": self._nordstormurl
                 }
             },
             {
                 "NORDSTROMRACK": {
                     "active": True,
-                    "name": "NORDSTROMRACK"
+                    "name": "NORDSTROMRACK",
+                    "url": self._nordstormrackurl
                 }
             },
             {
                 "HAUTELOOK": {
                     "active": True,
-                    "name": "HAUTELOOK"
+                    "name": "HAUTELOOK",
+                    "url": self._hautelookurl
                 }
             },
             {
                 "SAKSFIFTHAVENUE": {
                     "active": True,
-                    "name": "SAKSFIFTHAVENUE"
+                    "name": "SAKSFIFTHAVENUE",
+                    "url": self._saksfifthavenueurl
                 }
             },
             {
                 "EXPRESS": {
                     "active": True,
-                    "name": "EXPRESS"
+                    "name": "EXPRESS",
+                    "url": self._expressurl
                 }
             },
             {
                 "CHARLOTTERUSSE": {
                     "active": True,
-                    "name": "CHARLOTTERUSSE"
+                    "name": "CHARLOTTERUSSE",
+                    "url": self._charlotterusseurl
                 }
             },
             {
                 "ALDO": {
                     "active": False,
-                    "name": "ALDO"
+                    "name": "ALDO",
+                    "url": self._aldourl
                 }
             },
             {
                 "BASSO": {
                     "active": True,
-                    "name": "BASSO"
+                    "name": "BASSO",
+                    "url": self._bassourl
                 }
             },
             {
                 "SHOPQUEEN": {
                     "active": True,
-                    "name": "SHOPQUEEN"
+                    "name": "SHOPQUEEN",
+                    "url": self._shopqueenurl
                 }
             },
             {
                 "NIKE": {
                     "active": True,
-                    "name": "NIKE"
+                    "name": "NIKE",
+                    "url": self._nikeurl
                 }
             },
             {
                 "ADIDAS": {
                     "active": False,
-                    "name": "ADIDAS"
+                    "name": "ADIDAS",
+                    "url": self._adidasurl
                 }
             },
             {
                 "DICKSSPORTINGGOODS": {
                     "active": True,
-                    "name": "DICKSSPORTINGGOODS"
+                    "name": "DICKSSPORTINGGOODS",
+                    "url": self._dicksportinggoodsurl
                 }
             },
             {
-                "BINK": {
+                "BIINK": {
                     "active": True,
-                    "name": "BINK"
+                    "name": "BIINK",
+                    "url": self._biinkurl
                 }
             },
             {

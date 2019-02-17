@@ -36,19 +36,19 @@ class ShopBase(scrapy.Spider):
         )
 
     def get_request(
+        self,
         url,
         callback,
         domain_url=None,
         meta=None,
         headers=None
     ):
-
         return get_request(
-            url,
-            callback,
-            domain_url,
-            meta,
-            headers
+            url=url,
+            callback=callback,
+            domain_url=domain_url,
+            meta=meta,
+            headers=headers
         )
 
     def find_shop_configuration(self):
@@ -62,6 +62,7 @@ class ShopBase(scrapy.Spider):
         price,
         title,
         content_description,
+        shop_name=None,
         date_searched=None
     ):
 
@@ -69,7 +70,7 @@ class ShopBase(scrapy.Spider):
             shop_link=shop_link,
             searched_keyword=searched_keyword,
             image_url=image_url,
-            shop_name=self.name,
+            shop_name=shop_name or self.name,
             price=price,
             title=title,
             content_description=content_description,
