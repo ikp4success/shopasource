@@ -6,11 +6,16 @@ from flask import render_template
 from flask import jsonify
 from flask import request
 
+from rq import Queue
+from rq.job import Job
+from worker import conn
+
 from utilities.results_factory import run_api_search
 from shops.shop_utilities.shop_setup_functions import get_shops
 from project import db, app
 
 db.create_all()
+q = Queue(connection=conn)
 
 
 @app.after_request
@@ -40,6 +45,23 @@ def robots():
 
 
 @app.route("/api/shop/search", methods=['GET'])
+def bgtask():
+    job = q.enqueue_call(
+        func=api_search, result_ttl=5000
+    )
+    job_key = job.get_id()
+    print("JOB KEY - " + job.get_id())
+    return get_finished_results(job_key)
+
+
+def get_finished_results(job_key):
+    job = Job.fetch(job_key, connection=conn)
+    if job.is_finished:
+        return str(job.result), 200
+    else:
+        return get_finished_results(job_key)
+
+
 def api_search():
     # http://127.0.0.1:8000/api/shop/search?sk=drones&smatch=50&shl=false&slh=false&shops=TARGET
     shop_list_names = []
