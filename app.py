@@ -66,9 +66,11 @@ def robots():
 @app.route("/api/shop/search", methods=['GET'])
 def api_search():
     # get_searched_json_results.delay(request.args)
-    background_task.delay(request.args)
-    import pdb; pdb.set_trace()
-    return "ok"
+    # import pdb; pdb.set_trace()
+    result = background_task.delay(request.args)
+    result.wait()
+    # import pdb; pdb.set_trace()
+    return render_template('robots.txt')
 
 
 @celery.task
