@@ -10,6 +10,12 @@ from utilities.results_factory import run_api_search
 from shops.shop_utilities.shop_setup_functions import get_shops
 from project import db, app
 
+import tasks
+
+import os
+app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
+                CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
+
 db.create_all()
 
 
@@ -40,6 +46,11 @@ def robots():
 
 
 @app.route("/api/shop/search", methods=['GET'])
+def start_api_search():
+    api_search().delay()
+
+
+@app.task
 def api_search():
     # http://127.0.0.1:8000/api/shop/search?sk=drones&smatch=50&shl=false&slh=false&shops=TARGET
     shop_list_names = []
