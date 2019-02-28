@@ -1,6 +1,7 @@
 import sys
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from celery import Celery
 
 
 # from twilio.twiml.messaging_response import MessagingResponse
@@ -33,5 +34,9 @@ else:
     app.config['SQLALCHEMY_DATABASE_URI'] = hk_pr_db_uri
     app.config['DEBUG'] = False
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+
+app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
+app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
+
 
 db = SQLAlchemy(app)

@@ -6,10 +6,34 @@ from flask import render_template
 from flask import jsonify
 from flask import request
 
+from celery import Celery
+
 from utilities.results_factory import run_api_search
 from shops.shop_utilities.shop_setup_functions import get_shops
 from project import db, app
 
+
+def make_celery(app):
+    # set redis url vars
+    app.config['CELERY_BROKER_URL'] = "redis://localhost:6379/0"
+    # environ.get('REDIS_URL', 'redis://localhost:6379/0')
+    app.config['CELERY_RESULT_BACKEND'] = app.config['CELERY_BROKER_URL']
+    # create context tasks in celery
+    celery = Celery(app.import_name, broker=app.config['CELERY_BROKER_URL'])
+    celery.conf.update(app.config)
+    TaskBase = celery.Task
+
+    class ContextTask(TaskBase):
+        abstract = True
+
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return TaskBase.__call__(self, *args, **kwargs)
+    celery.Task = ContextTask
+    return celery
+
+
+celery = make_celery(app)
 db.create_all()
 
 
@@ -41,6 +65,15 @@ def robots():
 
 @app.route("/api/shop/search", methods=['GET'])
 def api_search():
+    # get_searched_json_results.delay(request.args)
+    background_task.delay(request.args)
+    import pdb; pdb.set_trace()
+    return "ok"
+
+
+@celery.task
+def background_task(request_args):
+    # request_args = request.args
     # http://127.0.0.1:8000/api/shop/search?sk=drones&smatch=50&shl=false&slh=false&shops=TARGET
     shop_list_names = []
     search_keyword = None
@@ -49,17 +82,17 @@ def api_search():
     high_to_low = True
 
     try:
-        search_keyword = request.args.get("sk")
-        shop_list_names = request.args.get("shops")
+        search_keyword = request_args.get("sk")
+        shop_list_names = request_args.get("shops")
         if shop_list_names:
             shop_list_names = shop_list_names.strip()
             if "," in shop_list_names:
                 shop_list_names = [shn.strip().upper() for shn in shop_list_names.split(",") if shn.strip()]
             else:
                 shop_list_names = [shop_list_names.upper()]
-        match_acc = int(request.args.get("smatch") or 0)
-        low_to_high = json.JSONDecoder().decode(request.args.get("slh") or "false")
-        high_to_low = json.JSONDecoder().decode(request.args.get("shl") or "false")
+        match_acc = int(request_args.get("smatch") or 0)
+        low_to_high = json.JSONDecoder().decode(request_args.get("slh") or "false")
+        high_to_low = json.JSONDecoder().decode(request_args.get("shl") or "false")
 
         if not low_to_high:  # fail safe
             high_to_low = True

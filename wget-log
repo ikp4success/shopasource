@@ -1,0 +1,11 @@
+--2019-02-27 16:10:09--  http://download.redis.io/releases/redis-3.2.1.tar.gz
+Resolving download.redis.io (download.redis.io)... 109.74.203.151
+Connecting to download.redis.io (download.redis.io)|109.74.203.151|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 1534696 (1.5M) [application/x-gzip]
+Saving to: ‘redis-3.2.1.tar.gz’
+
+redis-3.2.1.tar.gz                      0%[                                                                          ]       0  --.-KB/s               redis-3.2.1.tar.gz                      3%[=>                                                                        ]  47.78K   214KB/s               redis-3.2.1.tar.gz                     14%[=========>                                                                ] 216.05K   485KB/s               redis-3.2.1.tar.gz                     53%[======================================>                                   ] 801.01K  1.16MB/s               redis-3.2.1.tar.gz                    100%[=========================================================================>]   1.46M  2.05MB/s    in 0.7s    
+
+2019-02-27 16:10:10 (2.05 MB/s) - ‘redis-3.2.1.tar.gz’ saved [1534696/1534696]
+
