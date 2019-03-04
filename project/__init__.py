@@ -1,7 +1,8 @@
 import sys
+import uuid
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from celery import Celery
+from project.celery_app import make_celery
 
 
 # from twilio.twiml.messaging_response import MessagingResponse
@@ -38,5 +39,7 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
 app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
 
+app.secret_key = uuid.uuid4().hex
 
+celery = make_celery(app)
 db = SQLAlchemy(app)

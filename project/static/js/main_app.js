@@ -17,6 +17,7 @@ current_sk = null
 cancel_search = false
 shop_searching = false
 var $api_request = null
+var $api_task = null
 var $shop_request = null
 var $shop_active_request = null
 var regx = /^[A-Za-z0-9 _.-\\'\\,\\-]+$/;
@@ -181,6 +182,9 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
         function(data) {
           if(!data["message"]){
             shop_loaded_data = data
+          }else if(data["message"] == "Loading tasks"){
+            refresh_time_out()
+            load_time_out = setTimeout(refresh_tasks, 1000)
           }
           shops_completed = shop_size
     }).fail(
@@ -234,6 +238,29 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
   return false
 }
 
+function refresh_tasks(){
+  task_url = "/refresh"
+  if($api_task != null){
+    $api_task.abort()
+    $api_task = null
+  }
+
+  $api_task = $.getJSON(task_url,
+      function(task_data) {
+        if(task_data==null){
+          return
+        }
+        if(!task_data["message"]){
+          load_data_container(task_data, sk)
+          refresh_time_out()
+          load_time_out = setTimeout(load_shop_search, 1500)
+        }else if(task_data["message"] == "Loading tasks"){
+          refresh_time_out()
+          load_time_out = setTimeout(refresh_tasks, 1000)
+        }
+  })
+}
+
 function load_data_container(data, sk){
   if(data==null){
     return
@@ -276,8 +303,12 @@ function load_data_container(data, sk){
       }
 
     }
+  }else if(data["message"] == "Loading tasks"){
+    refresh_time_out()
+    load_time_out = setTimeout(refresh_tasks, 1000)
+  }else{
+    shops_completed++
   }
-  shops_completed++
 }
 
 function load_shops_cb(){
@@ -771,6 +802,7 @@ function refresh_shop_data(){
   }
   consume_l_data()
   if(load_next_btn){
+    refresh_tasks()
     refresh_time_out()
     load_time_out = setTimeout(kickstart_initial_api_search, 500)
   }

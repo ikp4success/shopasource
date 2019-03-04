@@ -75,7 +75,6 @@ def run_api_search(shops_thread_list, shop_names_list, search_keyword, match_acc
                 results = {"message": "Sorry, no products found"}
                 return results
             search_keyword = truncate_data(search_keyword, 75, html_escape=True)
-
             results = get_json_db_results(shop_names_list, search_keyword, match_acc, low_to_high, high_to_low)
             if results is None or len(results) == 0:
                 results = {"message": "Sorry, no products found"}
@@ -180,7 +179,9 @@ def get_data_from_db_by_date_asc(searched_keyword, shop_name=None):
                       ShoppedData.searched_keyword == searched_keyword,
                       ShoppedData.shop_name == shop_name).order_by(ShoppedData.date_searched.asc()).first())
     db.session.commit()
-    return [res.__str__() for res in results_db]
+    res_by_date = [res.__str__() for res in results_db]
+    close_db(db)
+    return res_by_date
 
 
 def get_data_from_db_contains(searched_keyword, low_to_high=False, high_to_low=True, shop_names_list=None):
@@ -226,6 +227,7 @@ def get_data_from_db_contains(searched_keyword, low_to_high=False, high_to_low=T
                     )
                 ).order_by(ShoppedData.numeric_price.asc()).all())
     db.session.commit()
+
     for results in results_db:
         if results is not None and len(results) > 0:
             results_1 = []
@@ -233,6 +235,7 @@ def get_data_from_db_contains(searched_keyword, low_to_high=False, high_to_low=T
                 result.searched_keyword = searched_keyword
                 results_1.append(result)
             results_centre = ([res.__str__() for res in results_1])
+    close_db(db)
     return results_centre
 
 
@@ -258,6 +261,7 @@ def get_data_from_db(searched_keyword, low_to_high=False, high_to_low=True, shop
     for results in results_db:
         if results is not None and len(results) > 0:
             results_centre = ([res.__str__() for res in results])
+    close_db(db)
     return results_centre
 
 
@@ -282,8 +286,10 @@ def update_db_results(results):
             filter(ShoppedData.id == result_find.id).\
             update(results)
         db.session.commit()
+        close_db(db)
         return True
     db.session.commit()
+    close_db(db)
     return False
 
 
@@ -291,6 +297,7 @@ def delete_data_by_shop_sk(shop_name, search_keyword):
     ShoppedData.query.\
         filter(ShoppedData.searched_keyword == search_keyword, ShoppedData.shop_name == shop_name).delete()
     db.session.commit()
+    close_db(db)
     return
 
 
@@ -377,6 +384,7 @@ def add_results_to_db(result):
         shopped_data = wrapshopdata(result)
         db.session.add(shopped_data)
     db.session.commit()
+    close_db(db)
 
 
 def wrapshopdata(results):
@@ -392,3 +400,8 @@ def wrapshopdata(results):
         shop_link=results["shop_link"]
     )
     return shopped_data
+
+
+def close_db(db):
+    db.session.close()
+    db.engine.dispose()

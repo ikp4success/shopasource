@@ -1,3 +1,3 @@
 #!/bin/bash
-celery worker -A app.celery &
+celery -A tasks.celery worker --loglevel=info &
 gunicorn app:app
