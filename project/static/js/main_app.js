@@ -258,7 +258,11 @@ function refresh_tasks(){
           refresh_time_out()
           load_time_out = setTimeout(refresh_tasks, 1000)
         }
-  })
+  }).fail(
+    function()
+    {
+      return
+    });
 }
 
 function load_data_container(data, sk){
@@ -489,6 +493,7 @@ function load_next(){
     item_size = 0
     max_item_size = max_item_size + 30
     $("#load_next").hide()
+    refresh_tasks()
     if(current_count == returned_item_size){
       refresh_time_out()
       load_time_out = setTimeout(refresh_shop_data, 1000)
@@ -802,7 +807,6 @@ function refresh_shop_data(){
   }
   consume_l_data()
   if(load_next_btn){
-    refresh_tasks()
     refresh_time_out()
     load_time_out = setTimeout(kickstart_initial_api_search, 500)
   }

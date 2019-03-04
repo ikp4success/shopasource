@@ -68,7 +68,7 @@ def get_tasks():
             if task_id.ready():
                 result_data = task_id.result
                 if(result_data == {"message": "Sorry, no products found"}):
-                    return (result_data, 404)
+                    return (jsonify(result_data), 200)
                 return (jsonify(result_data), 200)
         return (jsonify({"message": "Loading tasks"}), 200)
     return (jsonify({"message": "oops"}), 400)
