@@ -238,7 +238,7 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
   return false
 }
 
-function refresh_tasks(){
+function refresh_tasks(obj_tim=1000){
   task_url = "/refresh"
   if($api_task != null){
     $api_task.abort()
@@ -256,7 +256,7 @@ function refresh_tasks(){
           load_time_out = setTimeout(load_shop_search, 1500)
         }else if(task_data["message"] == "Loading tasks"){
           refresh_time_out()
-          load_time_out = setTimeout(refresh_tasks, 1000)
+          load_time_out = setTimeout(refresh_tasks, obj_tim)
         }
   }).fail(
     function()
@@ -493,7 +493,6 @@ function load_next(){
     item_size = 0
     max_item_size = max_item_size + 30
     $("#load_next").hide()
-    refresh_tasks()
     if(current_count == returned_item_size){
       refresh_time_out()
       load_time_out = setTimeout(refresh_shop_data, 1000)
@@ -805,6 +804,7 @@ function refresh_shop_data(){
   if(shop_searching){
     return
   }
+  // refresh_tasks(10)
   consume_l_data()
   if(load_next_btn){
     refresh_time_out()

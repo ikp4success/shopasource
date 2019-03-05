@@ -3,7 +3,7 @@ from flask import render_template
 from flask import jsonify
 from flask import request
 from flask import session
-from celery.result import AsyncResult
+from flask import make_response
 
 from project import (
     db,
@@ -48,28 +48,43 @@ def robots():
 @app.route("/api/shop/search", methods=['GET'])
 def api_search():
     result_data = api_bg_task.delay(request.args)
-    tasks_ids = []
-    if len(session.keys()) > 0:
-        tasks_ids = session.get("TASK_IDS", [])
-    tasks_ids.append(result_data.task_id)
-    session["TASK_IDS"] = tasks_ids
-    return get_tasks()
-    # if(result_data == {"message": "Sorry, no products found"}):
-    #     return (result_data.wait(), 404)
-    # return (jsonify(result_data.wait()), 200)
+    import pdb; pdb.set_trace()
+    if result_data.ready():
+        return result_data.result
+    return "Fucked"
+    # task_ids = []
+    # sk = request.args.get("sk")
+    # old_sk = session.get("sk") or ""
+    # if len(session.keys()) > 0:
+    #     task_ids = session.get("TASK_IDS")
+    #     if task_ids:
+    #         task_ids = task_ids.split(",")
+    #     else:
+    #         task_ids = []
+    #
+    # if sk != old_sk:
+    #     session.clear()
+    #     session["sk"] = sk
+    #
+    # task_ids.append(result_data.task_id)
+    # session["TASK_IDS"] = ",".join(task_ids)
+    # return get_tasks()
 
 
 @app.route("/refresh", methods=['GET'])
 def get_tasks():
+    result_data = []
     if len(session.keys()) > 0:
-        task_ids = session['TASK_IDS']
+        task_ids = session['TASK_IDS'].split(",")
+        print("Tasks - " + str(task_ids) + " \nSK - " + session.get("sk"))
         for task_id in task_ids:
             task_id = api_bg_task.AsyncResult(task_id)
             if task_id.ready():
-                result_data = task_id.result
-                if(result_data == {"message": "Sorry, no products found"}):
-                    return (jsonify(result_data), 200)
-                return (jsonify(result_data), 200)
+                if "message" in task_id.result:
+                    continue
+                result_data.extend(task_id.result)
+        if len(result_data) > 0:
+            return (jsonify(result_data), 200)
         return (jsonify({"message": "Loading tasks"}), 200)
     return (jsonify({"message": "oops"}), 400)
 
