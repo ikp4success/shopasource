@@ -23,6 +23,7 @@ var $shop_active_request = null
 var regx = /^[A-Za-z0-9 _.-\\'\\,\\-]+$/;
 var shops_drop = null
 var scraped_shops = []
+var wait_shops = []
 shop_loaded_data = {}
 shop_size = 0
 shops_completed = 0
@@ -182,9 +183,12 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
         function(data) {
           if(!data["message"]){
             shop_loaded_data = data
-          }else if(data["message"] == "Loading tasks"){
+          }
+          else if(task_data["message"] == "Loading tasks"){
             refresh_time_out()
-            load_time_out = setTimeout(refresh_tasks, 1000)
+            load_time_out =  setTimeout(function() {
+              task_refresher_by_sn(shop_name);
+              }, 1000)
           }
           shops_completed = shop_size
     }).fail(
@@ -203,18 +207,22 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
           var shop_index;
           for(shop_index in data){
             shop_name = data[shop_index]
+            if(!wait_shops.includes(shop_name)){
+              wait_shops.push(shop_name)
+            }
             search_params = "sk=" + sk + "&smatch=" + s_match + "&shl=" + s_hl + "&slh=" + s_lh + "&shops=" + shop_name
             sk_url = "/api/shop/search?" + search_params;
 
             api_request = $.getJSON(sk_url,
                 function(data) {
-                  load_data_container(data, sk)
+                  load_data_container(data, sk, shop_name)
             }).fail(
               function()
               {
                 shops_completed++
               });
           }
+          kick_start_refresh_tasks()
     });
   }else{
     shop_size = gs_data.length
@@ -222,24 +230,42 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
     var shop_index;
     for(shop_index in gs_data){
       shop_name = gs_data[shop_index]
+      if(!wait_shops.includes(shop_name)){
+        wait_shops.push(shop_name)
+      }
       search_params = "sk=" + sk + "&smatch=" + s_match + "&shl=" + s_hl + "&slh=" + s_lh + "&shops=" +  shop_name
       sk_url = "/api/shop/search?" + search_params;
 
       $api_request = $.getJSON(sk_url,
           function(gs_data) {
-            load_data_container(gs_data, sk)
+            load_data_container(gs_data, sk, shop_name)
       }).fail(
         function()
         {
           shops_completed++
         });
     }
+    kick_start_refresh_tasks()
   }
   return false
 }
 
-function refresh_tasks(obj_tim=1000){
-  task_url = "/refresh"
+function kick_start_refresh_tasks(){
+  refresh_time_out()
+  load_time_out = setTimeout(refresh_tasks, 1000)
+}
+
+function refresh_tasks(){
+  for(wait_index in wait_shops){
+    task_refresher_by_sn(shop_name)
+  }
+
+}
+
+function task_refresher_by_sn(shop_name){
+  shop_name = wait_shops[wait_index]
+  search_params = "sk=" + current_sk + "&shops=" +  shop_name
+  task_url = "/refresh?" + search_params
   if($api_task != null){
     $api_task.abort()
     $api_task = null
@@ -252,11 +278,15 @@ function refresh_tasks(obj_tim=1000){
         }
         if(!task_data["message"]){
           load_data_container(task_data, sk)
-          refresh_time_out()
-          load_time_out = setTimeout(load_shop_search, 1500)
+          load_shop_search()
+          // refresh_time_out()
+          // load_time_out = setTimeout(load_shop_search, 1)
         }else if(task_data["message"] == "Loading tasks"){
-          refresh_time_out()
-          load_time_out = setTimeout(refresh_tasks, obj_tim)
+          kick_start_refresh_tasks()
+          // refresh_time_out()
+          // load_time_out =  setTimeout(function() {
+          //   refresh_tasks(shop_name);
+          // }, 1)
         }
   }).fail(
     function()
@@ -265,7 +295,7 @@ function refresh_tasks(obj_tim=1000){
     });
 }
 
-function load_data_container(data, sk){
+function load_data_container(data, sk, shop_name=null){
   if(data==null){
     return
   }
@@ -296,20 +326,24 @@ function load_data_container(data, sk){
       var shop_sk_index
       for(shop_sk_index in d_shop_data){
         dshjson = JSON.parse(d_shop_data[shop_sk_index])
+        if(!dshjson[sk]){
+          continue
+        }
         l_s_name = dshjson[sk]["shop_name"]
         if(l_s_name){
           if(!scraped_shops.includes(l_s_name)){
             scraped_shops.push(l_s_name)
           }
-
           shop_loaded_data[l_s_name] = data
         }
       }
 
     }
-  }else if(data["message"] == "Loading tasks"){
-    refresh_time_out()
-    load_time_out = setTimeout(refresh_tasks, 1000)
+  // }
+  // else if(data["message"] == "Loading tasks"){
+  // if(!wait_shops.includes(shop_name)){
+  //   wait_shops.push(shop_name)
+  // }
   }else{
     shops_completed++
   }
@@ -458,6 +492,7 @@ function shop_web_search(){
     disable_controls()
     is_filter = false
     scraped_shops = []
+    wait_shops = []
     current_sk = sk
     initial_api_search(current_sk)
     shop_searching = true
@@ -493,13 +528,15 @@ function load_next(){
     item_size = 0
     max_item_size = max_item_size + 30
     $("#load_next").hide()
-    if(current_count == returned_item_size){
-      refresh_time_out()
-      load_time_out = setTimeout(refresh_shop_data, 1000)
-    }else{
-      refresh_time_out()
-      load_time_out = setTimeout(refresh_shop_data, 12500)
-    }
+    refresh_time_out()
+    load_time_out = setTimeout(refresh_shop_data, 1000)
+    // if(current_count == returned_item_size){
+    //   refresh_time_out()
+    //   load_time_out = setTimeout(refresh_shop_data, 1000)
+    // }else{
+    //   refresh_time_out()
+    //   load_time_out = setTimeout(refresh_shop_data, 12500)
+    // }
 
 }
 
@@ -541,6 +578,7 @@ function ini_reset_controls(is_alert=false){
   document.getElementById("searchbar").disabled = false;
   refresh_time_out()
   cancel_search = false
+  wait_shops = []
   time_check_default = 0
   if($api_request != null){
     $api_request.abort()
@@ -804,7 +842,7 @@ function refresh_shop_data(){
   if(shop_searching){
     return
   }
-  // refresh_tasks(10)
+  refresh_tasks()
   consume_l_data()
   if(load_next_btn){
     refresh_time_out()

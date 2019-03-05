@@ -39,7 +39,9 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
 app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
 
-app.secret_key = uuid.uuid4().hex
+# python -c 'import os; print(os.urandom(16))'
+app.secret_key = b'\x11v\xf4.\xde\\"c\x15\x14\xb6\x9f\x01\x0e\x82l'
+app_user_session = uuid.uuid4().hex
 
 celery = make_celery(app)
 db = SQLAlchemy(app)

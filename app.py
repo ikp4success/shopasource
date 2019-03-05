@@ -1,13 +1,13 @@
-
+import time
 from flask import render_template
 from flask import jsonify
 from flask import request
 from flask import session
-from flask import make_response
 
 from project import (
     db,
-    app
+    app,
+    app_user_session
 )
 
 from tasks import (
@@ -15,8 +15,12 @@ from tasks import (
     api_bg_task
 )
 
+from shops.shop_utilities.extra_function import safe_grab
+
 
 db.create_all()
+
+task_ids_dict = {}
 
 
 @app.after_request
@@ -48,35 +52,39 @@ def robots():
 @app.route("/api/shop/search", methods=['GET'])
 def api_search():
     result_data = api_bg_task.delay(request.args)
-    import pdb; pdb.set_trace()
     if result_data.ready():
-        return result_data.result
-    return "Fucked"
-    # task_ids = []
-    # sk = request.args.get("sk")
-    # old_sk = session.get("sk") or ""
-    # if len(session.keys()) > 0:
-    #     task_ids = session.get("TASK_IDS")
-    #     if task_ids:
-    #         task_ids = task_ids.split(",")
-    #     else:
-    #         task_ids = []
-    #
-    # if sk != old_sk:
-    #     session.clear()
-    #     session["sk"] = sk
-    #
-    # task_ids.append(result_data.task_id)
-    # session["TASK_IDS"] = ",".join(task_ids)
-    # return get_tasks()
+        return (jsonify(result_data.result), 200)
+    shop_name = request.args.get("shops")
+    sk = request.args.get("sk")
+    if sk and shop_name:
+        shop_name = "".join(shop_name)
+        app_user_session_sn_sk = "{}-{}-{}".format(app_user_session, shop_name, sk)
+        task_ids = safe_grab(task_ids_dict, [app_user_session_sn_sk, "TASK_IDS"], default=[])
+        task_id = result_data.task_id
+        old_sk = safe_grab(task_ids_dict, [app_user_session_sn_sk, "sk"])
+        if sk != old_sk:
+            task_ids_dict[app_user_session_sn_sk] = {}
+        task_ids_dict[app_user_session_sn_sk]["sk"] = sk
+        task_ids.append(task_id)
+        task_ids_dict[app_user_session_sn_sk]["TASK_IDS"] = task_ids
+        session["task_ids_dict"] = task_ids_dict
+        return get_tasks()
+    else:
+        return (jsonify({"message": "oops"}), 400)
 
 
 @app.route("/refresh", methods=['GET'])
 def get_tasks():
+    task_ids_dict = session["task_ids_dict"]
     result_data = []
-    if len(session.keys()) > 0:
-        task_ids = session['TASK_IDS'].split(",")
-        print("Tasks - " + str(task_ids) + " \nSK - " + session.get("sk"))
+    shop_name = request.args.get("shops")
+    sk = request.args.get("sk")
+    if sk and shop_name and len(task_ids_dict.keys()) > 0:
+        shop_name = "".join(shop_name)
+        app_user_session_sn_sk = "{}-{}-{}".format(app_user_session, shop_name, sk)
+        task_ids = safe_grab(task_ids_dict, [app_user_session_sn_sk, "TASK_IDS"], default=[])
+        sk = safe_grab(task_ids_dict, [app_user_session_sn_sk, "sk"])
+        print("\nID - {}\nApp_Session_ID - {}\nSk - {}\nTask_ids - {}\n".format(app_user_session_sn_sk, app_user_session, sk, str(task_ids)))
         for task_id in task_ids:
             task_id = api_bg_task.AsyncResult(task_id)
             if task_id.ready():

@@ -33,7 +33,7 @@ class ShopSetup(ShopLinks):
                 "TJMAXX": {
                     "active": True,
                     "name": "TJMAXX",
-                    "utl": self._tjmaxxurl
+                    "url": self._tjmaxxurl
                 }
 
             },
