@@ -186,9 +186,11 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
           }
           else if(task_data["message"] == "Loading tasks"){
             refresh_time_out()
-            load_time_out =  setTimeout(function() {
-              task_refresher_by_sn(shop_name);
-              }, 1000)
+            setInterval(task_refresher_by_sn, 5000);
+            // task_refresher_by_sn(shop_name);
+            // load_time_out =  setTimeout(function() {
+            //   task_refresher_by_sn(shop_name);
+            //   }, 1000)
           }
           shops_completed = shop_size
     }).fail(
@@ -251,11 +253,14 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
 }
 
 function kick_start_refresh_tasks(){
-  refresh_time_out()
-  load_time_out = setTimeout(refresh_tasks, 1000)
+  setInterval(refresh_tasks, 10000);
 }
 
 function refresh_tasks(){
+  if($api_task != null){
+    $api_task.abort()
+    $api_task = null
+  }
   for(wait_index in wait_shops){
     task_refresher_by_sn(shop_name)
   }
@@ -266,10 +271,6 @@ function task_refresher_by_sn(shop_name){
   shop_name = wait_shops[wait_index]
   search_params = "sk=" + current_sk + "&shops=" +  shop_name
   task_url = "/refresh?" + search_params
-  if($api_task != null){
-    $api_task.abort()
-    $api_task = null
-  }
 
   $api_task = $.getJSON(task_url,
       function(task_data) {
@@ -529,14 +530,14 @@ function load_next(){
     max_item_size = max_item_size + 30
     $("#load_next").hide()
     refresh_time_out()
-    load_time_out = setTimeout(refresh_shop_data, 1000)
-    // if(current_count == returned_item_size){
-    //   refresh_time_out()
-    //   load_time_out = setTimeout(refresh_shop_data, 1000)
-    // }else{
-    //   refresh_time_out()
-    //   load_time_out = setTimeout(refresh_shop_data, 12500)
-    // }
+
+    if(current_count == returned_item_size){
+      refresh_time_out()
+      load_time_out = setTimeout(refresh_shop_data, 1000)
+    }else{
+      refresh_time_out()
+      load_time_out = setTimeout(refresh_shop_data, 12500)
+    }
 
 }
 
@@ -842,9 +843,10 @@ function refresh_shop_data(){
   if(shop_searching){
     return
   }
-  refresh_tasks()
+  kick_start_refresh_tasks()
   consume_l_data()
   if(load_next_btn){
+    // kick_start_refresh_tasks(500)
     refresh_time_out()
     load_time_out = setTimeout(kickstart_initial_api_search, 500)
   }

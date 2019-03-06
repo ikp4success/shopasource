@@ -68,7 +68,8 @@ def api_search():
         task_ids.append(task_id)
         task_ids_dict[app_user_session_sn_sk]["TASK_IDS"] = task_ids
         session["task_ids_dict"] = task_ids_dict
-        return get_tasks()
+        # return get_tasks()
+        return (jsonify({"message": "queued"}), 200)
     else:
         return (jsonify({"message": "oops"}), 400)
 
@@ -76,6 +77,7 @@ def api_search():
 @app.route("/refresh", methods=['GET'])
 def get_tasks():
     task_ids_dict = session["task_ids_dict"]
+    print(str(task_ids_dict))
     result_data = []
     shop_name = request.args.get("shops")
     sk = request.args.get("sk")
@@ -83,7 +85,7 @@ def get_tasks():
         shop_name = "".join(shop_name)
         app_user_session_sn_sk = "{}-{}-{}".format(app_user_session, shop_name, sk)
         task_ids = safe_grab(task_ids_dict, [app_user_session_sn_sk, "TASK_IDS"], default=[])
-        sk = safe_grab(task_ids_dict, [app_user_session_sn_sk, "sk"])
+        sk = safe_grab(task_ids_dict, [app_user_session_sn_sk, "sk"]) or sk
         print("\nID - {}\nApp_Session_ID - {}\nSk - {}\nTask_ids - {}\n".format(app_user_session_sn_sk, app_user_session, sk, str(task_ids)))
         for task_id in task_ids:
             task_id = api_bg_task.AsyncResult(task_id)
