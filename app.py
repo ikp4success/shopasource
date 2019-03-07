@@ -105,7 +105,6 @@ def get_tasks():
     print(str(task_ids_dict))
     shop_name = request.args.get("shops")
     sk = request.args.get("sk")
-    import pdb; pdb.set_trace()
     if sk and shop_name and len(task_ids_dict.keys()) > 0:
         app_user_session_sn_sk = "{}-{}-{}".format(app_user_session, shop_name, sk)
         result_task = check_task.delay(sk, task_ids_dict, app_user_session_sn_sk, app_user_session)
