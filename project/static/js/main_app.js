@@ -177,22 +177,20 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
 
   if(fil_shop_name){
     search_params = "sk=" + sk + "&smatch=" + s_match + "&shl=" + s_hl + "&slh=" + s_lh + "&shops=" + fil_shop_name
-    sk_url = "/api/shop/search?" + search_params;
+    sk_url = "/api/shop/filter?" + search_params;
     shop_loaded_data = clear_dict_obj(shop_loaded_data)
     api_request = $.getJSON(sk_url,
         function(data) {
           if(!data["message"]){
             shop_loaded_data = data
+            shops_completed = shop_size
           }
-          else if(task_data["message"] == "Loading tasks"){
+          else if(data["message"] == "queued" || data["message"] == "Loading tasks"){
             refresh_time_out()
-            setInterval(task_refresher_by_sn, 5000);
-            // task_refresher_by_sn(shop_name);
-            // load_time_out =  setTimeout(function() {
-            //   task_refresher_by_sn(shop_name);
-            //   }, 1000)
+            fil_load_interval = setInterval(function() { task_refresher_by_sn(fil_shop_name);}, 5000);
+          }else{
+            shops_completed = shop_size
           }
-          shops_completed = shop_size
     }).fail(
       function()
       {
@@ -252,8 +250,8 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
   return false
 }
 
-function kick_start_refresh_tasks(){
-  setInterval(refresh_tasks, 10000);
+function kick_start_refresh_tasks(obj_time=10000){
+  kick_re_interval = setInterval(refresh_tasks, obj_time);
 }
 
 function refresh_tasks(){
@@ -262,15 +260,24 @@ function refresh_tasks(){
     $api_task = null
   }
   for(wait_index in wait_shops){
+    shop_name = wait_shops[wait_index]
     task_refresher_by_sn(shop_name)
   }
 
 }
 
 function task_refresher_by_sn(shop_name){
-  shop_name = wait_shops[wait_index]
+  if(shops_completed == shop_size){
+    clearInterval(kick_re_interval)
+    clearInterval(fil_load_interval)
+    kick_re_interval = null
+    fil_load_interval = null
+  }
   search_params = "sk=" + current_sk + "&shops=" +  shop_name
   task_url = "/refresh?" + search_params
+  if(is_filter){
+    task_url = "/refresh/filter?" + search_params
+  }
 
   $api_task = $.getJSON(task_url,
       function(task_data) {
@@ -278,20 +285,44 @@ function task_refresher_by_sn(shop_name){
           return
         }
         if(!task_data["message"]){
-          load_data_container(task_data, sk)
-          load_shop_search()
-          // refresh_time_out()
-          // load_time_out = setTimeout(load_shop_search, 1)
+          if(is_filter){
+            shop_loaded_data = task_data
+            shops_completed = shop_size
+            shop_searching = false
+            refresh_time_out()
+            load_time_out = setTimeout(refresh_shop_data, 200)
+          }else{
+            load_data_container(task_data, sk)
+          }
         }else if(task_data["message"] == "Loading tasks"){
+          if(is_filter){
+            if(shops_completed == shop_size){
+              refresh_time_out()
+             $("#spin_shop").hide()
+             $(".loading").hide()
+             $("#filterButton").show()
+             $("#cancelFilterButton").hide()
+             $(".alert").hide()
+              return
+            }
+            clearInterval(fil_load_interval)
+          }
+
+          clearInterval(kick_re_interval)
           kick_start_refresh_tasks()
-          // refresh_time_out()
-          // load_time_out =  setTimeout(function() {
-          //   refresh_tasks(shop_name);
-          // }, 1)
         }
   }).fail(
     function()
     {
+      if(is_filter){
+        shops_completed = shop_size
+        refresh_time_out()
+       $("#spin_shop").hide()
+       $(".loading").hide()
+       $("#filterButton").show()
+       $("#cancelFilterButton").hide()
+       $(".alert").hide()
+      }
       return
     });
 }
@@ -326,7 +357,10 @@ function load_data_container(data, sk, shop_name=null){
 
       var shop_sk_index
       for(shop_sk_index in d_shop_data){
-        dshjson = JSON.parse(d_shop_data[shop_sk_index])
+        dshjson = safe_json(d_shop_data[parseInt(shop_sk_index)])
+        if(dshjson["message"]){
+          continue
+        }
         if(!dshjson[sk]){
           continue
         }
@@ -340,12 +374,7 @@ function load_data_container(data, sk, shop_name=null){
       }
 
     }
-  // }
-  // else if(data["message"] == "Loading tasks"){
-  // if(!wait_shops.includes(shop_name)){
-  //   wait_shops.push(shop_name)
-  // }
-  }else{
+  }else if(data["message"] != "queued" && data["message"] != "Loading tasks"){
     shops_completed++
   }
 }
@@ -515,10 +544,10 @@ function shop_web_search(){
 }
 
 function load_next(){
-    if(shop_searching){
-      $('#spin_shop').hide()
-      return false
-    }
+    // if(shop_searching){
+    //   $('#spin_shop').hide()
+    //   return false
+    // }
     if(shop_size == 0){
       $('#spin_shop').hide()
       return false
@@ -579,7 +608,6 @@ function ini_reset_controls(is_alert=false){
   document.getElementById("searchbar").disabled = false;
   refresh_time_out()
   cancel_search = false
-  wait_shops = []
   time_check_default = 0
   if($api_request != null){
     $api_request.abort()
@@ -639,9 +667,7 @@ function count_returned_item(re_item){
       re_item = shop_loaded_data[shop_index_k]
       for(shop_each_index_k in re_item){
         try{
-          shop_each_d_v = JSON.parse(shop_loaded_data_v[shop_each_index_k])
-
-          shop_each_d_v = JSON.parse(shop_loaded_data_v[shop_each_index_k])
+          shop_each_d_v = safe_json(re_item[shop_each_index_k])
           if(!shop_each_d_v){
             continue
           }
@@ -662,9 +688,7 @@ function count_returned_item(re_item){
   }else{
     for(shop_each_index_k in re_item){
       try{
-        shop_each_d_v = JSON.parse(shop_loaded_data_v[shop_each_index_k])
-
-        shop_each_d_v = JSON.parse(shop_loaded_data_v[shop_each_index_k])
+        shop_each_d_v = safe_json(re_item[shop_each_index_k])
         if(!shop_each_d_v){
           continue
         }
@@ -686,17 +710,16 @@ function count_returned_item(re_item){
   return count
 }
 
-function consume_l_data_child(shop_loaded_data_v, sk){
+function consume_l_data_child(shop_loaded_data_v_child, sk){
   res_react_bucket_child = []
   var shop_each_index_k;
-  for(shop_each_index_k in shop_loaded_data_v){
+  for(shop_each_index_k in shop_loaded_data_v_child){
     try{
       if(item_size == max_item_size){
         break;
       }
-      shop_each_d_v = JSON.parse(shop_loaded_data_v[shop_each_index_k])
+      shop_each_d_v = safe_json(shop_loaded_data_v_child[shop_each_index_k])
 
-      shop_each_d_v = JSON.parse(shop_loaded_data_v[shop_each_index_k])
       if(!shop_each_d_v){
         continue
       }
@@ -796,6 +819,8 @@ function consume_l_data(){
   shop_searching = false
   reset_controls()
   if (shops_completed >= shop_size){
+      clearInterval(kick_re_interval)
+      clearInterval(fil_load_interval)
       returned_item_size = count_returned_item(sld)
       current_count = returned_item_size
       refresh_time_out()
@@ -843,13 +868,13 @@ function refresh_shop_data(){
   if(shop_searching){
     return
   }
-  kick_start_refresh_tasks()
+  // if(load_next_btn){
+  //   kick_start_refresh_tasks(500)
+  //   // refresh_time_out()
+  //   // load_time_out = setTimeout(kickstart_initial_api_search, 500)
+  // }
+  kick_start_refresh_tasks(500)
   consume_l_data()
-  if(load_next_btn){
-    // kick_start_refresh_tasks(500)
-    refresh_time_out()
-    load_time_out = setTimeout(kickstart_initial_api_search, 500)
-  }
   return false
 }
 
@@ -875,4 +900,22 @@ function load_search_progress_bar() {
     }
   }
   return false
+}
+
+function is_valid_json(json_str) {
+    try {
+        JSON.parse(json_str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+
+function safe_json(json_str){
+  if(!is_valid_json(json_str)){
+    json_str = JSON.stringify(json_str)
+    return JSON.parse(json_str);
+  }else{
+    return JSON.parse(json_str)
+  }
 }

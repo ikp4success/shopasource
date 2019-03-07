@@ -61,26 +61,26 @@ def run_api_search(shops_thread_list, shop_names_list, search_keyword, match_acc
     results = {}
     try:
         if shop_names_list is None or len(shop_names_list) == 0:
-            results = {"message": "Shop name is required"}
+            results = [{"message": "Shop name is required"}]
             return results
         if not find_shop(shop_names_list):
-            results = {"message": "Invalid shop name present in parameters"}
+            results = [{"message": "Invalid shop name present in parameters"}]
             return results
         if len(shop_names_list) == 1 and not is_shop_active(shop_names_list[0]):
-            results = {"message": "Shop is inactive at the moment, check back again"}
+            results = [{"message": "Shop is inactive at the moment, check back again"}]
             return results
 
         if search_keyword is not None and search_keyword.strip() != "":
             if len(search_keyword) < 2:
-                results = {"message": "Sorry, no products found"}
+                results = [{"message": "Sorry, no products found"}]
                 return results
             search_keyword = truncate_data(search_keyword, 75, html_escape=True)
             results = get_json_db_results(shop_names_list, search_keyword, match_acc, low_to_high, high_to_low)
             if results is None or len(results) == 0:
-                results = {"message": "Sorry, no products found"}
+                results = [{"message": "Sorry, no products found"}]
             return results
     except Exception as e:
-        results = {"message": "Sorry, error encountered during search, try again or contact admin if error persist"}
+        results = [{"message": "Sorry, error encountered during search, try again or contact admin if error persist"}]
         print(e)
         print(traceback.format_exc())
         return results
