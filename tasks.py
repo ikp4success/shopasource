@@ -3,12 +3,38 @@ from functools import partial
 from multiprocessing.dummy import Pool as ThreadPool
 from utilities.results_factory import run_api_search
 from shops.shop_utilities.shop_setup_functions import get_shops
+from shops.shop_utilities.extra_function import safe_grab
 from project import celery
 
 
 @celery.task(name="tasks.get_active_bg_task")
 def get_active_bg_task():
     return get_shops(active=True)
+
+
+@celery.task(name="tasks.check_task")
+def check_task(sk, task_ids_dict, app_user_session_sn_sk, app_user_session, is_filter=False):
+    result_data = []
+    print("Task_IDS")
+    print(str(task_ids_dict))
+    task_ids = safe_grab(task_ids_dict, [app_user_session_sn_sk, "TASK_IDS"], default=[])
+    sk = safe_grab(task_ids_dict, [app_user_session_sn_sk, "sk"]) or sk
+    print("\nID - {}\nApp_Session_ID - {}\nSk - {}\nTask_ids - {}\n".format(app_user_session_sn_sk, app_user_session, sk, str(task_ids)))
+    for task_id in task_ids:
+        task_id = api_bg_task.AsyncResult(task_id)
+        if task_id.ready():
+            if is_filter:
+                result_data = task_id.result
+                continue
+            if task_id.result == {'message': 'Loading tasks'}:
+                continue
+            if task_id.result and len(task_id.result) > 0 and safe_grab(task_id.result[0], ["message"]):
+                result_data.extend([json.dumps(task_id.result[0])])
+                continue
+            result_data.extend(task_id.result)
+    if len(result_data) > 0:
+        return result_data
+    return {"message": "Loading tasks"}
 
 
 @celery.task(name="tasks.api_bg_task")

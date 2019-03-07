@@ -599,6 +599,9 @@ function ini_reset_controls(is_alert=false){
   if(!is_alert){
     $(".alert").hide()
   }
+  // if(cancel_search){
+  //   clearInterval(kick_re_interval)
+  // }
 
   $(".loading").hide()
   restart_progress_bar()
@@ -609,6 +612,7 @@ function ini_reset_controls(is_alert=false){
   refresh_time_out()
   cancel_search = false
   time_check_default = 0
+
   if($api_request != null){
     $api_request.abort()
     $api_request = null
@@ -781,10 +785,13 @@ function consume_l_data(){
     width_progress = document.getElementById("searchProgressBar").style.width
     // if(time_check_default != max_t_chk_def){
     if(width_progress != "100%"){
+      clearInterval(kick_re_interval)
+      kick_start_refresh_tasks(5000)
       shop_searching = true
       time_check_default = time_check_default + 1
-      set_search_time_out(150, true)
+      set_search_time_out(10000, true)
     }else{
+      clearInterval(kick_re_interval)
       $(".alert").html("<strong>Sorry, no products found</strong>, refine search criteria.")
       $(".alert").show()
       shop_searching = false
@@ -820,7 +827,10 @@ function consume_l_data(){
   reset_controls()
   if (shops_completed >= shop_size){
       clearInterval(kick_re_interval)
-      clearInterval(fil_load_interval)
+      if(!is_filter){
+        clearInterval(fil_load_interval)
+      }
+
       returned_item_size = count_returned_item(sld)
       current_count = returned_item_size
       refresh_time_out()
