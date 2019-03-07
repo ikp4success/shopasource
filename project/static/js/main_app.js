@@ -868,12 +868,11 @@ function refresh_shop_data(){
   if(shop_searching){
     return
   }
-  // if(load_next_btn){
-  //   kick_start_refresh_tasks(500)
-  //   // refresh_time_out()
-  //   // load_time_out = setTimeout(kickstart_initial_api_search, 500)
-  // }
-  kick_start_refresh_tasks(500)
+  if(load_next_btn){
+    kick_start_refresh_tasks(500)
+    // refresh_time_out()
+    // load_time_out = setTimeout(kickstart_initial_api_search, 500)
+  }
   consume_l_data()
   return false
 }
