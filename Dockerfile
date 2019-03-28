@@ -7,7 +7,7 @@
 # Usage:
 #
 #   sudo docker build -t shopasource .
-#   sudo docker run -p 127.0.0.1:5001:5001 shopasource
+#   ssudo docker run -it -p 5001:5001 shopasource
 #
 # Pull the base image.
 FROM python:3
