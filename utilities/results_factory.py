@@ -17,7 +17,7 @@ from utilities.DefaultResources import _errorMessage
 from project.models import ShoppedData
 from shops.shop_utilities.shop_setup_functions import find_shop
 from shops.shop_utilities.extra_function import truncate_data, safe_json, safe_grab
-from shops.scrapy_settings.shop_settings import SHOP_CACHE_LOOKUP_SET, SHOP_CACHE_MAX_EXPIRY_TIME
+from shops.shop_utilities.shop_setup import SHOP_CACHE_LOOKUP_SET, SHOP_CACHE_MAX_EXPIRY_TIME
 
 
 possible_match_abbrev = {

@@ -1,6 +1,10 @@
 from shops.shop_connect.shoplinks import ShopLinks
 
 
+SHOP_CACHE_MAX_EXPIRY_TIME = 30
+SHOP_CACHE_LOOKUP_SET = True
+
+
 class ShopSetup(ShopLinks):
 
     def get_shop_configurations(self):
