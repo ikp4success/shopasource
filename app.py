@@ -66,6 +66,7 @@ def api_search():
 
 @app.route("/api/shop/filter", methods=['GET'])
 def filter_api_search():
+    import pdb; pdb.set_trace()
     result_data = api_bg_task.delay(request.args)
     if result_data.ready():
         return (jsonify(result_data.result), 200)
@@ -80,7 +81,7 @@ def filter_api_search():
 
 
 def queue_task(result_data, app_user_session_sn_sk, sk):
-    task_ids_dict = session["task_ids_dict"]
+    task_ids_dict = session.get("task_ids_dict", {})
     task_ids = safe_grab(task_ids_dict, [app_user_session_sn_sk, "TASK_IDS"], default=[])
     if len(task_ids_dict.keys()) > 0 and getsizeof(task_ids) > 4080:
         print("browser limit for cookie session exceeded for {}".format(app_user_session_sn_sk))
@@ -101,15 +102,18 @@ def queue_task(result_data, app_user_session_sn_sk, sk):
 
 @app.route("/refresh", methods=['GET'])
 def get_tasks():
-    task_ids_dict = session["task_ids_dict"]
+    task_ids_dict = session.get("task_ids_dict", {})
     print(str(task_ids_dict))
     shop_name = request.args.get("shops")
     sk = request.args.get("sk")
     if sk and shop_name and len(task_ids_dict.keys()) > 0:
         app_user_session_sn_sk = "{}-{}-{}".format(app_user_session, shop_name, sk)
         result_task = check_task.delay(sk, task_ids_dict, app_user_session_sn_sk, app_user_session)
+        print(result_task.result)
+        time.sleep(2)
         if result_task.ready() and not safe_grab(result_task.result, ["message"]):
             return (jsonify(result_task.result), 200)
+        # import pdb; pdb.set_trace()
         shop_name = "".join(shop_name)
         app_user_session_sn_sk = "{}-{}-{}".format(app_user_session, shop_name, sk)
         return queue_task(result_task, app_user_session_sn_sk, sk)
@@ -119,7 +123,7 @@ def get_tasks():
 
 @app.route("/refresh/filter", methods=['GET'])
 def get_filter_task():
-    task_ids_dict = session["task_ids_dict"]
+    task_ids_dict = session.get("task_ids_dict", {})
     print(str(task_ids_dict))
     shop_name = request.args.get("shops")
     sk = request.args.get("sk")

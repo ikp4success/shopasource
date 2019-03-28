@@ -32,6 +32,8 @@ def check_task(sk, task_ids_dict, app_user_session_sn_sk, app_user_session, is_f
                 result_data.extend([json.dumps(task_id.result[0])])
                 continue
             result_data.extend(task_id.result)
+    print("RESULT DATA")
+    print(result_data)
     if len(result_data) > 0:
         return result_data
     return {"message": "Loading tasks"}

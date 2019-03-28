@@ -269,7 +269,7 @@ function refresh_tasks(){
 function task_refresher_by_sn(shop_name){
   if(shops_completed == shop_size){
     clearInterval(kick_re_interval)
-    clearInterval(fil_load_interval)
+    // clearInterval(fil_load_interval)
     kick_re_interval = null
     fil_load_interval = null
   }
@@ -785,11 +785,11 @@ function consume_l_data(){
     width_progress = document.getElementById("searchProgressBar").style.width
     // if(time_check_default != max_t_chk_def){
     if(width_progress != "100%"){
-      clearInterval(kick_re_interval)
-      kick_start_refresh_tasks(5000)
+      // clearInterval(kick_re_interval)
+      // kick_start_refresh_tasks()
       shop_searching = true
       time_check_default = time_check_default + 1
-      set_search_time_out(10000, true)
+      set_search_time_out(500, true)
     }else{
       clearInterval(kick_re_interval)
       $(".alert").html("<strong>Sorry, no products found</strong>, refine search criteria.")
