@@ -5,7 +5,7 @@ class Nike(ShopBase):
     name = "NIKE"
     # download_delay = 2.5
 
-    headers = {
+    nike_headers = {
         "Host": "store.nike.com",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
         "Accept-Language": "en-US,en;q=0.9",

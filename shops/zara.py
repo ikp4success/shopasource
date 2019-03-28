@@ -4,7 +4,7 @@ from shops.shop_base import ShopBase
 class ZARA(ShopBase):
     name = "ZARA"
 
-    def parse_data(self, response):
+    def parse_results(self, response):
         json_data = self.safe_json(response.text)
         t_data = self.safe_grab(json_data, ["products"], default=[])
         for item in t_data:
