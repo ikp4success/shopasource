@@ -5,7 +5,6 @@ from shops.shop_base import ShopBase
 
 class Express(ShopBase):
     name = "EXPRESS"
-    _search_keyword = None
 
     headers = {
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
@@ -18,17 +17,14 @@ class Express(ShopBase):
         "Upgrade-Insecure-Requests": "1"
     }
 
-    def __init__(self, search_keyword):
-        self._search_keyword = search_keyword
-
     def start_requests(self):
         api_host_name = "search.unbxdapi.com"
         # url_key = re.search(r'express_com-\"\:\"(.*?)\"', "".join(response.css("script ::text").extract()))
         api_key = "b3094e45838bdcf3acf786d57e4ddd98"
         shop_url = self.shop_url.format(api_key, self._search_keyword, api_key)
-        self.express_headers["Host"] = api_host_name
-        self.express_headers["Accept"] = "*/*"
-        self.express_headers["Referer"] = "https://www.express.com/exp/search?q={}".format(self._search_keyword)
+        self.headers["Host"] = api_host_name
+        self.headers["Accept"] = "*/*"
+        self.headers["Referer"] = "https://www.express.com/exp/search?q={}".format(self._search_keyword)
         yield self.get_request(shop_url, self.parse_data, headers=self.headers)
 
     def parse_data(self, response):
