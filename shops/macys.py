@@ -3,7 +3,7 @@ from shops.shop_base import ShopBase
 
 class Macys(ShopBase):
     name = "MACYS"
-    macys_headers = {
+    headers = {
         "Host": "www.macys.com",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
         "Accept-Language": "en-US,en;q=0.5",

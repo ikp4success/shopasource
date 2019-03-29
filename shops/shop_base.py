@@ -9,6 +9,7 @@ from shops.shop_utilities.extra_function import (
     prepend_domain,
     extract_items
 )
+from shops.scrapy_settings.shop_settings import USER_AGENT
 from debug_app.manual_debug_funcs import printHtmlToFile
 
 
@@ -19,6 +20,7 @@ class ShopBase(scrapy.Spider):
     domain_url = None
     headers = {}
     meta = {}
+    user_agent = USER_AGENT
 
     def __init__(self, search_keyword):
         self.name = self.find_shop_configuration()["name"]
@@ -26,7 +28,10 @@ class ShopBase(scrapy.Spider):
         self._search_keyword = search_keyword
 
     def start_requests(self):
+        print("USER_AGENT: " + self.user_agent)
         shop_url = self.shop_url.format(self._search_keyword)
+        self.headers["Referer"] = shop_url
+        self.headers["USER-AGENT"] = self.user_agent
         yield get_request(
             url=shop_url,
             domain_url=self.domain_url,

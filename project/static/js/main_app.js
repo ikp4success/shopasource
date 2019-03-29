@@ -112,13 +112,13 @@ function exe_filter(){
 
     }
       is_filter = true
-      refresh_time_out()
       $("#filterButton").hide()
       $("#cancelFilterButton").show()
       c_match = document.getElementById("rangeacc").value
       c_hl =  document.getElementById("highlow").checked
       c_lh =  document.getElementById("lowhigh").checked
       shop_size = scraped_shops.length
+      refresh_time_out()
       initial_api_search(current_sk, sshp, c_match, c_hl, c_lh)
       load_time_out = setTimeout(refresh_shop_data, 1000)
       $("#err_msg").hide()
@@ -416,6 +416,7 @@ function shop_web_search(){
   if(cancel_search){
     item_size = 0
     max_item_size = 30
+    current_count = 0
     returned_item_size = max_item_size
     $("#load_next").hide()
     $("#filterButton").hide()
@@ -458,13 +459,17 @@ function load_next(){
     item_size = 0
     max_item_size = max_item_size + 30
     $("#load_next").hide()
-    if(current_count == returned_item_size){
-      refresh_time_out()
-      load_time_out = setTimeout(refresh_shop_data, 1000)
-    }else{
-      refresh_time_out()
-      load_time_out = setTimeout(refresh_shop_data, 12500)
-    }
+    load_next_btn = true
+    refresh_time_out()
+    load_time_out = setTimeout(refresh_shop_data, 1000)
+    // if(current_count == returned_item_size){
+    //   refresh_time_out()
+    //   load_time_out = setTimeout(refresh_shop_data, 1000)
+    // }
+    // else{
+    //   refresh_time_out()
+    //   load_time_out = setTimeout(refresh_shop_data, 12500)
+    // }
 
 }
 
@@ -733,7 +738,17 @@ function consume_l_data(){
          $("#load_next").hide()
          load_next_btn = false
       }else{
-        $("#load_next").show()
+        if(load_next_btn && current_count != returned_item_size){
+          $("#load_next").hide()
+          $("#spin_shop").show()
+          item_size = 0
+          refresh_time_out()
+          load_time_out = setTimeout(refresh_shop_data, 3000)
+        }else{
+          $("#spin_shop").hide()
+          $("#load_next").show()
+        }
+
       }
   }else{
     if(!is_filter){
@@ -743,16 +758,28 @@ function consume_l_data(){
       $(".alert").show()
     }
     if(item_size < 30){
+      item_size = 0
       refresh_time_out()
       load_time_out = setTimeout(refresh_shop_data, 3000)
    }else{
      if (max_item_size > returned_item_size && shops_completed >= shop_size){
         $("#load_next").hide()
-     }else{
+     }
+     else if (max_item_size >= returned_item_size){
         $("#load_next").show()
      }
       refresh_time_out()
-     $("#spin_shop").hide()
+    if(load_next_btn && current_count != returned_item_size){
+      $("#load_next").hide()
+      $("#spin_shop").show()
+      item_size = 0
+      refresh_time_out()
+      load_time_out = setTimeout(refresh_shop_data, 3000)
+      $(".loading").hide()
+      return
+    }else{
+      $("#spin_shop").hide()
+    }
      $(".loading").hide()
      $("#filterButton").show()
      $("#cancelFilterButton").hide()
@@ -770,10 +797,10 @@ function refresh_shop_data(){
     return
   }
   consume_l_data()
-  if(load_next_btn){
-    refresh_time_out()
-    load_time_out = setTimeout(kickstart_initial_api_search, 500)
-  }
+  // if(load_next_btn){
+  //   refresh_time_out()
+  //   load_time_out = setTimeout(kickstart_initial_api_search, 500)
+  // }
   return false
 }
 

@@ -5,7 +5,7 @@ class Nike(ShopBase):
     name = "NIKE"
     # download_delay = 2.5
 
-    nike_headers = {
+    headers = {
         "Host": "store.nike.com",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
         "Accept-Language": "en-US,en;q=0.9",
@@ -19,7 +19,7 @@ class Nike(ShopBase):
 
     def start_requests(self):
         shop_url = self.shop_url.format(self._search_keyword, self._search_keyword)
-        self.nike_headers["Referer"] = shop_url
+        self.headers["Referer"] = shop_url
         yield self.get_request(shop_url, self.get_best_link, headers=self.headers)
 
     def get_best_link(self, response):

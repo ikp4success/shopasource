@@ -1,15 +1,24 @@
+# import uuid
+
 from shops.shop_base import ShopBase
 
 
 class ChampSports(ShopBase):
     name = "CHAMPSSPORTS"
+    download_delay = 2.5
     headers = {
         "Host": "www.champssports.com",
         "Accept": "application/json",
         "Accept-Language": "en-US,en;q=0.5",
         "Accept-Encoding": "gzip, deflate, br",
-        "X-FL-Request-ID": "ef6b7840-3224-11e9-b4b4-35385d7e9887"
+        # "X-FL-Request-ID": str(uuid.uuid4())  # "ef6b7840-3224-11e9-b4b4-35385d7e9887"
     }
+
+    def start_requests(self):
+        shop_url = self.shop_url.format(self._search_keyword)
+        self.headers["Referer"] = shop_url
+        # self.headers["user-agent"] = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
+        yield self.get_request(shop_url, self.parse_results, headers=self.headers)
 
     def parse_results(self, response):
         json_data = self.safe_json(response.text)

@@ -7,5 +7,6 @@ flask_sqlalchemy
 requests
 python-dateutil
 user_agent
+fake-useragent
 w3lib==1.19.0
 Flask-SQLAlchemy-Session==1.1
