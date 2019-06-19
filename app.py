@@ -12,7 +12,8 @@ from utilities.results_factory import run_api_search
 from shops.shop_utilities.shop_setup_functions import get_shops
 from project import db, app
 
-sentry_sdk.init("https://c6f289ccab134c37972a7c60ae152871@sentry.io/1486142")
+sentry_sdk.init("https://83314d479d874ef3b199d4db231e474f@sentry.io/1486149")
+
 db.create_all()
 
 
