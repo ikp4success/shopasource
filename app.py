@@ -39,6 +39,11 @@ def about():
     return render_template('about.html')
 
 
+@app.route("/api", methods=['GET'])
+def api():
+    return render_template('api.html')
+
+
 @app.route("/robots.txt", methods=['GET'])
 def robots():
     return render_template('robots.txt')
