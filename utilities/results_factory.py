@@ -7,6 +7,7 @@ from multiprocessing.dummy import Pool as ThreadPool
 from dateutil import parser
 from datetime import datetime, timezone
 from functools import partial
+from sentry_sdk import init
 
 from sqlalchemy import or_
 
@@ -18,6 +19,10 @@ from project.models import ShoppedData
 from shops.shop_utilities.shop_setup_functions import find_shop
 from shops.shop_utilities.extra_function import truncate_data, safe_json, safe_grab
 from shops.shop_utilities.shop_setup import SHOP_CACHE_LOOKUP_SET, SHOP_CACHE_MAX_EXPIRY_TIME
+
+from sys_settings import sentry_dsn
+
+init(sentry_dsn)
 
 
 possible_match_abbrev = {

@@ -2,7 +2,7 @@ import json
 from functools import partial
 from multiprocessing.dummy import Pool as ThreadPool
 
-import sentry_sdk
+from sentry_sdk import init
 
 from flask import render_template
 from flask import jsonify
@@ -11,9 +11,9 @@ from flask import request
 from utilities.results_factory import run_api_search
 from shops.shop_utilities.shop_setup_functions import get_shops
 from project import db, app
-from sys_settings import sentry_key
+from sys_settings import sentry_dsn
 
-sentry_sdk.init(sentry_key)
+init(sentry_dsn)
 
 db.create_all()
 

@@ -32,7 +32,7 @@ Update these values in sys_settings.py before use.
 
 ```
 
-sentry_key = "https://"  # go to sentry.io
+sentry_dsn = "https://"  # go to sentry.io
 dev_post_gress_db = "postgress://"  # Heroku Postgress db url
 prod_post_gress_db = "postgress://"
 
