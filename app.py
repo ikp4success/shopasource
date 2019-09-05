@@ -11,8 +11,9 @@ from flask import request
 from utilities.results_factory import run_api_search
 from shops.shop_utilities.shop_setup_functions import get_shops
 from project import db, app
+from sys_settings import sentry_key
 
-sentry_sdk.init("https://83314d479d874ef3b199d4db231e474f@sentry.io/1486149")
+sentry_sdk.init(sentry_key)
 
 db.create_all()
 
