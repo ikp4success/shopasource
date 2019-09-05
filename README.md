@@ -1,4 +1,4 @@
-# shopasource-flask-python
+# SHOP A SOURCE
 
 **Website**
 
@@ -27,14 +27,22 @@ Css
 Hybrid of: https://github.com/ikp4success/bestlows-java
 
 **Settings**
+
 Update these values in sys_settings.py before use.
+
+```
 
 sentry_key = "https://"  # go to sentry.io
 dev_post_gress_db = "postgress://"  # Heroku Postgress db url
 prod_post_gress_db = "postgress://"
 
+```
+
 
 **Author**
-Immanuel George
+
+***Immanuel George***
+
 https://stackoverflow.com/cv/imgeorgeresume
+
 https://github.com/ikp4success
