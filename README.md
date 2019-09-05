@@ -27,6 +27,7 @@ Css
 Hybrid of: https://github.com/ikp4success/bestlows-java
 
 **Settings**
+
 Update these values in sys_settings.py before use.
 
 ```
@@ -39,6 +40,7 @@ prod_post_gress_db = "postgress://"
 
 
 **Author**
+
 Immanuel George
 https://stackoverflow.com/cv/imgeorgeresume
 https://github.com/ikp4success
