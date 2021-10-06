@@ -1,9 +1,13 @@
 import re
+import random
 
 from fake_useragent import UserAgent
 from user_agent import generate_user_agent
 
-default_user_agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
+default_user_agent = random.choice([
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.366",
+    "Mozilla/5.0 (X11; Linux i686; rv:93.0) Gecko/20100101 Firefox/93.0"
+])
 
 
 def get_desktop_user_agent():
@@ -31,27 +35,27 @@ def validate_user_agent(user_agent):
     if "Safari" in user_agent and "Chrome" not in user_agent:
         # print(user_agent)
         browser_version = re.search(r"Version\/(.*?)\.", user_agent)
-        if browser_version is not None and int(browser_version.group(1)) >= 10:
+        if browser_version is not None and int(browser_version.group(1)) >= 15:
             return True
     if "Chrome" in user_agent:
         # print(user_agent)
         browser_version = re.search(r"Chrome\/(.*?)\.", user_agent)
-        if browser_version is not None and int(browser_version.group(1)) >= 56:
+        if browser_version is not None and int(browser_version.group(1)) >= 90:
             return True
     if "Firefox" in user_agent:
         # print(user_agent)
         browser_version = re.search(r"Firefox\/(.*?)\.", user_agent)
-        if browser_version is not None and int(browser_version.group(1)) >= 50:
+        if browser_version is not None and int(browser_version.group(1)) >= 90:
             return True
     if "Edge" in user_agent:
         # print(user_agent)
-        browser_version = re.search(r"Edge\/(.*?)\.", user_agent)
-        if browser_version is not None and int(browser_version.group(1)) >= 15:
+        browser_version = re.search(r"Edg\/(.*?)\.", user_agent)
+        if browser_version is not None and int(browser_version.group(1)) >= 90:
             return True
     if "Opera" in user_agent:
         # print(user_agent)
-        browser_version = re.search(r"Opera\/(.*?)\.", user_agent)
-        if browser_version is not None and int(browser_version.group(1)) >= 50:
+        browser_version = re.search(r"OPR\/(.*?)\.", user_agent)
+        if browser_version is not None and int(browser_version.group(1)) >= 79:
             return True
     return False
 
