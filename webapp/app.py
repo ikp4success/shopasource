@@ -35,17 +35,17 @@ async def home_page():
 
 @app.route("/about", methods=["GET"])
 async def about():
-    return render_template("about.html")
+    return await render_template("about.html")
 
 
 @app.route("/api", methods=["GET"])
 async def api():
-    return render_template("api.html")
+    return await render_template("api.html")
 
 
 @app.route("/robots.txt", methods=["GET"])
-def robots():
-    return render_template("robots.txt")
+async def robots():
+    return await render_template("robots.txt")
 
 
 @app.route("/api/shop/search", methods=["GET"])
