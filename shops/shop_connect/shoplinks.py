@@ -16,7 +16,7 @@ class ShopLinks(object):
         "https://poshmark.com/search?query={}&sort_by=added_desc&department=All"
     )
     _macysurl = "https://www.macys.com/shop/search?keyword={}"
-    _asosurl = "https://us.asos.com/search/?q={}"
+    _asosurl = "https://www.asos.com/us/search/?q={}"
     _jcpenneyurl = "https://search-api.jcpenney.com/v1/search-service/s/{}?productGridView=medium&Ntt={}&responseType=organic"
     _kohlsurl = "https://www.kohls.com/search.jsp?submit-search=web-regular&search={}"
     _footlockerurl = "https://www.footlocker.com/search?query={}"
