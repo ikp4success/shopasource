@@ -16,8 +16,12 @@ class Forever21(ShopBase):
             title = self.safe_grab(item, ["title"])
             image_url = self.safe_grab(item, ["thumb_image"])
             description = title
-            price = self.safe_grab(item, ["sale_price"]) or self.safe_grab(item, ["price"])
-            url = self.prepend_domain(self.safe_grab(item, ["url"]), "https://www.forever21.com")
+            price = self.safe_grab(item, ["sale_price"]) or self.safe_grab(
+                item, ["price"]
+            )
+            url = self.prepend_domain(
+                self.safe_grab(item, ["url"]), "https://www.forever21.com"
+            )
             yield self.generate_result_meta(
                 shop_link=url,
                 image_url=image_url,
@@ -25,5 +29,5 @@ class Forever21(ShopBase):
                 price=price,
                 title=title,
                 searched_keyword=self._search_keyword,
-                content_description=description
+                content_description=description,
             )

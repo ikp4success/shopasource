@@ -18,7 +18,10 @@ class Newegg(ShopBase):
             if "areyouahuman" in item_url:
                 break
 
-            price = "${}{}".format(item.css(".price-current strong ::text").extract_first(), item.css(".price-current sup ::text").extract_first())
+            price = "${}{}".format(
+                item.css(".price-current strong ::text").extract_first(),
+                item.css(".price-current sup ::text").extract_first(),
+            )
 
             yield self.generate_result_meta(
                 shop_link=item_url,
@@ -27,8 +30,9 @@ class Newegg(ShopBase):
                 price=price,
                 title=title,
                 searched_keyword=self._search_keyword,
-                content_description=""
+                content_description="",
             )
+
     #         meta = {
     #             "p": prize,
     #             "t": item_text,

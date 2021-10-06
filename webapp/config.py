@@ -1,6 +1,6 @@
 import os
 
-from support import get_logger, get_config
+from support import get_config, get_logger
 
 logger = get_logger(__name__)
 

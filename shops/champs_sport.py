@@ -29,9 +29,8 @@ class ChampSports(ShopBase):
             image_url = self.safe_grab(item, ["images"])
             if image_url and len(image_url) > 0:
                 image_url = self.safe_grab(image_url[0], ["url"])
-            price = (
-                self.safe_grab(item, ["price", "formattedValue"]) or
-                self.safe_grab(item, ["originalPrice", "formattedValue"])
+            price = self.safe_grab(item, ["price", "formattedValue"]) or self.safe_grab(
+                item, ["originalPrice", "formattedValue"]
             )
             url_2nd = title.replace("-", "--").replace(" ", "-").replace("'", "-")
             sku = self.safe_grab(item, ["sku"])
@@ -43,5 +42,5 @@ class ChampSports(ShopBase):
                 price=price,
                 title=title,
                 searched_keyword=self._search_keyword,
-                content_description=""
+                content_description="",
             )

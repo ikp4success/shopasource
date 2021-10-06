@@ -1,16 +1,16 @@
 import scrapy
 
-from shops.shop_connect.shop_request import get_request
-from shops.shop_utilities.shop_setup_functions import find_shop_configuration
-from shops.shop_utilities.extra_function import (
-    generate_result_meta,
-    safe_json,
-    safe_grab,
-    prepend_domain,
-    extract_items
-)
-from shops.scrapy_settings.shop_settings import USER_AGENT
 from debug_app.manual_debug_funcs import printHtmlToFile
+from shops.scrapy_settings.shop_settings import USER_AGENT
+from shops.shop_connect.shop_request import get_request
+from shops.shop_utilities.extra_function import (
+    extract_items,
+    generate_result_meta,
+    prepend_domain,
+    safe_grab,
+    safe_json,
+)
+from shops.shop_utilities.shop_setup_functions import find_shop_configuration
 
 
 class ShopBase(scrapy.Spider):
@@ -37,23 +37,16 @@ class ShopBase(scrapy.Spider):
             domain_url=self.domain_url,
             callback=self.parse_results,
             headers=self.headers,
-            meta=self.meta
+            meta=self.meta,
         )
 
-    def get_request(
-        self,
-        url,
-        callback,
-        domain_url=None,
-        meta=None,
-        headers=None
-    ):
+    def get_request(self, url, callback, domain_url=None, meta=None, headers=None):
         return get_request(
             url=url,
             callback=callback,
             domain_url=domain_url,
             meta=meta,
-            headers=headers
+            headers=headers,
         )
 
     def find_shop_configuration(self):
@@ -68,7 +61,7 @@ class ShopBase(scrapy.Spider):
         title,
         content_description,
         shop_name=None,
-        date_searched=None
+        date_searched=None,
     ):
 
         return generate_result_meta(
@@ -79,7 +72,7 @@ class ShopBase(scrapy.Spider):
             price=price,
             title=title,
             content_description=content_description,
-            date_searched=date_searched
+            date_searched=date_searched,
         )
 
     def safe_json(self, data):
@@ -89,11 +82,7 @@ class ShopBase(scrapy.Spider):
         return safe_grab(data, keys, default)
 
     def prepend_domain(self, url, domain_url, ignore_domain_splice=False):
-        return prepend_domain(
-            url,
-            domain_url,
-            ignore_domain_splice
-        )
+        return prepend_domain(url, domain_url, ignore_domain_splice)
 
     def printHtmlToFile(self, html, page_name=None):
         return printHtmlToFile(html, page_name)

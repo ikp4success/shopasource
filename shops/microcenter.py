@@ -13,16 +13,27 @@ class MicroCenter(ShopBase):
                 url=item_url,
                 callback=self.parse_data,
                 domain_url=response.url,
-                meta={"ti": item_title}
+                meta={"ti": item_title},
             )
 
     def parse_data(self, response):
         image_url = response.css(".image-slide ::attr(src)").extract_first()
         title = self.safe_grab(response.meta, ["ti"])
-        description = "{}\n{}".format(
-            self.extract_items(response.css(".content-wrapper div.inline ul ::text").extract()),
-            self.extract_items(response.css(".content-wrapper div.inline p ::text").extract())).rstrip().strip()
-        price = self.extract_items(response.css("#options-pricing #pricing ::text").extract())
+        description = (
+            "{}\n{}".format(
+                self.extract_items(
+                    response.css(".content-wrapper div.inline ul ::text").extract()
+                ),
+                self.extract_items(
+                    response.css(".content-wrapper div.inline p ::text").extract()
+                ),
+            )
+            .rstrip()
+            .strip()
+        )
+        price = self.extract_items(
+            response.css("#options-pricing #pricing ::text").extract()
+        )
         yield self.generate_result_meta(
             shop_link=response.url,
             image_url=image_url,
@@ -30,5 +41,5 @@ class MicroCenter(ShopBase):
             price=price,
             title=title,
             searched_keyword=self._search_keyword,
-            content_description=description
+            content_description=description,
         )

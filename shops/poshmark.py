@@ -9,7 +9,9 @@ class PostMark(ShopBase):
 
         for item in items:
             item_url = item.css("a.covershot-con ::attr(href)").extract_first()
-            yield self.get_request(url=item_url, callback=self.parse_data, domain_url=response.url)
+            yield self.get_request(
+                url=item_url, callback=self.parse_data, domain_url=response.url
+            )
 
     def parse_data(self, response):
         image_url = response.css(".covershot ::attr(src)").extract_first()
@@ -27,5 +29,5 @@ class PostMark(ShopBase):
             price=price,
             title=title,
             searched_keyword=self._search_keyword,
-            content_description=description
+            content_description=description,
         )

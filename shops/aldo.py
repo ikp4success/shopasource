@@ -14,15 +14,13 @@ class ALDO(ShopBase):
         "Upgrade-Insecure-Requests": "1",
         "Referer": "https://www.aldoshoes.com/us/en_US/",
         "TE": "Trailers",
-        "USER-AGENT": "Mozilla/5.0 (X11; Linux x86_64; rv:65.0) Gecko/20100101 Firefox/65.0"
+        "USER-AGENT": "Mozilla/5.0 (X11; Linux x86_64; rv:65.0) Gecko/20100101 Firefox/65.0",
     }
 
     def start_requests(self):
         shop_url = "https://www.aldoshoes.com/us/en_US/"
         yield self.get_request(
-            shop_url,
-            callback=self.get_products,
-            headers=self.headers
+            shop_url, callback=self.get_products, headers=self.headers
         )
 
     def get_products(self, response):
@@ -32,22 +30,34 @@ class ALDO(ShopBase):
         items = "".join(response.css("script ::text").extract())
         items = re.search("__INITIAL_STATE__ =(.*)", items)
         if items:
-            items = self.safe_grab(self.safe_json(items.group(1)), ["products"], default=[])
+            items = self.safe_grab(
+                self.safe_json(items.group(1)), ["products"], default=[]
+            )
             products = self.safe_grab(items, ["byCode"], default={})
-            for k, v in products.items():
-                item_url = "https://www.aldoshoes.com/us/en_US/" + self.safe_grab(v, ["url"], default="")
+            for _, v in products.items():
+                item_url = "https://www.aldoshoes.com/us/en_US/" + self.safe_grab(
+                    v, ["url"], default=""
+                )
                 yield self.get_request(
                     url=item_url,
                     callback=self.parse_data,
                     domain_url=response.url,
                     headers=self.aldo_headers,
-                    meta={"dont_redirect": "True"}
+                    meta={"dont_redirect": "True"},
                 )
 
     def parse_data(self, response):
-        image_url = response.css(".c-carousel-product-overview img ::attr(src)").extract_first()
-        title = self.extract_items(response.css(".c-product-detail__info .c-heading__dash-wrap .c-markdown ::text").extract())
-        description = self.extract_items(response.css(".c-product-detail__info ::text").extract())
+        image_url = response.css(
+            ".c-carousel-product-overview img ::attr(src)"
+        ).extract_first()
+        title = self.extract_items(
+            response.css(
+                ".c-product-detail__info .c-heading__dash-wrap .c-markdown ::text"
+            ).extract()
+        )
+        description = self.extract_items(
+            response.css(".c-product-detail__info ::text").extract()
+        )
         price = response.css(".c-product-price__formatted-price ::text").extract_first()
         yield self.generate_result_meta(
             shop_link=response.url,
@@ -55,5 +65,5 @@ class ALDO(ShopBase):
             price=price,
             title=title,
             searched_keyword=self._search_keyword,
-            content_description=description
+            content_description=description,
         )

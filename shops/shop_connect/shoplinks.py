@@ -12,7 +12,9 @@ class ShopLinks(object):
     _grouponurl = "https://www.groupon.com/browse/query={}?sort=relevance"
     _fashionnovaurl = "https://ultimate-fnova-dot-acp-magento.appspot.com/full_text_search?page_num=1&q={}&UUID={}"
     _6pmurl = "https://www.6pm.com/{}"
-    _poshmarkurl = "https://poshmark.com/search?query={}&sort_by=added_desc&department=All"
+    _poshmarkurl = (
+        "https://poshmark.com/search?query={}&sort_by=added_desc&department=All"
+    )
     _macysurl = "https://www.macys.com/shop/search?keyword={}"
     _asosurl = "https://us.asos.com/search/?q={}"
     _jcpenneyurl = "https://search-api.jcpenney.com/v1/search-service/s/{}?productGridView=medium&Ntt={}&responseType=organic"
@@ -20,7 +22,9 @@ class ShopLinks(object):
     _footlockerurl = "https://www.footlocker.com/search?query={}"
     _kmarturl = "https://www.kmart.com/service/search/v2/productSearch?keyword={}"
     _biglotsurl = "https://www.biglots.com/search/?Ntt={}"
-    _burlingtonurl = "https://www.burlington.com/b/catalog/searchresults.aspx?filter=&search={}"
+    _burlingtonurl = (
+        "https://www.burlington.com/b/catalog/searchresults.aspx?filter=&search={}"
+    )
     _mvmtwatchesurl = "https://www.mvmtwatches.com/search?type=product&q={}"
     _boohoourl = "https://us.boohoo.com/search?q={}"
     _cushineurl = "https://www.cushnie.com/solr/?q_search={}"

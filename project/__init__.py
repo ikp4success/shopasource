@@ -2,6 +2,7 @@ import sys
 
 from flask_sqlalchemy import SQLAlchemy
 from quart import Quart
+
 from support import Config
 
 app = Quart(__name__, template_folder="web_content")

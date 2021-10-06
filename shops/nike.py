@@ -14,7 +14,7 @@ class Nike(ShopBase):
         "Upgrade-Insecure-Requests": "1",
         "TE": "Trailers",
         "Referer": "https://www.nike.com",
-        "USER-AGENT": "Mozilla/5.0 (X11; Linux x86_64; rv:65.0) Gecko/20100101 Firefox/65.0"
+        "USER-AGENT": "Mozilla/5.0 (X11; Linux x86_64; rv:65.0) Gecko/20100101 Firefox/65.0",
     }
 
     def start_requests(self):
@@ -34,7 +34,9 @@ class Nike(ShopBase):
             # def_image_url = "https://c.static-nike.com/a/images/t_PDP_1280_v1/f_auto/mnrclursmzg1muwzdgjj/{}.jpg"
             # img_item_url = item_url.replace("https://www.nike.com/t/", "")
             image_url = item.css("a img ::attr(src)").extract_first()
-            description = self.extract_items(item.css(".product-subtitle ::text").extract())
+            description = self.extract_items(
+                item.css(".product-subtitle ::text").extract()
+            )
 
             yield self.generate_result_meta(
                 shop_link=item_url,
@@ -43,7 +45,7 @@ class Nike(ShopBase):
                 price=price,
                 title=title,
                 searched_keyword=self._search_keyword,
-                content_description=description
+                content_description=description,
             )
             # meta = {
             #     "t": title,
@@ -52,14 +54,24 @@ class Nike(ShopBase):
             # yield get_request(url=item_url, callback=self.parse_data, domain_url=response.url, meta=meta)
 
     def parse_data(self, response):
-        image_url = response.css(".colorway-images .bg-medium-grey ::attr(src)").extract_first()
+        image_url = response.css(
+            ".colorway-images .bg-medium-grey ::attr(src)"
+        ).extract_first()
         if image_url:
             image_url = image_url.replace("144", "1280")
         else:
-            image_url = response.css("picture #pdp_6up-hero ::attr(src)").extract_first()
-        title = self.extract_items(response.css(".ncss-base ::text").extract())  # or safe_grab(response.meta, ["t"])
-        description = self.extract_items(response.css(".description-preview ::text").extract())
-        price = response.css("div[data-test='product-price'] ::text").extract_first()  # or safe_grab(response.meta, ["p"])
+            image_url = response.css(
+                "picture #pdp_6up-hero ::attr(src)"
+            ).extract_first()
+        title = self.extract_items(
+            response.css(".ncss-base ::text").extract()
+        )  # or safe_grab(response.meta, ["t"])
+        description = self.extract_items(
+            response.css(".description-preview ::text").extract()
+        )
+        price = response.css(
+            "div[data-test='product-price'] ::text"
+        ).extract_first()  # or safe_grab(response.meta, ["p"])
         yield self.generate_result_meta(
             shop_link=response.url,
             image_url=image_url,
@@ -67,5 +79,5 @@ class Nike(ShopBase):
             price=price,
             title=title,
             searched_keyword=self._search_keyword,
-            content_description=description
+            content_description=description,
         )

@@ -18,13 +18,23 @@ class FashionNova(ShopBase):
             yield self.get_request(
                 url=item_url,
                 callback=self.parse_data,
-                domain_url="https://www.fashionnova.com/"
+                domain_url="https://www.fashionnova.com/",
             )
 
     def parse_data(self, response):
         image_url = response.css("#large-thumb ::attr(src)").extract_first()
-        title = self.extract_items(response.css("#product-info .title ::text").extract())
-        description = "\n".join(list(set(response.css(".description .group .group-body ul li::text").extract())))
+        title = self.extract_items(
+            response.css("#product-info .title ::text").extract()
+        )
+        description = "\n".join(
+            list(
+                set(
+                    response.css(
+                        ".description .group .group-body ul li::text"
+                    ).extract()
+                )
+            )
+        )
         price = response.css(".deal spanclass ::text").extract_first()
         yield self.generate_result_meta(
             shop_link=response.url,
@@ -33,5 +43,5 @@ class FashionNova(ShopBase):
             price=price,
             title=title,
             searched_keyword=self._search_keyword,
-            content_description=description
+            content_description=description,
         )

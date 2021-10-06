@@ -22,5 +22,5 @@ class Cushine(ShopBase):
                 price=price,
                 title=title,
                 searched_keyword=self._search_keyword,
-                content_description=description
+                content_description=description,
             )

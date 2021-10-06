@@ -1,5 +1,5 @@
-from shops.shop_utilities.shop_setup import ShopSetup
 from shops.shop_utilities.extra_function import safe_grab
+from shops.shop_utilities.shop_setup import ShopSetup
 
 shop_configurations = ShopSetup().get_shop_configurations()
 

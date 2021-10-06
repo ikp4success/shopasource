@@ -5,7 +5,7 @@ import traceback
 from datetime import datetime, timezone
 from functools import partial
 from multiprocessing.dummy import Pool as ThreadPool
-from subprocess import call
+from subprocess import call  # nosec
 
 from dateutil import parser
 from sentry_sdk import init
@@ -19,8 +19,8 @@ from shops.shop_utilities.shop_setup import (
     SHOP_CACHE_MAX_EXPIRY_TIME,
 )
 from shops.shop_utilities.shop_setup_functions import find_shop, is_shop_active
-from utilities.DefaultResources import _errorMessage, _resultRow
 from support import Config
+from utilities.DefaultResources import _errorMessage, _resultRow
 
 init(Config().SENTRY_DSN)
 

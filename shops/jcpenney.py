@@ -6,7 +6,9 @@ class JcPenney(ShopBase):
     name = "JCPENNEY"
 
     def parse_results(self, response):
-        items = self.safe_grab(self.safe_json(response.text), ["organicZoneInfo", "products"])
+        items = self.safe_grab(
+            self.safe_json(response.text), ["organicZoneInfo", "products"]
+        )
         for item in items:
             item_url = self.safe_grab(item, ["pdpUrl"])
             price = self.safe_grab(item, ["fpacPriceMax"])
@@ -14,13 +16,15 @@ class JcPenney(ShopBase):
                 url=item_url,
                 callback=self.parse_data,
                 domain_url="https://www.jcpenney.com",
-                meta={"pc": price}
+                meta={"pc": price},
             )
 
     def parse_data(self, response):
         image_url = response.css("._3JaiK ::attr(src)").extract_first()
         title = self.extract_items(response.css("._37-TG ::text").extract())
-        description = "\n".join(list(set(response.css("#productDescriptionParent .o3cEt ::text").extract())))
+        description = "\n".join(
+            list(set(response.css("#productDescriptionParent .o3cEt ::text").extract()))
+        )
         price = self.safe_grab(response.meta, ["pc"])
         if price:
             price = "${}".format(price)
@@ -33,5 +37,5 @@ class JcPenney(ShopBase):
             price=price,
             title=title,
             searched_keyword=self._search_keyword,
-            content_description=description
+            content_description=description,
         )
