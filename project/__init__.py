@@ -20,14 +20,6 @@ def get_sys_args_kwargs():
     return args_lst, kwargs_dict
 
 
-# app.config["SQLALCHEMY_DATABASE_OPTIONS"] = {
-#     "connect_args": {
-#         "ssl": {
-#             # "key": "ssl/mysql/client-key.pem",
-#             "cert": "/BaltimoreCyberTrustRoot.crt.pem",
-#         }
-#     }
-# }
 app.config["SQLALCHEMY_DATABASE_URI"] = Config().POSTGRESS_DB_URL
 app.config["DEBUG"] = True if Config().ENVIRONMENT == "debug" else False
 app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
