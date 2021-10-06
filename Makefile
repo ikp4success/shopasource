@@ -8,7 +8,8 @@ VENV_PRECOMMIT := $(VENV)/bin/pre-commit
 VENV_PYTEST := $(VENV)/bin/pytest
 
 STAGE ?= dev
-PORT := 5001
+PORT := 5003
+HOST := 0.0.0.0
 QUART_ENV := $(STAGE)
 QUART_APP := webapp.app
 
@@ -51,9 +52,10 @@ run:
 	. $(VENV_ACTIVATE) ;\
 	QUART_ENV=$(QUART_ENV) \
 	QUART_APP=$(QUART_APP) \
+	ENV_CONFIGURATION=$(STAGE) \
 	SKIP_SENTRY=1 \
 	STAGE=$(STAGE) \
-	quart run -p $(PORT)
+	quart run --host=$(HOST) --port=$(PORT)
 
 
 clean:

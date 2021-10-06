@@ -20,7 +20,7 @@ from shops.shop_utilities.shop_setup import (
 )
 from shops.shop_utilities.shop_setup_functions import find_shop, is_shop_active
 from utilities.DefaultResources import _errorMessage, _resultRow
-from utilities.config import Config
+from support import Config
 
 init(Config().SENTRY_DSN)
 

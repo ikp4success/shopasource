@@ -1,7 +1,6 @@
 import os
 
-from support import get_logger
-from tasks.utils.config import get_config
+from support import get_logger, get_config
 
 logger = get_logger(__name__)
 

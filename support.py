@@ -1,5 +1,8 @@
+import logging
 import json
 import os
+
+import coloredlogs
 
 
 def get_config(env=None):
@@ -21,3 +24,15 @@ class Config:
 
     def __init__(self):
         self.load_config()
+
+
+def get_logger(name):
+    logger = logging.getLogger(name)
+    logging.basicConfig()
+    if Config().ENVIRONMENT == "debug":
+        logging.getLogger().setLevel(logging.DEBUG)
+        coloredlogs.install(level="DEBUG")
+    else:
+        logging.getLogger().setLevel(logging.WARNING)
+        coloredlogs.install(level="WARNING")
+    return logger
