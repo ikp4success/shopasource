@@ -1,28 +1,28 @@
-import os
 import json
-import traceback
 import multiprocessing.pool
-from subprocess import call
-from multiprocessing.dummy import Pool as ThreadPool
-from dateutil import parser
+import os
+import traceback
 from datetime import datetime, timezone
 from functools import partial
-from sentry_sdk import init
+from multiprocessing.dummy import Pool as ThreadPool
+from subprocess import call
 
+from dateutil import parser
+from sentry_sdk import init
 from sqlalchemy import or_
 
 from project import db
-from shops.shop_utilities.shop_setup_functions import is_shop_active
-from utilities.DefaultResources import _resultRow
-from utilities.DefaultResources import _errorMessage
 from project.models import ShoppedData
-from shops.shop_utilities.shop_setup_functions import find_shop
-from shops.shop_utilities.extra_function import truncate_data, safe_json, safe_grab
-from shops.shop_utilities.shop_setup import SHOP_CACHE_LOOKUP_SET, SHOP_CACHE_MAX_EXPIRY_TIME
+from shops.shop_utilities.extra_function import safe_grab, safe_json, truncate_data
+from shops.shop_utilities.shop_setup import (
+    SHOP_CACHE_LOOKUP_SET,
+    SHOP_CACHE_MAX_EXPIRY_TIME,
+)
+from shops.shop_utilities.shop_setup_functions import find_shop, is_shop_active
+from sys_settings import configs
+from utilities.DefaultResources import _errorMessage, _resultRow
 
-from sys_settings import sentry_dsn
-
-init(sentry_dsn)
+init(configs["sentry_dsn"])
 
 
 possible_match_abbrev = {
@@ -35,7 +35,7 @@ possible_match_abbrev = {
     "desktop": ["laptop", "computer", "pc"],
     "children": ["child", "kid"],
     "drones": ["drone"],
-    "drone": ["drones"]
+    "drone": ["drones"],
 }
 
 
@@ -62,7 +62,14 @@ def match_sk(search_keyword, searched_item, match_sk_set):
     return False
 
 
-def run_api_search(shops_thread_list, shop_names_list, search_keyword, match_acc, low_to_high, high_to_low):
+def run_api_search(
+    shops_thread_list,
+    shop_names_list,
+    search_keyword,
+    match_acc,
+    low_to_high,
+    high_to_low,
+):
     results = {}
     try:
         if shop_names_list is None or len(shop_names_list) == 0:
@@ -81,12 +88,16 @@ def run_api_search(shops_thread_list, shop_names_list, search_keyword, match_acc
                 return results
             search_keyword = truncate_data(search_keyword, 75, html_escape=True)
 
-            results = get_json_db_results(shop_names_list, search_keyword, match_acc, low_to_high, high_to_low)
+            results = get_json_db_results(
+                shop_names_list, search_keyword, match_acc, low_to_high, high_to_low
+            )
             if results is None or len(results) == 0:
                 results = {"message": "Sorry, no products found"}
             return results
     except Exception as e:
-        results = {"message": "Sorry, error encountered during search, try again or contact admin if error persist"}
+        results = {
+            "message": "Sorry, error encountered during search, try again or contact admin if error persist"
+        }
         print(e)
         print(traceback.format_exc())
         return results
@@ -95,7 +106,9 @@ def run_api_search(shops_thread_list, shop_names_list, search_keyword, match_acc
 
 def ignite_thread_timeout(shop_name, search_keyword):
     pool = multiprocessing.pool.ThreadPool(1)
-    result_send = pool.apply_async(partial(start_thread_search, shop_name, search_keyword))
+    result_send = pool.apply_async(
+        partial(start_thread_search, shop_name, search_keyword)
+    )
     try:
         result_send.get(timeout=15)
     except multiprocessing.TimeoutError:
@@ -120,8 +133,18 @@ def launch_spiders(sn, sk):
     if not os.path.exists("json_shop_results/"):
         os.makedirs("json_shop_results/")
     file_name = "json_shop_results/{}_RESULTS.json".format(name)
-    open(file_name, 'w+').close()
-    call(["scrapy", "crawl", "{}".format(name), "-a", "search_keyword={}".format(search_keyword), "-o", file_name])
+    open(file_name, "w+").close()
+    call(
+        [
+            "scrapy",
+            "crawl",
+            "{}".format(name),
+            "-a",
+            "search_keyword={}".format(search_keyword),
+            "-o",
+            file_name,
+        ]
+    )
     return pr_result(search_keyword, file_name)
 
 
@@ -147,25 +170,32 @@ def execute_add_results_to_db(result, search_keyword):
 
 def build_result_row(result_data):
     """ this function is deprecated """
-    _resultRow_res = _resultRow.replace("{PRODUCTIMAGESOURCE}", safe_grab(result_data, ["image_url"], "") or "") \
-        .replace("{PRODUCTLINK}", safe_grab(result_data, ["shop_link"], "") or "") \
-        .replace("{PRODUCTTITLE}", safe_grab(result_data, ["title"], "") or "") \
-        .replace("{PRODUCTDESCRIPTION}", safe_grab(result_data, ["content_description"], "") or "") \
-        .replace("{PRODUCTPRICE}", safe_grab(result_data, ["price"], "") or "") \
+    _resultRow_res = (
+        _resultRow.replace(
+            "{PRODUCTIMAGESOURCE}", safe_grab(result_data, ["image_url"], "") or ""
+        )
+        .replace("{PRODUCTLINK}", safe_grab(result_data, ["shop_link"], "") or "")
+        .replace("{PRODUCTTITLE}", safe_grab(result_data, ["title"], "") or "")
+        .replace(
+            "{PRODUCTDESCRIPTION}",
+            safe_grab(result_data, ["content_description"], "") or "",
+        )
+        .replace("{PRODUCTPRICE}", safe_grab(result_data, ["price"], "") or "")
         .replace("{PRODUCTSHOPNAME}", safe_grab(result_data, ["shop_name"], "") or "")
+    )
     return _resultRow_res
 
 
 def update_search_results(data, key):
     filedata = None
-    with open("project/web_content/searchresults_default.html", 'r') as file:
+    with open("project/web_content/searchresults_default.html", "r") as file:
         filedata = file.read()
     if filedata is not None:
         if key == "{REACT_RESULT_ROW}":
             filedata = filedata.replace("{error_message}", "")
         filedata = filedata.replace(key, data)
 
-        with open("project/web_content/searchresults.html", 'w+') as file:
+        with open("project/web_content/searchresults.html", "w+") as file:
             file.write(filedata)
 
 
@@ -180,15 +210,26 @@ def update_results_row_error(data):
 def get_data_from_db_by_date_asc(searched_keyword, shop_name=None):
     results_db = []
     if not shop_name:
-        results_db.append(ShoppedData.query.filter(ShoppedData.searched_keyword == searched_keyword).order_by(ShoppedData.date_searched.asc()).first())
-    results_db.append(ShoppedData.query.filter(
-                      ShoppedData.searched_keyword == searched_keyword,
-                      ShoppedData.shop_name == shop_name).order_by(ShoppedData.date_searched.asc()).first())
+        results_db.append(
+            ShoppedData.query.filter(ShoppedData.searched_keyword == searched_keyword)
+            .order_by(ShoppedData.date_searched.asc())
+            .first()
+        )
+    results_db.append(
+        ShoppedData.query.filter(
+            ShoppedData.searched_keyword == searched_keyword,
+            ShoppedData.shop_name == shop_name,
+        )
+        .order_by(ShoppedData.date_searched.asc())
+        .first()
+    )
     db.session.commit()
     return [res.__str__() for res in results_db]
 
 
-def get_data_from_db_contains(searched_keyword, low_to_high=False, high_to_low=True, shop_names_list=None):
+def get_data_from_db_contains(
+    searched_keyword, low_to_high=False, high_to_low=True, shop_names_list=None
+):
     results_db = []
     results_centre = []
     if shop_names_list is not None:
@@ -198,9 +239,13 @@ def get_data_from_db_contains(searched_keyword, low_to_high=False, high_to_low=T
                     # ShoppedData.searched_keyword.contains(searched_keyword),
                     or_(
                         ShoppedData.searched_keyword.contains(searched_keyword),
-                        ShoppedData.content_description.contains(searched_keyword)
+                        ShoppedData.content_description.contains(searched_keyword),
                     ),
-                    ShoppedData.shop_name.in_(shop_names_list)).order_by(ShoppedData.numeric_price.desc()).all())
+                    ShoppedData.shop_name.in_(shop_names_list),
+                )
+                .order_by(ShoppedData.numeric_price.desc())
+                .all()
+            )
 
         elif low_to_high:
             results_db.append(
@@ -208,9 +253,13 @@ def get_data_from_db_contains(searched_keyword, low_to_high=False, high_to_low=T
                     # ShoppedData.searched_keyword.contains(searched_keyword),
                     or_(
                         ShoppedData.searched_keyword.contains(searched_keyword),
-                        ShoppedData.content_description.contains(searched_keyword)
+                        ShoppedData.content_description.contains(searched_keyword),
                     ),
-                    ShoppedData.shop_name.in_(shop_names_list)).order_by(ShoppedData.numeric_price.asc()).all())
+                    ShoppedData.shop_name.in_(shop_names_list),
+                )
+                .order_by(ShoppedData.numeric_price.asc())
+                .all()
+            )
     else:
         if high_to_low:
             results_db.append(
@@ -218,18 +267,24 @@ def get_data_from_db_contains(searched_keyword, low_to_high=False, high_to_low=T
                     # ShoppedData.searched_keyword.contains(searched_keyword),
                     or_(
                         ShoppedData.searched_keyword.contains(searched_keyword),
-                        ShoppedData.content_description.contains(searched_keyword)
+                        ShoppedData.content_description.contains(searched_keyword),
                     )
-                ).order_by(ShoppedData.numeric_price.desc()).all())
+                )
+                .order_by(ShoppedData.numeric_price.desc())
+                .all()
+            )
         elif low_to_high:
             results_db.append(
                 ShoppedData.query.filter(
                     # ShoppedData.searched_keyword.contains(searched_keyword),
                     or_(
                         ShoppedData.searched_keyword.contains(searched_keyword),
-                        ShoppedData.content_description.contains(searched_keyword)
+                        ShoppedData.content_description.contains(searched_keyword),
                     )
-                ).order_by(ShoppedData.numeric_price.asc()).all())
+                )
+                .order_by(ShoppedData.numeric_price.asc())
+                .all()
+            )
     db.session.commit()
     for results in results_db:
         if results is not None and len(results) > 0:
@@ -237,32 +292,56 @@ def get_data_from_db_contains(searched_keyword, low_to_high=False, high_to_low=T
             for result in results:
                 result.searched_keyword = searched_keyword
                 results_1.append(result)
-            results_centre = ([res.__str__() for res in results_1])
+            results_centre = [res.__str__() for res in results_1]
     return results_centre
 
 
-def get_data_from_db(searched_keyword, low_to_high=False, high_to_low=True, shop_names_list=None):
+def get_data_from_db(
+    searched_keyword, low_to_high=False, high_to_low=True, shop_names_list=None
+):
     results_db = []
     results_centre = []
     if shop_names_list is not None:
         if high_to_low:
-            results_db.append(ShoppedData.query.filter(
-                              ShoppedData.searched_keyword == searched_keyword,
-                              ShoppedData.shop_name.in_(shop_names_list)).order_by(ShoppedData.numeric_price.desc()).all())
+            results_db.append(
+                ShoppedData.query.filter(
+                    ShoppedData.searched_keyword == searched_keyword,
+                    ShoppedData.shop_name.in_(shop_names_list),
+                )
+                .order_by(ShoppedData.numeric_price.desc())
+                .all()
+            )
         elif low_to_high:
-            results_db.append(ShoppedData.query.filter(
-                              ShoppedData.searched_keyword == searched_keyword,
-                              ShoppedData.shop_name.in_(shop_names_list)).order_by(ShoppedData.numeric_price.asc()).all())
+            results_db.append(
+                ShoppedData.query.filter(
+                    ShoppedData.searched_keyword == searched_keyword,
+                    ShoppedData.shop_name.in_(shop_names_list),
+                )
+                .order_by(ShoppedData.numeric_price.asc())
+                .all()
+            )
     else:
         if high_to_low:
-            results_db.append(ShoppedData.query.filter(ShoppedData.searched_keyword == searched_keyword).order_by(ShoppedData.numeric_price.desc()).all())
+            results_db.append(
+                ShoppedData.query.filter(
+                    ShoppedData.searched_keyword == searched_keyword
+                )
+                .order_by(ShoppedData.numeric_price.desc())
+                .all()
+            )
         elif low_to_high:
-            results_db.append(ShoppedData.query.filter(ShoppedData.searched_keyword == searched_keyword).order_by(ShoppedData.numeric_price.asc()).all())
+            results_db.append(
+                ShoppedData.query.filter(
+                    ShoppedData.searched_keyword == searched_keyword
+                )
+                .order_by(ShoppedData.numeric_price.asc())
+                .all()
+            )
     db.session.commit()
 
     for results in results_db:
         if results is not None and len(results) > 0:
-            results_centre = ([res.__str__() for res in results])
+            results_centre = [res.__str__() for res in results]
     return results_centre
 
 
@@ -270,7 +349,9 @@ def match_results_by_sk(results, searched_keyword, match_acc=0):
     mk_results = []
     for item_r in results:
         item_r = safe_json(item_r)
-        if match_sk(searched_keyword, safe_grab(item_r, [searched_keyword, "title"]), match_acc):
+        if match_sk(
+            searched_keyword, safe_grab(item_r, [searched_keyword, "title"]), match_acc
+        ):
             mk_results.append(json.dumps(item_r))
     return mk_results
 
@@ -279,13 +360,13 @@ def update_db_results(results):
     searched_keyword = results.get("searched_keyword")
     shop_name = results.get("shop_name")
     title = results.get("title")
-    result_find = ShoppedData.query.\
-        filter(ShoppedData.searched_keyword == searched_keyword, ShoppedData.shop_name == shop_name, ShoppedData.title == title).\
-        scalar()
+    result_find = ShoppedData.query.filter(
+        ShoppedData.searched_keyword == searched_keyword,
+        ShoppedData.shop_name == shop_name,
+        ShoppedData.title == title,
+    ).scalar()
     if result_find is not None:
-        ShoppedData.query.\
-            filter(ShoppedData.id == result_find.id).\
-            update(results)
+        ShoppedData.query.filter(ShoppedData.id == result_find.id).update(results)
         db.session.commit()
         return True
     db.session.commit()
@@ -293,24 +374,31 @@ def update_db_results(results):
 
 
 def delete_data_by_shop_sk(shop_name, search_keyword):
-    ShoppedData.query.\
-        filter(ShoppedData.searched_keyword == search_keyword, ShoppedData.shop_name == shop_name).delete()
+    ShoppedData.query.filter(
+        ShoppedData.searched_keyword == search_keyword,
+        ShoppedData.shop_name == shop_name,
+    ).delete()
     db.session.commit()
     return
 
 
-def get_json_db_results(shop_names_list, search_keyword, match_acc, low_to_high, high_to_low):
+def get_json_db_results(
+    shop_names_list, search_keyword, match_acc, low_to_high, high_to_low
+):
 
-    results = get_data_from_db(shop_names_list=shop_names_list,
-                               searched_keyword=search_keyword,
-                               low_to_high=low_to_high,
-                               high_to_low=high_to_low)
+    results = get_data_from_db(
+        shop_names_list=shop_names_list,
+        searched_keyword=search_keyword,
+        low_to_high=low_to_high,
+        high_to_low=high_to_low,
+    )
     if results:
         new_result = []
         if shop_names_list and len(shop_names_list) == 1:
             for shop_name in shop_names_list:
-                results_by_date = get_data_from_db_by_date_asc(shop_name=shop_name,
-                                                               searched_keyword=search_keyword)
+                results_by_date = get_data_from_db_by_date_asc(
+                    shop_name=shop_name, searched_keyword=search_keyword
+                )
                 if results_by_date and is_new_data(results_by_date, search_keyword):
                     new_result.extend(results)
                 else:
@@ -327,7 +415,8 @@ def get_json_db_results(shop_names_list, search_keyword, match_acc, low_to_high,
                 shop_names_list=shop_names_list,
                 searched_keyword=search_keyword,
                 low_to_high=low_to_high,
-                high_to_low=high_to_low)
+                high_to_low=high_to_low,
+            )
 
             return match_results_by_sk(results, search_keyword, match_acc)
     else:
@@ -337,7 +426,8 @@ def get_json_db_results(shop_names_list, search_keyword, match_acc, low_to_high,
             shop_names_list=shop_names_list,
             searched_keyword=search_keyword,
             low_to_high=low_to_high,
-            high_to_low=high_to_low)
+            high_to_low=high_to_low,
+        )
         return match_results_by_sk(results, search_keyword, match_acc)
     return results
 
@@ -394,6 +484,6 @@ def wrapshopdata(results):
         searched_keyword=results["searched_keyword"],
         date_searched=results["date_searched"],
         shop_name=results["shop_name"],
-        shop_link=results["shop_link"]
+        shop_link=results["shop_link"],
     )
     return shopped_data

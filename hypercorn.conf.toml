@@ -1,0 +1,8 @@
+workers = 4
+preload_app = true
+accesslog = "-"
+keepalive = 10
+loglevel = "warn"
+# This is a security issue because all files created by this process will have the same all user access
+# TODO https://github.com/vklab/achilles/issues/312
+umask = 777

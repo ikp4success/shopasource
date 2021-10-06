@@ -1,12 +1,11 @@
 import sys
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from sys_settings import (
-    dev_post_gress_db,
-    prod_post_gress_db
-)
 
-app = Flask(__name__, template_folder='web_content')
+from flask_sqlalchemy import SQLAlchemy
+from quart import Quart
+
+from sys_settings import configs
+
+app = Quart(__name__, template_folder="web_content")
 
 
 def get_sys_args_kwargs():
@@ -21,12 +20,20 @@ def get_sys_args_kwargs():
     return args_lst, kwargs_dict
 
 
+app.config["SQLALCHEMY_DATABASE_OPTIONS"] = {
+    "connect_args": {
+        "ssl": {
+            "key": "ssl/mysql/client-key.pem",
+            "cert": "/BaltimoreCyberTrustRoot.crt.pem",
+        }
+    }
+}
 if sys.argv and len(sys.argv) > 1 and get_sys_args_kwargs()[1].get("debug"):
-    app.config['SQLALCHEMY_DATABASE_URI'] = dev_post_gress_db
-    app.config['DEBUG'] = True
+    app.config["SQLALCHEMY_DATABASE_URI"] = configs["dev_post_gress_db"]
+    app.config["DEBUG"] = True
 else:
-    app.config['SQLALCHEMY_DATABASE_URI'] = prod_post_gress_db
-    app.config['DEBUG'] = False
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+    app.config["SQLALCHEMY_DATABASE_URI"] = configs["prod_post_gress_db"]
+    app.config["DEBUG"] = False
+app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
 
 db = SQLAlchemy(app)

@@ -1,7 +1,8 @@
-from project import db
 import json
+
 from sqlalchemy.sql import func
 
+from project import db
 from shops.shop_utilities.extra_function import generate_result_meta
 
 
@@ -18,7 +19,18 @@ class ShoppedData(db.Model):
     content_description = db.Column(db.String)
     date_searched = db.Column(db.DateTime(timezone=True), server_default=func.now())
 
-    def __init__(self, searched_keyword, image_url, shop_link, shop_name, price, numeric_price, title, content_description, date_searched):
+    def __init__(
+        self,
+        searched_keyword,
+        image_url,
+        shop_link,
+        shop_name,
+        price,
+        numeric_price,
+        title,
+        content_description,
+        date_searched,
+    ):
         self.searched_keyword = searched_keyword
         self.image_url = image_url
         self.shop_link = shop_link
@@ -30,14 +42,28 @@ class ShoppedData(db.Model):
         self.numeric_price = numeric_price
 
     def __repr__(self):
-        data_gen = generate_result_meta(image_url=self.image_url,
-                                        searched_keyword=self.searched_keyword,
-                                        shop_name=self.shop_name,
-                                        shop_link=self.shop_link,
-                                        price=self.price,
-                                        title=self.title,
-                                        content_description=self.content_description,
-                                        date_searched=str(self.date_searched))
+        data_gen = generate_result_meta(
+            image_url=self.image_url,
+            searched_keyword=self.searched_keyword,
+            shop_name=self.shop_name,
+            shop_link=self.shop_link,
+            price=self.price,
+            title=self.title,
+            content_description=self.content_description,
+            date_searched=str(self.date_searched),
+        )
         if data_gen is not None:
             data_gen = json.dumps(data_gen)
         return data_gen
+
+
+class Job(db.Model):
+    __tablename__ = "job"
+    id = db.Column(db.Integer, primary_key=True)
+    status = db.Column(db.String, nullable=False)
+    search_string = db.Column(db.String)
+    date_searched = db.Column(db.DateTime(timezone=True), server_default=func.now())
+
+    def __init__(self, status, search_string):
+        self.status = status
+        self.search_string = search_string
