@@ -16,12 +16,12 @@ class Asos(ShopBase):
     }
 
     def parse_results(self, response):
-        items = response.css("._2oHs74P")
+        items = response.css("._2qG85dG")
         if len(items) == 0:
             yield from (self.parse_data(response))
         for item in items:
-            item_url = item.css("a._3x-5VWa ::attr(href)").extract_first()
-            price = item.css("._342BXW_ ::text").extract_first()
+            item_url = item.css("a ::attr(href)").extract_first()
+            price = item.css("span[data-auto-id='productTilePrice'] ::text").extract_first()
             yield self.get_request(
                 url=item_url,
                 callback=self.parse_data,
