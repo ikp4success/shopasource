@@ -7,10 +7,10 @@ from sentry_sdk import init
 
 from project import app, db
 from shops.shop_utilities.shop_setup_functions import get_shops
-from sys_settings import configs
+from utilities.config import Config
 from utilities.results_factory import run_api_search
 
-init(configs["sentry_dsn"])
+init(Config().SENTRY_DSN)
 
 db.create_all()
 

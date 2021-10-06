@@ -28,7 +28,7 @@ Hybrid of: https://github.com/ikp4success/bestlows-java
 
 **Settings**
 
-Update these values in sys_settings.py before use.
+Update these values in configs before use.
 
 ```
 

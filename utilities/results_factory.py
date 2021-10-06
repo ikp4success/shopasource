@@ -19,10 +19,10 @@ from shops.shop_utilities.shop_setup import (
     SHOP_CACHE_MAX_EXPIRY_TIME,
 )
 from shops.shop_utilities.shop_setup_functions import find_shop, is_shop_active
-from sys_settings import configs
 from utilities.DefaultResources import _errorMessage, _resultRow
+from utilities.config import Config
 
-init(configs["sentry_dsn"])
+init(Config().SENTRY_DSN)
 
 
 possible_match_abbrev = {

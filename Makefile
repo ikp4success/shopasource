@@ -10,7 +10,7 @@ VENV_PYTEST := $(VENV)/bin/pytest
 STAGE ?= dev
 PORT := 5001
 QUART_ENV := $(STAGE)
-QUART_APP := app
+QUART_APP := webapp.app
 
 
 .PHONY: ensure_git_clean
@@ -34,7 +34,7 @@ $(VENV):
 $(VENV_SENTINEL): requirements.txt .pre-commit-config.yaml
 	$(MAKE) ensure_no_venv
 	rm -rf $(VENV)
-	python3.7 -m venv $(VENV)
+	python3.8 -m venv $(VENV)
 	$(VENV_PIP) install --upgrade pip wheel
 	$(VENV_PIP) install -r requirements.txt
 	$(VENV_PRECOMMIT) install
