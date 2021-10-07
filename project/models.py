@@ -55,3 +55,26 @@ class ShoppedData(db.Model):
         if data_gen is not None:
             data_gen = json.dumps(data_gen)
         return data_gen
+
+
+class Job(db.Model):
+    __tablename__ = "job"
+    id = db.Column(db.Integer, primary_key=True)
+    guid = db.Column(db.String, nullable=False)
+    status = db.Column(db.String, nullable=False)
+    searched_keyword = db.Column(db.String, nullable=False)
+    shop_list_names = db.Column(db.String, nullable=False)
+    smatch = db.Column(db.String, nullable=False)
+    slh = db.Column(db.String, nullable=False)
+    shl = db.Column(db.String, nullable=False)
+    date_searched = db.Column(db.DateTime(timezone=True), server_default=func.now())
+
+    def __init__(self, guid, status, searched_keyword, shop_list_names, smatch, slh, shl):
+        self.guid = guid
+        self.status = status
+        self.searched_keyword = searched_keyword
+        self.shop_list_names = shop_list_names
+        self.smatch = smatch
+        self.slh = slh
+        self.shl = shl
+        self.smatch = smatch

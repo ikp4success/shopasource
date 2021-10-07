@@ -36,3 +36,8 @@ def get_logger(name):
         logging.getLogger().setLevel(logging.WARNING)
         coloredlogs.install(level="WARNING")
     return logger
+
+
+def generate_key():
+    import uuid
+    return str(uuid.uuid1()).replace("-", "").upper()

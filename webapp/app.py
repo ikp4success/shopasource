@@ -1,13 +1,15 @@
 import json
+import asyncio
 from functools import partial
 from multiprocessing.dummy import Pool as ThreadPool
+from project.models import Job
 
 from quart import jsonify, render_template, request
 from sentry_sdk import init
 
 from project import app, db
 from shops.shop_utilities.shop_setup_functions import get_shops
-from support import Config
+from support import Config, generate_key
 from utilities.results_factory import run_api_search
 from webapp.config import configure_app
 
@@ -48,8 +50,36 @@ async def robots():
     return await render_template("robots.txt")
 
 
-@app.route("/api/shop/search", methods=["GET"])
-async def api_search():
+@app.route("/schedule/api/shop/search", methods=["GET"])
+async def schedule_api_search():
+    guid = generate_key()
+    shop_list_names = []
+    match_acc = 0
+    low_to_high = False
+    high_to_low = True
+    kwargs = request.args
+    kwargs["guid"] = guid
+    job = Job(
+        guid=guid,
+        status="started",
+        searched_keyword=request.args.get("sk"),
+        shop_list_names=request.args.get("shops") or shop_list_names,
+        smatch=request.args.get("smatch") or match_acc,
+        slh=request.args.get("slh") or low_to_high,
+        shl=request.args.get("shl") or high_to_low,
+    )
+    db.session.add(job)
+    signature = partial(start_api_search, **kwargs)
+    loop = asyncio.get_running_loop()
+    loop.run_in_executor(None, signature)
+    return {
+        "guid": guid,
+        "status": "success",
+        **request.args
+    }, 200
+
+
+async def start_api_search(**kwargs):
     # http://127.0.0.1:8000/api/shop/search?sk=drones&smatch=50&shl=false&slh=false&shops=TARGET
     shop_list_names = []
     search_keyword = None
@@ -58,8 +88,8 @@ async def api_search():
     high_to_low = True
 
     try:
-        search_keyword = request.args.get("sk")
-        shop_list_names = request.args.get("shops")
+        search_keyword = kwargs.get("sk")
+        shop_list_names = kwargs.get("shops")
         if shop_list_names:
             shop_list_names = shop_list_names.strip()
             if "," in shop_list_names:
@@ -70,9 +100,9 @@ async def api_search():
                 ]
             else:
                 shop_list_names = [shop_list_names.upper()]
-        match_acc = int(request.args.get("smatch") or 0)
-        low_to_high = json.JSONDecoder().decode(request.args.get("slh") or "false")
-        high_to_low = json.JSONDecoder().decode(request.args.get("shl") or "false")
+        match_acc = int(kwargs.get("smatch") or 0)
+        low_to_high = json.JSONDecoder().decode(kwargs.get("slh") or "false")
+        high_to_low = json.JSONDecoder().decode(kwargs.get("shl") or "false")
 
         if not low_to_high:  # fail safe
             high_to_low = True
@@ -82,7 +112,7 @@ async def api_search():
         }
         return (results, 404)
 
-    if len(shop_list_names) > 0 and len(shop_list_names) == 1:
+    if len(shop_list_names) > 0:
         pool = ThreadPool(len(shop_list_names))
         launch_spiders_partial = partial(
             run_api_search,
@@ -112,6 +142,11 @@ async def api_search():
         else:
             results = {"message": "Sorry, no products found"}
             return (results, 404)
+
+
+@app.route("/api/shop/search", methods=["GET"])
+async def api_search():
+    return await start_api_search(**request.args)
 
 
 @app.route("/websearch/shops-active.json", methods=["GET"])
