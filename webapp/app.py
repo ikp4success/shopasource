@@ -50,36 +50,36 @@ async def robots():
     return await render_template("robots.txt")
 
 
-@app.route("/schedule/api/shop/search", methods=["GET"])
-async def schedule_api_search():
-    guid = generate_key()
-    shop_list_names = []
-    match_acc = 0
-    low_to_high = False
-    high_to_low = True
-    kwargs = request.args
-    kwargs["guid"] = guid
-    job = Job(
-        guid=guid,
-        status="started",
-        searched_keyword=request.args.get("sk"),
-        shop_list_names=request.args.get("shops") or shop_list_names,
-        smatch=request.args.get("smatch") or match_acc,
-        slh=request.args.get("slh") or low_to_high,
-        shl=request.args.get("shl") or high_to_low,
-    )
-    db.session.add(job)
-    signature = partial(start_api_search, **kwargs)
-    loop = asyncio.get_running_loop()
-    loop.run_in_executor(None, signature)
-    return {
-        "guid": guid,
-        "status": "success",
-        **request.args
-    }, 200
+def update_status(**kwargs):
+    if kwargs.get("guid"):
+        job = Job.query.filter(
+            Job.guid == kwargs.get("guid"),
+        )
+        job.status = kwargs.get("status")
+        db.session.commit()
 
 
-async def start_api_search(**kwargs):
+@app.route("/api/get_result", methods=["GET"])
+async def get_result():
+    import pdb; pdb.set_trace()
+    guid = request.args.get("guid")
+    if guid:
+        job = Job.query.filter(
+            Job.guid == guid,
+        ).scalar()
+        if job:
+            results = run_api_search(
+                [], job.shop_list_names, job.search_keyword, job.smatch, job.slh, job.shl
+            )
+            if results and len(results) > 0:
+                results = results[0]
+            else:
+                results = {"message": "Sorry, no products found"}
+
+        return jsonify(results), 200
+
+
+def start_api_search(**kwargs):
     # http://127.0.0.1:8000/api/shop/search?sk=drones&smatch=50&shl=false&slh=false&shops=TARGET
     shop_list_names = []
     search_keyword = None
@@ -110,6 +110,7 @@ async def start_api_search(**kwargs):
         results = {
             "message": "Sorry, error encountered during search, try again or contact admin if error persist"
         }
+        update_status(status="error", guid=kwargs.get("guid"))
         return (results, 404)
 
     if len(shop_list_names) > 0:
@@ -128,25 +129,59 @@ async def start_api_search(**kwargs):
         pool.close()
         pool.join()
         if results and len(results) > 0 and results[0] != "null":
-            results = jsonify(results[0])
-            return (results, 200)
+            results = results[0]
+            update_status(status="done", guid=kwargs.get("guid"))
+            return results
         results = {"message": "Sorry, no products found"}
-        return (results, 404)
+        update_status(status="error", guid=kwargs.get("guid"))
+
+        return results
     else:
         results = run_api_search(
             [], shop_list_names, search_keyword, match_acc, low_to_high, high_to_low
         )
         if results and len(results) > 0:
-            results = jsonify(results)
-            return (results, 200)
+            results = results[0]
+            update_status(status="done", guid=kwargs.get("guid"))
+            return results
         else:
             results = {"message": "Sorry, no products found"}
-            return (results, 404)
+            update_status(status="error", guid=kwargs.get("guid"))
+            return results
+
+
+@app.route("/schedule/api/shop/search", methods=["GET"])
+async def schedule_api_search():
+    guid = generate_key()
+    shop_list_names = []
+    match_acc = 0
+    low_to_high = False
+    high_to_low = True
+    kwargs = {**request.args}
+    kwargs["guid"] = guid
+    job = Job(
+        guid=guid,
+        status="started",
+        searched_keyword=request.args.get("sk"),
+        shop_list_names=request.args.get("shops") or shop_list_names,
+        smatch=request.args.get("smatch") or match_acc,
+        slh=request.args.get("slh") or low_to_high,
+        shl=request.args.get("shl") or high_to_low,
+    )
+    db.session.add(job)
+    signature = partial(start_api_search, **kwargs)
+    loop = asyncio.get_running_loop()
+    loop.run_in_executor(None, signature)
+    return {
+        "status": "success",
+        **kwargs
+    }, 200
 
 
 @app.route("/api/shop/search", methods=["GET"])
 async def api_search():
-    return await start_api_search(**request.args)
+    kwargs = {**request.args}
+    return jsonify(start_api_search(**kwargs), 200)
 
 
 @app.route("/websearch/shops-active.json", methods=["GET"])
