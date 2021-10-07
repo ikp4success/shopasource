@@ -18,7 +18,7 @@ class Nike(ShopBase):
     }
 
     def start_requests(self):
-        shop_url = self.shop_url.format(self._search_keyword, self._search_keyword)
+        shop_url = self.shop_url.format(keyword=self._search_keyword)
         self.headers["Referer"] = shop_url
         yield self.get_request(shop_url, self.get_best_link, headers=self.headers)
 

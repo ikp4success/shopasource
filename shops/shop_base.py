@@ -29,7 +29,7 @@ class ShopBase(scrapy.Spider):
 
     def start_requests(self):
         print("USER_AGENT: " + self.user_agent)
-        shop_url = self.shop_url.format(self._search_keyword)
+        shop_url = self.shop_url.format(keyword=self._search_keyword)
         self.headers["Referer"] = shop_url
         self.headers["USER-AGENT"] = self.user_agent
         yield get_request(

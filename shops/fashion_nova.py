@@ -7,7 +7,7 @@ class FashionNova(ShopBase):
     def start_requests(self):
         # uuid_v = uuid.uuid4()
         uuid_v = "8fb37bd6-aef1-4d7c-be3f-88bafef01308"
-        shop_url = self.shop_url.format(self._search_keyword, uuid_v)
+        shop_url = self.shop_url.format(keyword=self._search_keyword, uuid=uuid_v)
         yield self.get_request(shop_url, self.get_best_link)
 
     def get_best_link(self, response):

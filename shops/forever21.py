@@ -4,10 +4,6 @@ from shops.shop_base import ShopBase
 class Forever21(ShopBase):
     name = "FOREVER21"
 
-    def start_requests(self):
-        shop_url = self.shop_url.replace("{SKEY}", self._search_keyword)
-        yield self.get_request(shop_url, self.parse_data)
-
     def parse_data(self, response):
         json_data = self.safe_json(response.text)
         t_data = self.safe_grab(json_data, ["response", "docs"], default=[])

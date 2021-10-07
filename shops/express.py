@@ -21,7 +21,7 @@ class Express(ShopBase):
         api_host_name = "search.unbxdapi.com"
         # url_key = re.search(r'express_com-\"\:\"(.*?)\"', "".join(response.css("script ::text").extract()))
         api_key = "b3094e45838bdcf3acf786d57e4ddd98"
-        shop_url = self.shop_url.format(api_key, self._search_keyword, api_key)
+        shop_url = self.shop_url.format(api_key=api_key, keyword=self._search_keyword)
         self.headers["Host"] = api_host_name
         self.headers["Accept"] = "*/*"
         self.headers["Referer"] = "https://www.express.com/exp/search?q={}".format(
