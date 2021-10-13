@@ -50,31 +50,50 @@ async def robots():
     return await render_template("robots.txt")
 
 
+def format_shop(**kwargs):
+    shop_list_names = kwargs.get("shops")
+    if shop_list_names:
+        shop_list_names = shop_list_names.strip()
+        if "," in shop_list_names:
+            shop_list_names = [
+                shn.strip().upper()
+                for shn in shop_list_names.split(",")
+                if shn.strip()
+            ]
+        else:
+            shop_list_names = [shop_list_names.upper()]
+
+    return shop_list_names
+
+
 def update_status(**kwargs):
     if kwargs.get("guid"):
-        job = Job.query.filter(
-            Job.guid == kwargs.get("guid"),
-        )
-        job.status = kwargs.get("status")
+        Job.query.filter(
+            Job.id == kwargs.get("guid"),
+        ).update({"status": kwargs.get("status")})
+
         db.session.commit()
 
 
 @app.route("/api/get_result", methods=["GET"])
 async def get_result():
-    import pdb; pdb.set_trace()
     guid = request.args.get("guid")
     if guid:
         job = Job.query.filter(
-            Job.guid == guid,
+            Job.id == guid,
         ).scalar()
         if job:
+            shop_list_names = format_shop(shops=job.shop_list_names)
+            match_acc = int(job.smatch or 0)
+            low_to_high = json.JSONDecoder().decode(job.slh or "false")
+            high_to_low = json.JSONDecoder().decode(job.shl or "false")
             results = run_api_search(
-                [], job.shop_list_names, job.search_keyword, job.smatch, job.slh, job.shl
+                [], shop_list_names, job.searched_keyword, match_acc, low_to_high, high_to_low
             )
-            if results and len(results) > 0:
-                results = results[0]
-            else:
+            if not results:
                 results = {"message": "Sorry, no products found"}
+        else:
+            results = {"message": "Sorry, no products found"}
 
         return jsonify(results), 200
 
@@ -89,17 +108,7 @@ def start_api_search(**kwargs):
 
     try:
         search_keyword = kwargs.get("sk")
-        shop_list_names = kwargs.get("shops")
-        if shop_list_names:
-            shop_list_names = shop_list_names.strip()
-            if "," in shop_list_names:
-                shop_list_names = [
-                    shn.strip().upper()
-                    for shn in shop_list_names.split(",")
-                    if shn.strip()
-                ]
-            else:
-                shop_list_names = [shop_list_names.upper()]
+        shop_list_names = format_shop(**kwargs)
         match_acc = int(kwargs.get("smatch") or 0)
         low_to_high = json.JSONDecoder().decode(kwargs.get("slh") or "false")
         high_to_low = json.JSONDecoder().decode(kwargs.get("shl") or "false")
@@ -152,23 +161,21 @@ def start_api_search(**kwargs):
 
 @app.route("/schedule/api/shop/search", methods=["GET"])
 async def schedule_api_search():
-    guid = generate_key()
-    shop_list_names = []
     match_acc = 0
     low_to_high = False
     high_to_low = True
     kwargs = {**request.args}
-    kwargs["guid"] = guid
     job = Job(
-        guid=guid,
         status="started",
         searched_keyword=request.args.get("sk"),
-        shop_list_names=request.args.get("shops") or shop_list_names,
+        shop_list_names=request.args.get("shops"),
         smatch=request.args.get("smatch") or match_acc,
         slh=request.args.get("slh") or low_to_high,
         shl=request.args.get("shl") or high_to_low,
     )
     db.session.add(job)
+    db.session.commit()
+    kwargs["guid"] = str(job.id)
     signature = partial(start_api_search, **kwargs)
     loop = asyncio.get_running_loop()
     loop.run_in_executor(None, signature)
