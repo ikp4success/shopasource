@@ -40,4 +40,5 @@ def get_logger(name):
 
 def generate_key():
     import uuid
+
     return str(uuid.uuid1()).replace("-", "").upper()

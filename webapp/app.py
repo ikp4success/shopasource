@@ -1,12 +1,12 @@
-import json
 import asyncio
+import json
 from functools import partial
-from project.models import Job
 
 from quart import jsonify, render_template, request
 from sentry_sdk import init
 
 from project import app, db
+from project.models import Job
 from shops.shop_utilities.shop_setup_functions import get_shops
 from support import Config
 from utilities.results_factory import run_api_search
@@ -55,9 +55,7 @@ def format_shop(**kwargs):
         shop_list_names = shop_list_names.strip()
         if "," in shop_list_names:
             shop_list_names = [
-                shn.strip().upper()
-                for shn in shop_list_names.split(",")
-                if shn.strip()
+                shn.strip().upper() for shn in shop_list_names.split(",") if shn.strip()
             ]
         else:
             shop_list_names = [shop_list_names.upper()]
@@ -67,9 +65,9 @@ def format_shop(**kwargs):
 
 def update_status(**kwargs):
     if kwargs.get("guid"):
-        Job.query.filter(
-            Job.id == kwargs.get("guid"),
-        ).update({"status": kwargs.get("status")})
+        Job.query.filter(Job.id == kwargs.get("guid"),).update(
+            {"status": kwargs.get("status")}
+        )
 
         db.session.commit()
 
@@ -78,9 +76,7 @@ def update_status(**kwargs):
 async def get_result():
     guid = request.args.get("guid")
     if guid:
-        job = Job.query.filter(
-            Job.id == guid,
-        ).scalar()
+        job = Job.query.filter(Job.id == guid,).scalar()
         if job:
             shop_list_names = format_shop(shops=job.shop_list_names)
             match_acc = int(job.smatch or 0)
@@ -90,7 +86,13 @@ async def get_result():
             for shop_list_name in shop_list_names:
                 result = {
                     shop_list_name: run_api_search(
-                        [], [shop_list_name], job.searched_keyword, match_acc, low_to_high, high_to_low, is_cache=True
+                        [],
+                        [shop_list_name],
+                        job.searched_keyword,
+                        match_acc,
+                        low_to_high,
+                        high_to_low,
+                        is_cache=True,
                     )
                 }
                 results.append(result)
@@ -99,10 +101,7 @@ async def get_result():
         else:
             results = {"message": "Sorry, no products found"}
 
-        output = {
-            "status": job.status,
-            "data": results
-        }
+        output = {"status": job.status, "data": results}
 
         return jsonify(output), 200
 
@@ -132,7 +131,13 @@ def start_api_search(**kwargs):
         return (results, 404)
 
     results = run_api_search(
-        [], shop_list_names, search_keyword, match_acc, low_to_high, high_to_low, is_cache=False
+        [],
+        shop_list_names,
+        search_keyword,
+        match_acc,
+        low_to_high,
+        high_to_low,
+        is_cache=False,
     )
     if results and len(results) > 0 and results[0] != "null":
         results = results[0]
@@ -165,10 +170,7 @@ async def schedule_api_search():
     signature = partial(start_api_search, **kwargs)
     loop = asyncio.get_running_loop()
     loop.run_in_executor(None, signature)
-    return {
-        "status": job.status,
-        **kwargs
-    }, 200
+    return {"status": job.status, **kwargs}, 200
 
 
 @app.route("/api/shop/search", methods=["GET"])

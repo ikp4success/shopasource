@@ -68,7 +68,7 @@ def run_api_search(
     match_acc,
     low_to_high,
     high_to_low,
-    is_cache=False
+    is_cache=False,
 ):
     results = {}
     try:
@@ -89,7 +89,12 @@ def run_api_search(
             search_keyword = truncate_data(search_keyword, 75, html_escape=True)
 
             results = get_json_db_results(
-                shop_names_list, search_keyword, match_acc, low_to_high, high_to_low, is_cache
+                shop_names_list,
+                search_keyword,
+                match_acc,
+                low_to_high,
+                high_to_low,
+                is_cache,
             )
             if results is None or len(results) == 0:
                 results = {"message": "Sorry, no products found"}
@@ -117,7 +122,7 @@ def launch_spiders(sn, sk):
         os.makedirs("json_shop_results/")
     file_name = "json_shop_results/{}_RESULTS.json".format(name)
     open(file_name, "w+").close()
-    call(
+    call(  # nosec
         [
             "scrapy",
             "crawl",

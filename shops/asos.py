@@ -21,7 +21,9 @@ class Asos(ShopBase):
             yield from (self.parse_data(response))
         for item in items:
             item_url = item.css("a ::attr(href)").extract_first()
-            price = item.css("span[data-auto-id='productTilePrice'] ::text").extract_first()
+            price = item.css(
+                "span[data-auto-id='productTilePrice'] ::text"
+            ).extract_first()
             yield self.get_request(
                 url=item_url,
                 callback=self.parse_data,

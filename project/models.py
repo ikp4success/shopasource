@@ -1,6 +1,7 @@
+import datetime
 import json
 import uuid
-import datetime
+
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 
@@ -68,7 +69,9 @@ class Job(db.Model):
     smatch = db.Column(db.String, nullable=False)
     slh = db.Column(db.String, nullable=False)
     shl = db.Column(db.String, nullable=False)
-    date_searched = db.Column(db.DateTime(timezone=True), default=datetime.datetime.utcnow)
+    date_searched = db.Column(
+        db.DateTime(timezone=True), default=datetime.datetime.utcnow
+    )
 
     def __init__(self, status, searched_keyword, shop_list_names, smatch, slh, shl):
         self.status = status

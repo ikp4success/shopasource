@@ -1,5 +1,5 @@
-import re
 import random
+import re
 
 from fake_useragent import UserAgent
 from user_agent import generate_user_agent
@@ -8,10 +8,12 @@ from support import get_logger
 
 logger = get_logger(__name__)
 
-default_user_agent = random.choice([
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.366",
-    "Mozilla/5.0 (X11; Linux i686; rv:93.0) Gecko/20100101 Firefox/93.0"
-])
+default_user_agent = random.choice(  # nosec
+    [
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.366",
+        "Mozilla/5.0 (X11; Linux i686; rv:93.0) Gecko/20100101 Firefox/93.0",
+    ]
+)
 
 
 def get_desktop_user_agent():
