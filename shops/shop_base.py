@@ -11,6 +11,7 @@ from shops.shop_utilities.extra_function import (
     safe_json,
 )
 from shops.shop_utilities.shop_setup_functions import find_shop_configuration
+from support import get_logger
 
 
 class ShopBase(scrapy.Spider):
@@ -21,6 +22,7 @@ class ShopBase(scrapy.Spider):
     headers = {}
     meta = {}
     user_agent = USER_AGENT
+    logger = get_logger(__name__)
 
     def __init__(self, search_keyword):
         self.name = self.find_shop_configuration()["name"]
@@ -28,7 +30,7 @@ class ShopBase(scrapy.Spider):
         self._search_keyword = search_keyword
 
     def start_requests(self):
-        print("USER_AGENT: " + self.user_agent)
+        self.logger.info("USER_AGENT: " + self.user_agent)
         shop_url = self.shop_url.format(keyword=self._search_keyword)
         self.headers["Referer"] = shop_url
         self.headers["USER-AGENT"] = self.user_agent

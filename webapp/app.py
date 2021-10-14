@@ -1,7 +1,6 @@
 import json
 import asyncio
 from functools import partial
-from multiprocessing.dummy import Pool as ThreadPool
 from project.models import Job
 
 from quart import jsonify, render_template, request
@@ -87,9 +86,14 @@ async def get_result():
             match_acc = int(job.smatch or 0)
             low_to_high = json.JSONDecoder().decode(job.slh or "false")
             high_to_low = json.JSONDecoder().decode(job.shl or "false")
-            results = run_api_search(
-                [], shop_list_names, job.searched_keyword, match_acc, low_to_high, high_to_low, is_cache=True
-            )
+            results = []
+            for shop_list_name in shop_list_names:
+                result = {
+                    shop_list_name: run_api_search(
+                        [], [shop_list_name], job.searched_keyword, match_acc, low_to_high, high_to_low, is_cache=True
+                    )
+                }
+                results.append(result)
             if not results:
                 results = {"message": "Sorry, no products found"}
         else:
@@ -127,41 +131,17 @@ def start_api_search(**kwargs):
         update_status(status="error", guid=kwargs.get("guid"))
         return (results, 404)
 
-    if len(shop_list_names) > 0:
-        pool = ThreadPool(len(shop_list_names))
-        launch_spiders_partial = partial(
-            run_api_search,
-            shop_names_list=shop_list_names,
-            search_keyword=search_keyword,
-            match_acc=match_acc,
-            low_to_high=low_to_high,
-            high_to_low=high_to_low,
-        )
-
-        shops_thread_list = shop_list_names
-        results = pool.map(launch_spiders_partial, shops_thread_list)
-        pool.close()
-        pool.join()
-        if results and len(results) > 0 and results[0] != "null":
-            results = results[0]
-            update_status(status="done", guid=kwargs.get("guid"))
-            return results
-        results = {"message": "Sorry, no products found"}
-        update_status(status="error", guid=kwargs.get("guid"))
-
+    results = run_api_search(
+        [], shop_list_names, search_keyword, match_acc, low_to_high, high_to_low, is_cache=False
+    )
+    if results and len(results) > 0 and results[0] != "null":
+        results = results[0]
+        update_status(status="done", guid=kwargs.get("guid"))
         return results
-    else:
-        results = run_api_search(
-            [], shop_list_names, search_keyword, match_acc, low_to_high, high_to_low
-        )
-        if results and len(results) > 0:
-            results = results[0]
-            update_status(status="done", guid=kwargs.get("guid"))
-            return results
-        else:
-            results = {"message": "Sorry, no products found"}
-            update_status(status="error", guid=kwargs.get("guid"))
-            return results
+    results = {"message": "Sorry, no products found"}
+    update_status(status="error", guid=kwargs.get("guid"))
+
+    return results
 
 
 @app.route("/schedule/api/shop/search", methods=["GET"])
@@ -186,7 +166,7 @@ async def schedule_api_search():
     loop = asyncio.get_running_loop()
     loop.run_in_executor(None, signature)
     return {
-        "status": "success",
+        "status": job.status,
         **kwargs
     }, 200
 

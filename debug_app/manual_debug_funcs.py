@@ -1,4 +1,7 @@
 import os
+from support import get_logger
+
+logger = get_logger(__name__)
 
 
 def printHtmlToFile(html, page_name=None):
@@ -23,17 +26,17 @@ def printLogTrace(error, errorTag=None):
 
 
 def printStr(keyword, trace_str):
-    print("DEBUG PRINT STR TRACE: %s : %s" % (keyword, trace_str))
+    logger.info("DEBUG PRINT STR TRACE: %s : %s" % (keyword, trace_str))
 
 
 def generateUUID():
     import uuid
 
-    print("**UUID GENERATION**\n")
-    print("32 - {}\n".format(uuid.uuid4()))
-    print("64 - {}{}\n".format(str(uuid.uuid4()), str(uuid.uuid4())))
-    print("32Hex - {}\n".format(uuid.uuid4().hex))
-    print("64Hex - {}{}\n".format(uuid.uuid4().hex, uuid.uuid4().hex))
+    logger.info("**UUID GENERATION**\n")
+    logger.info("32 - {}\n".format(uuid.uuid4()))
+    logger.info("64 - {}{}\n".format(str(uuid.uuid4()), str(uuid.uuid4())))
+    logger.info("32Hex - {}\n".format(uuid.uuid4().hex))
+    logger.info("64Hex - {}{}\n".format(uuid.uuid4().hex, uuid.uuid4().hex))
 
 
 result_Sample = [

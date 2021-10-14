@@ -4,6 +4,9 @@ from twisted.internet.error import DNSLookupError, TCPTimedOutError, TimeoutErro
 from w3lib.url import safe_url_string
 
 from shops.shop_utilities.extra_function import prepend_domain
+from support import get_logger
+
+logger = get_logger(__name__)
 
 
 def get_request(url, callback, domain_url=None, meta=None, headers=None):
@@ -21,16 +24,16 @@ def get_request(url, callback, domain_url=None, meta=None, headers=None):
 
 def errcallback(failure):
     # logs failures
-    print(repr(failure))
+    logger.warning(repr(failure))
 
     if failure.check(HttpError):
         response = failure.value.response
-        print("HttpError occurred on %s", response.url)
+        logger.warning("HttpError occurred on %s", response.url)
 
     elif failure.check(DNSLookupError):
         request = failure.request
-        print("DNSLookupError occurred on %s", request.url)
+        logger.warning("DNSLookupError occurred on %s", request.url)
 
     elif failure.check(TimeoutError, TCPTimedOutError):
         request = failure.request
-        print("TimeoutError occurred on %s", request.url)
+        logger.warning("TimeoutError occurred on %s", request.url)

@@ -1,10 +1,7 @@
 import json
-import multiprocessing.pool
 import os
 import traceback
 from datetime import datetime, timezone
-from functools import partial
-from multiprocessing.dummy import Pool as ThreadPool
 from subprocess import call  # nosec
 
 from dateutil import parser
@@ -19,8 +16,10 @@ from shops.shop_utilities.shop_setup import (
     SHOP_CACHE_MAX_EXPIRY_TIME,
 )
 from shops.shop_utilities.shop_setup_functions import find_shop, is_shop_active
-from support import Config
+from support import Config, get_logger
 from utilities.DefaultResources import _errorMessage, _resultRow
+
+logger = get_logger(__name__)
 
 init(Config().SENTRY_DSN)
 
@@ -99,23 +98,10 @@ def run_api_search(
         results = {
             "message": "Sorry, error encountered during search, try again or contact admin if error persist"
         }
-        print(e)
-        print(traceback.format_exc())
+        logger.warning(e)
+        logger.warning(traceback.format_exc())
         return results
     return results
-
-
-def ignite_thread_timeout(shop_name, search_keyword):
-    pool = multiprocessing.pool.ThreadPool(1)
-    result_send = pool.apply_async(
-        partial(start_thread_search, shop_name, search_keyword)
-    )
-    try:
-        result_send.get(timeout=15)
-    except multiprocessing.TimeoutError:
-        print("Process timed out")
-    pool.terminate()
-    print("Pool terminated")
 
 
 def start_thread_search(shop_name, search_keyword):
@@ -151,7 +137,7 @@ def pr_result(sk, fname):
     with open(fname, "r") as items_file:
         results = items_file.read()
 
-    if results is not None and results != "":
+    if results:
         results = safe_json(results)
         for result in results:
             execute_add_results_to_db(result, sk)
@@ -400,7 +386,8 @@ def get_json_db_results(
                     new_result.extend(results)
                 else:
                     delete_data_by_shop_sk(shop_name, search_keyword)
-                    ignite_thread_timeout(shop_name, search_keyword)
+                    if not is_cache:
+                        start_thread_search(shop_name, search_keyword)
         else:
             new_result.extend(results)
 
@@ -420,7 +407,7 @@ def get_json_db_results(
         return []
     else:
         for shop_name in shop_names_list:
-            ignite_thread_timeout(shop_name, search_keyword)
+            start_thread_search(shop_name, search_keyword)
         results = get_data_from_db_contains(
             shop_names_list=shop_names_list,
             searched_keyword=search_keyword,
