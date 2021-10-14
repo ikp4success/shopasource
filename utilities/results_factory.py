@@ -42,7 +42,7 @@ possible_match_abbrev = {
 def match_sk(search_keyword, searched_item, match_sk_set):
     if match_sk_set == 0:
         return True
-    if search_keyword is None or searched_item is None:
+    if not search_keyword or not searched_item:
         return False
     search_keyword = search_keyword.lower()
     searched_item = searched_item.lower()
@@ -69,6 +69,7 @@ def run_api_search(
     match_acc,
     low_to_high,
     high_to_low,
+    is_cache=False
 ):
     results = {}
     try:
@@ -89,7 +90,7 @@ def run_api_search(
             search_keyword = truncate_data(search_keyword, 75, html_escape=True)
 
             results = get_json_db_results(
-                shop_names_list, search_keyword, match_acc, low_to_high, high_to_low
+                shop_names_list, search_keyword, match_acc, low_to_high, high_to_low, is_cache
             )
             if results is None or len(results) == 0:
                 results = {"message": "Sorry, no products found"}
@@ -120,11 +121,7 @@ def ignite_thread_timeout(shop_name, search_keyword):
 def start_thread_search(shop_name, search_keyword):
     if not is_shop_active(shop_name):
         return
-    pool = ThreadPool(1)
-    launch_spiders_partial = partial(launch_spiders, sk=search_keyword)
-    pool.map(launch_spiders_partial, [shop_name])
-    pool.close()
-    pool.join()
+    launch_spiders(sk=search_keyword, sn=shop_name)
 
 
 def launch_spiders(sn, sk):
@@ -383,7 +380,7 @@ def delete_data_by_shop_sk(shop_name, search_keyword):
 
 
 def get_json_db_results(
-    shop_names_list, search_keyword, match_acc, low_to_high, high_to_low
+    shop_names_list, search_keyword, match_acc, low_to_high, high_to_low, is_cache
 ):
 
     results = get_data_from_db(
@@ -419,6 +416,8 @@ def get_json_db_results(
             )
 
             return match_results_by_sk(results, search_keyword, match_acc)
+    elif is_cache:
+        return []
     else:
         for shop_name in shop_names_list:
             ignite_thread_timeout(shop_name, search_keyword)

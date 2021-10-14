@@ -9,7 +9,7 @@ from sentry_sdk import init
 
 from project import app, db
 from shops.shop_utilities.shop_setup_functions import get_shops
-from support import Config, generate_key
+from support import Config
 from utilities.results_factory import run_api_search
 from webapp.config import configure_app
 
@@ -88,14 +88,19 @@ async def get_result():
             low_to_high = json.JSONDecoder().decode(job.slh or "false")
             high_to_low = json.JSONDecoder().decode(job.shl or "false")
             results = run_api_search(
-                [], shop_list_names, job.searched_keyword, match_acc, low_to_high, high_to_low
+                [], shop_list_names, job.searched_keyword, match_acc, low_to_high, high_to_low, is_cache=True
             )
             if not results:
                 results = {"message": "Sorry, no products found"}
         else:
             results = {"message": "Sorry, no products found"}
 
-        return jsonify(results), 200
+        output = {
+            "status": job.status,
+            "data": results
+        }
+
+        return jsonify(output), 200
 
 
 def start_api_search(**kwargs):
@@ -176,6 +181,7 @@ async def schedule_api_search():
     db.session.add(job)
     db.session.commit()
     kwargs["guid"] = str(job.id)
+    kwargs["result"] = f"/api/get_result?guid={str(job.id)}"
     signature = partial(start_api_search, **kwargs)
     loop = asyncio.get_running_loop()
     loop.run_in_executor(None, signature)
