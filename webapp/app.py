@@ -9,7 +9,7 @@ from project import app, db
 from project.models import Job
 from shops.shop_utilities.shop_setup_functions import get_shops
 from support import Config
-from utilities.results_factory import run_api_search
+from utilities.results_factory import run_api_search, pr_result
 from webapp.config import configure_app
 
 init(Config().SENTRY_DSN)
@@ -140,6 +140,8 @@ def start_api_search(**kwargs):
         is_cache=False,
     )
     if results and len(results) > 0 and results[0] != "null":
+        for shop_list_name in shop_list_names:
+            pr_result(search_keyword, "json_shop_results/{}_RESULTS.json".format(shop_list_name))
         results = results[0]
         update_status(status="done", guid=kwargs.get("guid"))
         return results

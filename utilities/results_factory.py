@@ -1,4 +1,5 @@
 import json
+import time
 import os
 import traceback
 from datetime import datetime, timezone
@@ -150,7 +151,7 @@ def pr_result(sk, fname):
 
 
 def execute_add_results_to_db(result, search_keyword):
-    if result is not None:
+    if result:
         result_data = result.get(search_keyword, {})
         if len(result_data) > 0:
             add_results_to_db(result_data)
@@ -353,7 +354,7 @@ def update_db_results(results):
         ShoppedData.shop_name == shop_name,
         ShoppedData.title == title,
     ).scalar()
-    if result_find is not None:
+    if result_find:
         ShoppedData.query.filter(ShoppedData.id == result_find.id).update(results)
         db.session.commit()
         return True
