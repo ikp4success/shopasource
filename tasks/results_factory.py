@@ -1,20 +1,17 @@
 import json
 import traceback
-from multiprocessing import Process
 from datetime import datetime, timezone
+from multiprocessing import Process
 
 from dateutil import parser
 from sqlalchemy import or_
 
 from project.models import ShoppedData
 from shops.shop_util.extra_function import safe_grab, safe_json, truncate_data
-from shops.shop_util.shop_setup import (
-    SHOP_CACHE_LOOKUP_SET,
-    SHOP_CACHE_MAX_EXPIRY_TIME,
-)
+from shops.shop_util.shop_setup import SHOP_CACHE_LOOKUP_SET, SHOP_CACHE_MAX_EXPIRY_TIME
 from shops.shop_util.shop_setup_functions import find_shop, is_shop_active
-from tasks.scrapy_run import spider_runner
 from support import Config, get_logger
+from tasks.scrapy_run import spider_runner
 
 logger = get_logger(__name__)
 

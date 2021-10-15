@@ -1,7 +1,7 @@
-import os
 import datetime as dt
 import html
 import json
+import os
 import re
 from urllib import parse as urlparse
 
@@ -155,5 +155,6 @@ def truncate_data(data, length_cont, html_escape=False):
 def save_to_db(data):
     if data and int(os.environ.get("SAVE_TO_DB", 0)) != 1:
         from project.models import ShoppedData
+
         shop = ShoppedData(**data)
         shop.commit()

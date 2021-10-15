@@ -1,9 +1,11 @@
 import importlib
+from multiprocessing import Process, Queue
+
+from scrapy.crawler import CrawlerRunner
 from scrapy.utils.log import configure_logging
 from scrapy.utils.project import get_project_settings
-from scrapy.crawler import CrawlerRunner
-from multiprocessing import Process, Queue
 from twisted.internet import reactor
+
 from support import get_logger
 
 logger = get_logger(__name__)
@@ -33,9 +35,7 @@ def spider_runner(spider_name, search_keyword):
     spider_class = import_class(spider_name)
     logger.debug("Running spider {spider_class.name}")
     scrapy_settings = get_project_settings()
-    scrapy_custom_settings = {
-        "LOG_FILE": f"logs/{spider_class.name}.log"
-    }
+    scrapy_custom_settings = {"LOG_FILE": f"logs/{spider_class.name}.log"}
     scrapy_settings.update(scrapy_custom_settings)
 
     def crawl(q):

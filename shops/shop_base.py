@@ -9,10 +9,10 @@ from shops.shop_util.extra_function import (
     prepend_domain,
     safe_grab,
     safe_json,
-    save_to_db
+    save_to_db,
 )
 from shops.shop_util.shop_setup_functions import find_shop_configuration
-from support import get_logger, Config
+from support import Config, get_logger
 
 Config().intialize_sentry()
 

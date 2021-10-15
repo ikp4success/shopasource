@@ -4,7 +4,7 @@ from functools import partial
 
 from quart import Quart, jsonify, render_template, request
 
-from project.models import Model, engine, Job
+from project.models import Job, Model, engine
 from shops.shop_util.shop_setup_functions import get_shops
 from support import Config
 from tasks.results_factory import run_search

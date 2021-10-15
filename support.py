@@ -30,6 +30,7 @@ class Config:
     def intialize_sentry(self):
         if not self.SKIP_SENTRY:
             from sentry_sdk import init
+
             return init(Config().SENTRY_DSN)
 
 
