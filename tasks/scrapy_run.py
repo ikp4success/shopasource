@@ -37,7 +37,6 @@ def spider_runner(spider_name, search_keyword):
     scrapy_settings = get_project_settings()
     scrapy_custom_settings = {
         "LOG_FILE": f"logs/{spider_class.name}.log",
-        "CONCURRENT_REQUESTS": 10,
     }
     scrapy_settings.update(scrapy_custom_settings)
 
