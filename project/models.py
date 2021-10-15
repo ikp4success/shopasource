@@ -2,14 +2,49 @@ import datetime
 import json
 import uuid
 
+import sqlalchemy as db
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.sql import func
 
-from project import db
 from shops.shop_utilities.extra_function import generate_result_meta
+from support import Config
+
+engine = db.create_engine(Config().POSTGRESS_DB_URL, convert_unicode=True,)
+
+db_session = scoped_session(
+    sessionmaker(autocommit=False, autoflush=False, bind=engine)
+)
 
 
-class ShoppedData(db.Model):
+def init_db():
+    Model.metadata.create_all(bind=engine)
+
+
+Model = declarative_base(name="Model")
+Model.query = db_session.query_property()
+
+
+class ModelMixin:
+    session = db_session
+
+    def commit(self):
+        self.session.add(self)
+        self.session.commit()
+
+    def get_item(self, **kwargs):
+        return self.query.get(kwargs)
+
+    def update_item(self, **kwargs):
+        for k, v in kwargs.items():
+            if k == "id":
+                continue
+            setattr(self, k, v)
+        self.commit()
+
+
+class ShoppedData(Model, ModelMixin):
     __tablename__ = "shopped_data"
     id = db.Column(db.Integer, primary_key=True)
     searched_keyword = db.Column(db.String, nullable=False)
@@ -22,27 +57,16 @@ class ShoppedData(db.Model):
     content_description = db.Column(db.String)
     date_searched = db.Column(db.DateTime(timezone=True), server_default=func.now())
 
-    def __init__(
-        self,
-        searched_keyword,
-        image_url,
-        shop_link,
-        shop_name,
-        price,
-        numeric_price,
-        title,
-        content_description,
-        date_searched,
-    ):
-        self.searched_keyword = searched_keyword
-        self.image_url = image_url
-        self.shop_link = shop_link
-        self.shop_name = shop_name
-        self.price = price
-        self.title = title
-        self.content_description = content_description
-        self.date_searched = date_searched
-        self.numeric_price = numeric_price
+    def __init__(self, *args, **kwargs):
+        self.searched_keyword = kwargs.get("searched_keyword")
+        self.image_url = kwargs.get("image_url")
+        self.shop_link = kwargs.get("shop_link")
+        self.shop_name = kwargs.get("shop_name")
+        self.price = kwargs.get("price")
+        self.title = kwargs.get("title")
+        self.content_description = kwargs.get("content_description")
+        self.date_searched = kwargs.get("date_searched")
+        self.numeric_price = kwargs.get("numeric_price")
 
     def __repr__(self):
         data_gen = generate_result_meta(
@@ -60,7 +84,7 @@ class ShoppedData(db.Model):
         return data_gen
 
 
-class Job(db.Model):
+class Job(Model, ModelMixin):
     __tablename__ = "job"
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     status = db.Column(db.String, nullable=False)
@@ -73,14 +97,14 @@ class Job(db.Model):
         db.DateTime(timezone=True), default=datetime.datetime.utcnow
     )
 
-    def __init__(self, status, searched_keyword, shop_list_names, smatch, slh, shl):
-        self.status = status
-        self.searched_keyword = searched_keyword
-        self.shop_list_names = shop_list_names
-        self.smatch = smatch
-        self.slh = slh
-        self.shl = shl
-        self.smatch = smatch
+    def __init__(self, *args, **kwargs):
+        self.status = kwargs.get("status")
+        self.searched_keyword = kwargs.get("searched_keyword")
+        self.shop_list_names = kwargs.get("shop_list_names")
+        self.smatch = kwargs.get("smatch")
+        self.slh = kwargs.get("slh")
+        self.shl = kwargs.get("shl")
+        self.smatch = kwargs.get("smatch")
 
     def __repr__(self):
         data_gen = {

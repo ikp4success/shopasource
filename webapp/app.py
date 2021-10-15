@@ -2,20 +2,19 @@ import asyncio
 import json
 from functools import partial
 
-from quart import jsonify, render_template, request
+from quart import Quart, jsonify, render_template, request
 from sentry_sdk import init
 
-from project import app, db
 from project.models import Job
 from shops.shop_utilities.shop_setup_functions import get_shops
 from support import Config
-from utilities.results_factory import run_api_search, pr_result
+from utilities.results_factory import run_search
 from webapp.config import configure_app
 
 init(Config().SENTRY_DSN)
 
+app = Quart(__name__, template_folder="web_content")
 configure_app(app)
-db.create_all()
 
 
 @app.after_request
@@ -69,14 +68,14 @@ def update_status(**kwargs):
             {"status": kwargs.get("status")}
         )
 
-        db.session.commit()
+        Job.commit()
 
 
 @app.route("/api/get_result", methods=["GET"])
 async def get_result():
     guid = request.args.get("guid")
     if guid:
-        job = Job.query.filter(Job.id == guid,).scalar()
+        job = Job().get_item(id=guid)
         if job:
             shop_list_names = format_shop(shops=job.shop_list_names)
             match_acc = int(job.smatch or 0)
@@ -85,7 +84,7 @@ async def get_result():
             results = []
             for shop_list_name in shop_list_names:
                 result = {
-                    shop_list_name: run_api_search(
+                    shop_list_name: run_search(
                         [],
                         [shop_list_name],
                         job.searched_keyword,
@@ -130,7 +129,7 @@ def start_api_search(**kwargs):
         update_status(status="error", guid=kwargs.get("guid"))
         return (results, 404)
 
-    results = run_api_search(
+    results = run_search(
         [],
         shop_list_names,
         search_keyword,
@@ -140,8 +139,6 @@ def start_api_search(**kwargs):
         is_cache=False,
     )
     if results and len(results) > 0 and results[0] != "null":
-        for shop_list_name in shop_list_names:
-            pr_result(search_keyword, "json_shop_results/{}_RESULTS.json".format(shop_list_name))
         results = results[0]
         update_status(status="done", guid=kwargs.get("guid"))
         return results
@@ -165,13 +162,16 @@ async def schedule_api_search():
         slh=request.args.get("slh") or low_to_high,
         shl=request.args.get("shl") or high_to_low,
     )
-    db.session.add(job)
-    db.session.commit()
+    import pdb
+
+    pdb.set_trace()
+    job.commit()
+    start_api_search(**kwargs)
     kwargs["guid"] = str(job.id)
     kwargs["result"] = f"/api/get_result?guid={str(job.id)}"
-    signature = partial(start_api_search, **kwargs)
-    loop = asyncio.get_running_loop()
-    loop.run_in_executor(None, signature)
+    # signature = partial(start_api_search, **kwargs)
+    # loop = asyncio.get_running_loop()
+    # loop.run_in_executor(None, signature)
     return {"status": job.status, **kwargs}, 200
 
 

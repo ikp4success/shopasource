@@ -1,5 +1,4 @@
 import json
-import time
 import os
 import traceback
 from datetime import datetime, timezone
@@ -9,7 +8,6 @@ from dateutil import parser
 from sentry_sdk import init
 from sqlalchemy import or_
 
-from project import db
 from project.models import ShoppedData
 from shops.shop_utilities.extra_function import safe_grab, safe_json, truncate_data
 from shops.shop_utilities.shop_setup import (
@@ -18,7 +16,6 @@ from shops.shop_utilities.shop_setup import (
 )
 from shops.shop_utilities.shop_setup_functions import find_shop, is_shop_active
 from support import Config, get_logger
-from utilities.DefaultResources import _errorMessage, _resultRow
 
 logger = get_logger(__name__)
 
@@ -62,7 +59,7 @@ def match_sk(search_keyword, searched_item, match_sk_set):
     return False
 
 
-def run_api_search(
+def run_search(
     shops_thread_list,
     shop_names_list,
     search_keyword,
@@ -73,7 +70,7 @@ def run_api_search(
 ):
     results = {}
     try:
-        if shop_names_list is None or len(shop_names_list) == 0:
+        if not shop_names_list:
             results = {"message": "Shop name is required"}
             return results
         if not find_shop(shop_names_list):
@@ -110,7 +107,7 @@ def run_api_search(
     return results
 
 
-def start_thread_search(shop_name, search_keyword):
+def start_search(shop_name, search_keyword):
     if not is_shop_active(shop_name):
         return
     launch_spiders(sk=search_keyword, sn=shop_name)
@@ -134,66 +131,6 @@ def launch_spiders(sn, sk):
             file_name,
         ]
     )
-    return pr_result(search_keyword, file_name)
-
-
-def pr_result(sk, fname):
-    results = None
-
-    with open(fname, "r") as items_file:
-        results = items_file.read()
-
-    if results:
-        results = safe_json(results)
-        for result in results:
-            execute_add_results_to_db(result, sk)
-    return results
-
-
-def execute_add_results_to_db(result, search_keyword):
-    if result:
-        result_data = result.get(search_keyword, {})
-        if len(result_data) > 0:
-            add_results_to_db(result_data)
-
-
-def build_result_row(result_data):
-    """ this function is deprecated """
-    _resultRow_res = (
-        _resultRow.replace(
-            "{PRODUCTIMAGESOURCE}", safe_grab(result_data, ["image_url"], "") or ""
-        )
-        .replace("{PRODUCTLINK}", safe_grab(result_data, ["shop_link"], "") or "")
-        .replace("{PRODUCTTITLE}", safe_grab(result_data, ["title"], "") or "")
-        .replace(
-            "{PRODUCTDESCRIPTION}",
-            safe_grab(result_data, ["content_description"], "") or "",
-        )
-        .replace("{PRODUCTPRICE}", safe_grab(result_data, ["price"], "") or "")
-        .replace("{PRODUCTSHOPNAME}", safe_grab(result_data, ["shop_name"], "") or "")
-    )
-    return _resultRow_res
-
-
-def update_search_results(data, key):
-    filedata = None
-    with open("project/web_content/searchresults_default.html", "r") as file:
-        filedata = file.read()
-    if filedata is not None:
-        if key == "{REACT_RESULT_ROW}":
-            filedata = filedata.replace("{error_message}", "")
-        filedata = filedata.replace(key, data)
-
-        with open("project/web_content/searchresults.html", "w+") as file:
-            file.write(filedata)
-
-
-def update_results_row(data):
-    update_search_results(data, "{REACT_RESULT_ROW}")
-
-
-def update_results_row_error(data):
-    update_search_results(_errorMessage.replace("{Message}", data), "{error_message}")
 
 
 def get_data_from_db_by_date_asc(searched_keyword, shop_name=None):
@@ -212,7 +149,6 @@ def get_data_from_db_by_date_asc(searched_keyword, shop_name=None):
         .order_by(ShoppedData.date_searched.asc())
         .first()
     )
-    db.session.commit()
     return [res.__str__() for res in results_db]
 
 
@@ -221,7 +157,7 @@ def get_data_from_db_contains(
 ):
     results_db = []
     results_centre = []
-    if shop_names_list is not None:
+    if shop_names_list:
         if high_to_low:
             results_db.append(
                 ShoppedData.query.filter(
@@ -274,9 +210,8 @@ def get_data_from_db_contains(
                 .order_by(ShoppedData.numeric_price.asc())
                 .all()
             )
-    db.session.commit()
     for results in results_db:
-        if results is not None and len(results) > 0:
+        if results:
             results_1 = []
             for result in results:
                 result.searched_keyword = searched_keyword
@@ -290,7 +225,7 @@ def get_data_from_db(
 ):
     results_db = []
     results_centre = []
-    if shop_names_list is not None:
+    if shop_names_list:
         if high_to_low:
             results_db.append(
                 ShoppedData.query.filter(
@@ -326,7 +261,6 @@ def get_data_from_db(
                 .order_by(ShoppedData.numeric_price.asc())
                 .all()
             )
-    db.session.commit()
 
     for results in results_db:
         if results is not None and len(results) > 0:
@@ -345,29 +279,12 @@ def match_results_by_sk(results, searched_keyword, match_acc=0):
     return mk_results
 
 
-def update_db_results(results):
-    searched_keyword = results.get("searched_keyword")
-    shop_name = results.get("shop_name")
-    title = results.get("title")
-    result_find = ShoppedData.query.filter(
-        ShoppedData.searched_keyword == searched_keyword,
-        ShoppedData.shop_name == shop_name,
-        ShoppedData.title == title,
-    ).scalar()
-    if result_find:
-        ShoppedData.query.filter(ShoppedData.id == result_find.id).update(results)
-        db.session.commit()
-        return True
-    db.session.commit()
-    return False
-
-
 def delete_data_by_shop_sk(shop_name, search_keyword):
-    ShoppedData.query.filter(
+    shop_data = ShoppedData.query.filter(
         ShoppedData.searched_keyword == search_keyword,
         ShoppedData.shop_name == shop_name,
     ).delete()
-    db.session.commit()
+    shop_data.commit()
     return
 
 
@@ -393,7 +310,7 @@ def get_json_db_results(
                 else:
                     delete_data_by_shop_sk(shop_name, search_keyword)
                     if not is_cache:
-                        start_thread_search(shop_name, search_keyword)
+                        start_search(shop_name, search_keyword)
         else:
             new_result.extend(results)
 
@@ -413,7 +330,7 @@ def get_json_db_results(
         return []
     else:
         for shop_name in shop_names_list:
-            start_thread_search(shop_name, search_keyword)
+            start_search(shop_name, search_keyword)
         results = get_data_from_db_contains(
             shop_names_list=shop_names_list,
             searched_keyword=search_keyword,
@@ -422,27 +339,6 @@ def get_json_db_results(
         )
         return match_results_by_sk(results, search_keyword, match_acc)
     return results
-
-
-def update_search_view_with_db_results(search_keyword, results):
-    if results:
-        output_data = ""
-        output_data = update(results, search_keyword)
-        if output_data != "":
-            update_results_row(output_data.replace("<br>", ""))
-            return
-    return
-
-
-def update(results, search_keyword):
-    output_data = ""
-    for result in results:
-        result = safe_json(result)
-        result_data = safe_grab(result, [search_keyword], {})
-        if result_data == {}:
-            continue
-        output_data += build_result_row(result_data)
-    return output_data
 
 
 def is_new_data(results, search_keyword):
@@ -457,25 +353,3 @@ def is_new_data(results, search_keyword):
             if dt_time_diff.days < SHOP_CACHE_MAX_EXPIRY_TIME:
                 return SHOP_CACHE_LOOKUP_SET
     return False
-
-
-def add_results_to_db(result):
-    if not update_db_results(result):
-        shopped_data = wrapshopdata(result)
-        db.session.add(shopped_data)
-    db.session.commit()
-
-
-def wrapshopdata(results):
-    shopped_data = ShoppedData(
-        title=results["title"],
-        content_description=results["content_description"],
-        image_url=results["image_url"],
-        price=results["price"],
-        numeric_price=results["numeric_price"],
-        searched_keyword=results["searched_keyword"],
-        date_searched=results["date_searched"],
-        shop_name=results["shop_name"],
-        shop_link=results["shop_link"],
-    )
-    return shopped_data
