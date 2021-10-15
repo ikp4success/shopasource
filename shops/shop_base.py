@@ -1,7 +1,6 @@
 import scrapy
 
 from debug_app.manual_debug_funcs import printHtmlToFile
-from project.models import ShoppedData
 from shops.scrapy_settings.shop_settings import USER_AGENT
 from shops.shop_connect.shop_request import get_request
 from shops.shop_util.extra_function import (
@@ -10,6 +9,7 @@ from shops.shop_util.extra_function import (
     prepend_domain,
     safe_grab,
     safe_json,
+    save_to_db
 )
 from shops.shop_util.shop_setup_functions import find_shop_configuration
 from support import get_logger
@@ -78,9 +78,8 @@ class ShopBase(scrapy.Spider):
             content_description=content_description,
             date_searched=date_searched,
         )
-        if gen_result:
-            shop = ShoppedData(**gen_result[searched_keyword])
-            shop.commit()
+        if gen_result and gen_result.get(searched_keyword):
+            save_to_db(gen_result[searched_keyword])
         return gen_result
 
     def safe_json(self, data):

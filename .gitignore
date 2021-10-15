@@ -1,5 +1,5 @@
 *.pyc
-json_shop_results/
+json_shop_results/*
 __pycache__/
 scraped_sites/
 .venv/

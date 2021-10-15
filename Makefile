@@ -19,6 +19,8 @@ DB_USER ?= admin
 DB_PORT ?= 5432
 DB_NAME ?= shopasource
 
+SEARCH_KEYWORD ?= wallet
+
 
 .PHONY: ensure_git_clean
 ensure_git_clean:
@@ -89,6 +91,20 @@ clean_db: stop_db
 .PHONY: load_db
 load_db:
 	psql postgresql://$(DB_USER):$(DB_PASS)@localhost:$(DB_PORT)/$(DB_NAME)
+
+
+.PHONY: run_spider
+run_spider:
+	. $(VENV_ACTIVATE) ;\
+	SAVE_TO_DB=1 \
+	ENV_CONFIGURATION=$(STAGE) \
+	SKIP_SENTRY=1 \
+	STAGE=$(STAGE) \
+	DB_USER=$(DB_USER) \
+	DB_PASS=$(DB_PASS) \
+	DB_PORT=$(DB_PORT) \
+	DB_NAME=$(DB_NAME) \
+	$(VENV)/bin/scrapy crawl $(SPIDER) -a search_keyword=$(SEARCH_KEYWORD) -o json_shop_results/$(SPIDER)_RESULTS.json
 
 
 clean:

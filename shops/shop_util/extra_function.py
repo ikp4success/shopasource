@@ -1,3 +1,4 @@
+import os
 import datetime as dt
 import html
 import json
@@ -149,3 +150,10 @@ def truncate_data(data, length_cont, html_escape=False):
             return ""  # data is not good
     else:
         return data
+
+
+def save_to_db(data):
+    if data and int(os.environ.get("SAVE_TO_DB", 0)) != 1:
+        from project.models import ShoppedData
+        shop = ShoppedData(**data)
+        shop.commit()
