@@ -4,7 +4,6 @@ from multiprocessing import Process
 from datetime import datetime, timezone
 
 from dateutil import parser
-from sentry_sdk import init
 from sqlalchemy import or_
 
 from project.models import ShoppedData
@@ -19,7 +18,7 @@ from support import Config, get_logger
 
 logger = get_logger(__name__)
 
-init(Config().SENTRY_DSN)
+Config().intialize_sentry()
 
 
 possible_match_abbrev = {

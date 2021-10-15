@@ -27,6 +27,11 @@ class Config:
     def __init__(self):
         self.load_config()
 
+    def intialize_sentry(self):
+        if not self.SKIP_SENTRY:
+            from sentry_sdk import init
+            return init(Config().SENTRY_DSN)
+
 
 def get_logger(name):
     logger = logging.getLogger(name)

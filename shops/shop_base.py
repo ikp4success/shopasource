@@ -12,7 +12,9 @@ from shops.shop_util.extra_function import (
     save_to_db
 )
 from shops.shop_util.shop_setup_functions import find_shop_configuration
-from support import get_logger
+from support import get_logger, Config
+
+Config().intialize_sentry()
 
 
 class ShopBase(scrapy.Spider):

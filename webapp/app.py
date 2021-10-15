@@ -3,7 +3,6 @@ import json
 from functools import partial
 
 from quart import Quart, jsonify, render_template, request
-from sentry_sdk import init
 
 from project.models import Model, engine, Job
 from shops.shop_util.shop_setup_functions import get_shops
@@ -11,7 +10,7 @@ from support import Config
 from tasks.results_factory import run_search
 from webapp.config import configure_app
 
-init(Config().SENTRY_DSN)
+Config().intialize_sentry()
 
 app = Quart(__name__, template_folder="web_content")
 configure_app(app)
