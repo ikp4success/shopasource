@@ -13,9 +13,10 @@ HOST := 0.0.0.0
 QUART_ENV := $(STAGE)
 QUART_APP := webapp.app
 
+DK_NAME ?= shopasource-psql
 DB_PASS ?= admin
 DB_USER ?= admin
-DB_PORT ?= 5004
+DB_PORT ?= 5432
 DB_NAME ?= shopasource
 
 
@@ -69,7 +70,7 @@ run:
 
 .PHONY: run_db
 run_db:
-	docker run --name sqlalchemy-orm-psql \
+	docker run --name $(DK_NAME) \
     -e POSTGRES_PASSWORD=$(DB_PASS) \
     -e POSTGRES_USER=$(DB_USER) \
     -e POSTGRES_DB=$(DB_NAME) \
@@ -78,11 +79,16 @@ run_db:
 
 .PHONY: stop_db
 stop_db:
-	docker stop sqlalchemy-orm-psql
+	docker stop $(DK_NAME)
 
 .PHONY: clean_db
-clean_db:
-	docker rm sqlalchemy-orm-psql
+clean_db: stop_db
+	docker rm $(DK_NAME)
+
+
+.PHONY: load_db
+load_db:
+	psql postgresql://$(DB_USER):$(DB_PASS)@localhost:$(DB_PORT)/$(DB_NAME)
 
 
 clean:

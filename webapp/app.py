@@ -148,39 +148,32 @@ def start_api_search(**kwargs):
     return results
 
 
-@app.route("/async/api/shop/search", methods=["GET"])
-async def schedule_api_search():
+@app.route("/api/shop/search", methods=["GET"])
+async def api_search():
     match_acc = 0
     low_to_high = False
     high_to_low = True
-    kwargs = {**request.args, "async": False}
-    job = Job(
-        status="started",
-        searched_keyword=request.args.get("sk"),
-        shop_list_names=request.args.get("shops"),
-        smatch=request.args.get("smatch") or match_acc,
-        slh=request.args.get("slh") or low_to_high,
-        shl=request.args.get("shl") or high_to_low,
-    )
-    import pdb
+    kwargs = {**request.args}
 
-    pdb.set_trace()
-    job.commit()
-    kwargs["guid"] = str(job.id)
-    kwargs["result"] = f"/api/get_result?guid={str(job.id)}"
     if kwargs.get("async"):
-        signature = partial(start_api_search, **kwargs)
-        loop = asyncio.get_running_loop()
-        loop.run_in_executor(None, signature)
-    else:
+        job = Job(
+            status="started",
+            searched_keyword=request.args.get("sk"),
+            shop_list_names=request.args.get("shops"),
+            smatch=request.args.get("smatch") or match_acc,
+            slh=request.args.get("slh") or low_to_high,
+            shl=request.args.get("shl") or high_to_low,
+        )
+        job.commit()
+        kwargs["guid"] = str(job.id)
+        kwargs["result"] = f"/api/get_result?guid={str(job.id)}"
+        # signature = partial(start_api_search, **kwargs)
+        # loop = asyncio.get_running_loop()
+        # loop.run_in_executor(None, signature)
         start_api_search(**kwargs)
-    return {"status": job.status, **kwargs}, 200
-
-
-@app.route("/api/shop/search", methods=["GET"])
-async def api_search():
-    kwargs = {**request.args, "async": False}
-    return jsonify(start_api_search(**kwargs), 200)
+        return {"status": job.status, **kwargs}, 200
+    else:
+        return jsonify(start_api_search(**kwargs), 200)
 
 
 @app.route("/websearch/shops-active.json", methods=["GET"])
