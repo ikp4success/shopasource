@@ -1,0 +1,6 @@
+{
+  "SENTRY_DSN": "sentry log key",
+  "API_KEY": "dev",
+  "ENVIRONMENT": "dev",
+  "POSTGRESS_DB_URL": "your postgres url"
+}

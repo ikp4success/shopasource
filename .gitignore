@@ -4,3 +4,4 @@ __pycache__/
 scraped_sites/
 .venv/
 /logs/*
+/configs/dev.json

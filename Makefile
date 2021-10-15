@@ -7,7 +7,7 @@ VENV_AWS := $(VENV)/bin/aws
 VENV_PRECOMMIT := $(VENV)/bin/pre-commit
 VENV_PYTEST := $(VENV)/bin/pytest
 
-STAGE ?= dev
+STAGE ?= debug
 PORT := 5003
 HOST := 0.0.0.0
 QUART_ENV := $(STAGE)

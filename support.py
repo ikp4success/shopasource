@@ -6,7 +6,7 @@ import coloredlogs
 
 
 def get_config(env=None):
-    env = env or os.getenv("ENV_CONFIGURATION", "test")
+    env = env or os.getenv("ENV_CONFIGURATION", "debug")
     with open("configs/{}.json".format(env)) as file:
         return json.load(file)
 

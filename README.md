@@ -1,5 +1,9 @@
 # SHOP A SOURCE
 
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+
+
 **Website**
 
 http://www.shopasource.com/
@@ -20,23 +24,58 @@ Python,
 Html,
 Flask,
 Heroku,
-Postgress,
+Postgres,
+sqlalchemy
 JavaScript
 Css
 
 Hybrid of: https://github.com/ikp4success/bestlows-java
 
-**Settings**
+#### Python Version: 3.8+
 
-Update these values in configs before use.
+### Setup
 
+```bash
+$ make .venv
+$ make clean # cleans virtual environment folder
+```
+Setup virtual environment
+
+### Pre-commit
+
+[pre-commit](https://pre-commit.com/) installed automatically via .venv, used for linting best practices.
+
+```bash
+$ make pre-commit
 ```
 
-sentry_dsn = "https://"  # go to sentry.io
-dev_post_gress_db = "postgress://"  # Heroku Postgress db url
-prod_post_gress_db = "postgress://"
+#### Settings
 
+Update values in configs/dev for dev environment and deploy's.
+
+
+##### run flask project
+```bash
+$ make run STAGE=debug or make run  # debug is default
+
+$ make run STAGE=dev # dev runs
 ```
+
+##### setup docker db for debug runs
+Assumes docker is installed on machine.
+```bash
+$ make run_db
+$ make clean_db
+$ make stop_db
+
+$ make load_db # psql interactive db shell
+```
+
+##### run individual spider
+```bash
+$ make run_spider SPIDER=AMAZON SEARCH_KEYWORD=shirts
+```
+
 
 **API**
 
@@ -44,9 +83,4 @@ http://www.shopasource.com/api
 
 
 **Author**
-
-***Immanuel George***
-
-https://stackoverflow.com/cv/imgeorgeresume
-
-https://github.com/ikp4success
+[***Immanuel George***](https://stackoverflow.com/cv/imgeorgeresume)

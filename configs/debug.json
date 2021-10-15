@@ -1,5 +1,5 @@
 {
-  "SENTRY_DSN": "https://83314d479d874ef3b199d4db231e474f@sentry.io/1486149",
+  "SKIP_SENTRY": 1,
   "API_KEY": "debug",
   "ENVIRONMENT": "debug",
   "POSTGRESS_DB_URL": null

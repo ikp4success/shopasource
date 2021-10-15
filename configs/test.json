@@ -1,6 +1,0 @@
-{
-  "SENTRY_DSN": "",
-  "API_KEY": "test",
-  "ENVIRONMENT": "test",
-  "POSTGRESS_DB_URL": ""
-}
