@@ -17,7 +17,6 @@ class ChampSports(ShopBase):
     def start_requests(self):
         shop_url = self.shop_url.format(keyword=self._search_keyword)
         self.headers["Referer"] = shop_url
-        # self.headers["user-agent"] = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
         yield self.get_request(shop_url, self.parse_results, headers=self.headers)
 
     def parse_results(self, response):
