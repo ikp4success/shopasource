@@ -8,7 +8,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.sql import func
 
-from shops.shop_utilities.extra_function import generate_result_meta
+from shops.shop_util.extra_function import generate_result_meta
 from support import Config
 
 engine = db.create_engine(Config().POSTGRESS_DB_URL, convert_unicode=True,)

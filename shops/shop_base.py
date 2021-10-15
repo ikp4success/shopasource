@@ -4,14 +4,14 @@ from debug_app.manual_debug_funcs import printHtmlToFile
 from project.models import ShoppedData
 from shops.scrapy_settings.shop_settings import USER_AGENT
 from shops.shop_connect.shop_request import get_request
-from shops.shop_utilities.extra_function import (
+from shops.shop_util.extra_function import (
     extract_items,
     generate_result_meta,
     prepend_domain,
     safe_grab,
     safe_json,
 )
-from shops.shop_utilities.shop_setup_functions import find_shop_configuration
+from shops.shop_util.shop_setup_functions import find_shop_configuration
 from support import get_logger
 
 
@@ -31,7 +31,8 @@ class ShopBase(scrapy.Spider):
         self._search_keyword = search_keyword
 
     def start_requests(self):
-        self.logger.info("USER_AGENT: " + self.user_agent)
+        self.logger.info(f"USER_AGENT: {self.user_agent}")
+        self.logger.info(f"Search Keyword: {self._search_keyword}")
         shop_url = self.shop_url.format(keyword=self._search_keyword)
         self.headers["Referer"] = shop_url
         self.headers["USER-AGENT"] = self.user_agent

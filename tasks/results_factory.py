@@ -1,20 +1,20 @@
 import json
-import os
 import traceback
+from multiprocessing import Process
 from datetime import datetime, timezone
-from subprocess import call  # nosec
 
 from dateutil import parser
 from sentry_sdk import init
 from sqlalchemy import or_
 
 from project.models import ShoppedData
-from shops.shop_utilities.extra_function import safe_grab, safe_json, truncate_data
-from shops.shop_utilities.shop_setup import (
+from shops.shop_util.extra_function import safe_grab, safe_json, truncate_data
+from shops.shop_util.shop_setup import (
     SHOP_CACHE_LOOKUP_SET,
     SHOP_CACHE_MAX_EXPIRY_TIME,
 )
-from shops.shop_utilities.shop_setup_functions import find_shop, is_shop_active
+from shops.shop_util.shop_setup_functions import find_shop, is_shop_active
+from tasks.scrapy_run import spider_runner
 from support import Config, get_logger
 
 logger = get_logger(__name__)
@@ -60,7 +60,6 @@ def match_sk(search_keyword, searched_item, match_sk_set):
 
 
 def run_search(
-    shops_thread_list,
     shop_names_list,
     search_keyword,
     match_acc,
@@ -107,30 +106,22 @@ def run_search(
     return results
 
 
-def start_search(shop_name, search_keyword):
-    if not is_shop_active(shop_name):
-        return
-    launch_spiders(sk=search_keyword, sn=shop_name)
+def start_search(shop_names, search_keyword):
+    process = []
+    for shop_name in shop_names:
+        process_func = Process(target=launch_spiders, args=(shop_name, search_keyword))
+        process_func.start()
+        process.append(process_func)
+
+    for proc in process:
+        proc.join()
 
 
 def launch_spiders(sn, sk):
-    name = sn
-    search_keyword = sk
-    if not os.path.exists("json_shop_results/"):
-        os.makedirs("json_shop_results/")
-    file_name = "json_shop_results/{}_RESULTS.json".format(name)
-    open(file_name, "w+").close()
-    call(  # nosec
-        [
-            "scrapy",
-            "crawl",
-            "{}".format(name),
-            "-a",
-            "search_keyword={}".format(search_keyword),
-            "-o",
-            file_name,
-        ]
-    )
+    if is_shop_active(sn) and sk:
+        spider_runner(sn, sk)
+    else:
+        raise Exception("Name and Search_keyword required")
 
 
 def get_data_from_db_by_date_asc(searched_keyword, shop_name=None):
@@ -301,16 +292,16 @@ def get_json_db_results(
     if results:
         new_result = []
         if shop_names_list and len(shop_names_list) == 1:
-            for shop_name in shop_names_list:
-                results_by_date = get_data_from_db_by_date_asc(
-                    shop_name=shop_name, searched_keyword=search_keyword
-                )
-                if results_by_date and is_new_data(results_by_date, search_keyword):
-                    new_result.extend(results)
-                else:
-                    delete_data_by_shop_sk(shop_name, search_keyword)
-                    if not is_cache:
-                        start_search(shop_name, search_keyword)
+            shop_name = shop_names_list[0]
+            results_by_date = get_data_from_db_by_date_asc(
+                shop_name=shop_name, searched_keyword=search_keyword
+            )
+            if results_by_date and is_new_data(results_by_date, search_keyword):
+                new_result.extend(results)
+            else:
+                delete_data_by_shop_sk(shop_name, search_keyword)
+                if not is_cache:
+                    start_search([shop_name], search_keyword)
         else:
             new_result.extend(results)
 
@@ -329,8 +320,7 @@ def get_json_db_results(
     elif is_cache:
         return []
     else:
-        for shop_name in shop_names_list:
-            start_search(shop_name, search_keyword)
+        start_search(shop_names_list, search_keyword)
         results = get_data_from_db_contains(
             shop_names_list=shop_names_list,
             searched_keyword=search_keyword,

@@ -6,9 +6,9 @@ from quart import Quart, jsonify, render_template, request
 from sentry_sdk import init
 
 from project.models import Model, engine, Job
-from shops.shop_utilities.shop_setup_functions import get_shops
+from shops.shop_util.shop_setup_functions import get_shops
 from support import Config
-from utilities.results_factory import run_search
+from tasks.results_factory import run_search
 from webapp.config import configure_app
 
 init(Config().SENTRY_DSN)
@@ -85,20 +85,14 @@ async def get_result():
             match_acc = int(job.smatch or 0)
             low_to_high = json.JSONDecoder().decode(job.slh or "false")
             high_to_low = json.JSONDecoder().decode(job.shl or "false")
-            results = []
-            for shop_list_name in shop_list_names:
-                result = {
-                    shop_list_name: run_search(
-                        [],
-                        [shop_list_name],
-                        job.searched_keyword,
-                        match_acc,
-                        low_to_high,
-                        high_to_low,
-                        is_cache=True,
-                    )
-                }
-                results.append(result)
+            results = run_search(
+                shop_list_names,
+                job.searched_keyword,
+                match_acc,
+                low_to_high,
+                high_to_low,
+                is_cache=True,
+            )
 
         if not results:
             results = fallback_error
@@ -133,7 +127,6 @@ def start_api_search(**kwargs):
         return (results, 404)
 
     results = run_search(
-        [],
         shop_list_names,
         search_keyword,
         match_acc,
@@ -141,12 +134,13 @@ def start_api_search(**kwargs):
         high_to_low,
         is_cache=False,
     )
+
     if results and len(results) > 0 and results[0] != "null":
         results = results[0]
         update_status(status="done", guid=kwargs.get("guid"))
-        return results
-    results = {"message": "Sorry, no products found"}
-    update_status(status="error", guid=kwargs.get("guid"))
+    else:
+        results = {"message": "Sorry, no products found"}
+        update_status(status="error", guid=kwargs.get("guid"))
 
     return results
 
@@ -158,7 +152,7 @@ async def api_search():
     high_to_low = True
     kwargs = {**request.args}
 
-    if kwargs.get("async"):
+    if int(kwargs.get("async", "0")) == 1:
         job = Job(
             status="started",
             searched_keyword=request.args.get("sk"),
@@ -170,10 +164,9 @@ async def api_search():
         job.commit()
         kwargs["guid"] = str(job.id)
         kwargs["result"] = f"/api/get_result?guid={str(job.id)}"
-        # signature = partial(start_api_search, **kwargs)
-        # loop = asyncio.get_running_loop()
-        # loop.run_in_executor(None, signature)
-        start_api_search(**kwargs)
+        signature = partial(start_api_search, **kwargs)
+        loop = asyncio.get_running_loop()
+        loop.run_in_executor(None, signature)
         return {"status": job.status, **kwargs}, 200
     else:
         return jsonify(start_api_search(**kwargs), 200)

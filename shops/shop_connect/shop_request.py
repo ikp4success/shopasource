@@ -3,7 +3,7 @@ from scrapy.spidermiddlewares.httperror import HttpError
 from twisted.internet.error import DNSLookupError, TCPTimedOutError, TimeoutError
 from w3lib.url import safe_url_string
 
-from shops.shop_utilities.extra_function import prepend_domain
+from shops.shop_util.extra_function import prepend_domain
 from support import get_logger
 
 logger = get_logger(__name__)
