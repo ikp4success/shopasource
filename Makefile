@@ -19,6 +19,7 @@ DB_USER ?= admin
 DB_PORT ?= 5432
 DB_NAME ?= shopasource
 
+SAVE_TO_DB ?= 1
 SEARCH_KEYWORD ?= wallet
 
 
@@ -96,7 +97,7 @@ load_db:
 .PHONY: run_spider
 run_spider:
 	. $(VENV_ACTIVATE) ;\
-	SAVE_TO_DB=1 \
+	SAVE_TO_DB=$(SAVE_TO_DB) \
 	ENV_CONFIGURATION=$(STAGE) \
 	SKIP_SENTRY=1 \
 	STAGE=$(STAGE) \
