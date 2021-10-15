@@ -13,6 +13,11 @@ HOST := 0.0.0.0
 QUART_ENV := $(STAGE)
 QUART_APP := webapp.app
 
+DB_PASS ?= admin
+DB_USER ?= admin
+DB_PORT ?= 5004
+DB_NAME ?= shopasource
+
 
 .PHONY: ensure_git_clean
 ensure_git_clean:
@@ -55,7 +60,29 @@ run:
 	ENV_CONFIGURATION=$(STAGE) \
 	SKIP_SENTRY=1 \
 	STAGE=$(STAGE) \
+	DB_USER=$(DB_USER) \
+	DB_PASS=$(DB_PASS) \
+	DB_PORT=$(DB_PORT) \
+	DB_NAME=$(DB_NAME) \
 	quart run --host=$(HOST) --port=$(PORT)
+
+
+.PHONY: run_db
+run_db:
+	docker run --name sqlalchemy-orm-psql \
+    -e POSTGRES_PASSWORD=$(DB_PASS) \
+    -e POSTGRES_USER=$(DB_USER) \
+    -e POSTGRES_DB=$(DB_NAME) \
+    -p $(DB_PORT):$(DB_PORT) \
+    -d postgres
+
+.PHONY: stop_db
+stop_db:
+	docker stop sqlalchemy-orm-psql
+
+.PHONY: clean_db
+clean_db:
+	docker rm sqlalchemy-orm-psql
 
 
 clean:

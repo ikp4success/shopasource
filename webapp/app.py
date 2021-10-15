@@ -148,12 +148,12 @@ def start_api_search(**kwargs):
     return results
 
 
-@app.route("/schedule/api/shop/search", methods=["GET"])
+@app.route("/async/api/shop/search", methods=["GET"])
 async def schedule_api_search():
     match_acc = 0
     low_to_high = False
     high_to_low = True
-    kwargs = {**request.args}
+    kwargs = {**request.args, "async": False}
     job = Job(
         status="started",
         searched_keyword=request.args.get("sk"),
@@ -166,18 +166,20 @@ async def schedule_api_search():
 
     pdb.set_trace()
     job.commit()
-    start_api_search(**kwargs)
     kwargs["guid"] = str(job.id)
     kwargs["result"] = f"/api/get_result?guid={str(job.id)}"
-    # signature = partial(start_api_search, **kwargs)
-    # loop = asyncio.get_running_loop()
-    # loop.run_in_executor(None, signature)
+    if kwargs.get("async"):
+        signature = partial(start_api_search, **kwargs)
+        loop = asyncio.get_running_loop()
+        loop.run_in_executor(None, signature)
+    else:
+        start_api_search(**kwargs)
     return {"status": job.status, **kwargs}, 200
 
 
 @app.route("/api/shop/search", methods=["GET"])
 async def api_search():
-    kwargs = {**request.args}
+    kwargs = {**request.args, "async": False}
     return jsonify(start_api_search(**kwargs), 200)
 
 

@@ -34,7 +34,6 @@ repos:
     args:
     - --autofix
     - --no-sort-keys
-    exclude: ^terraform/release.tf.json$
   - id: mixed-line-ending
     # Begin Checkers
   - id: check-case-conflict
