@@ -78,7 +78,7 @@ class ShopBase(scrapy.Spider):
             date_searched=date_searched,
         )
         if gen_result:
-            shop = ShoppedData(**gen_result["search_keyword"])
+            shop = ShoppedData(**gen_result[searched_keyword])
             shop.commit()
         return gen_result
 

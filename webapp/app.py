@@ -5,7 +5,7 @@ from functools import partial
 from quart import Quart, jsonify, render_template, request
 from sentry_sdk import init
 
-from project.models import Job
+from project.models import Model, engine, Job
 from shops.shop_utilities.shop_setup_functions import get_shops
 from support import Config
 from utilities.results_factory import run_search
@@ -15,6 +15,7 @@ init(Config().SENTRY_DSN)
 
 app = Quart(__name__, template_folder="web_content")
 configure_app(app)
+Model.metadata.create_all(engine)
 
 
 @app.after_request
@@ -64,19 +65,22 @@ def format_shop(**kwargs):
 
 def update_status(**kwargs):
     if kwargs.get("guid"):
-        Job.query.filter(Job.id == kwargs.get("guid"),).update(
-            {"status": kwargs.get("status")}
-        )
-
-        Job.commit()
+        job = Job().get_item(id=kwargs.get("guid"))
+        if job and kwargs.get("status"):
+            job.status = kwargs.get("status")
+            job.commit()
 
 
 @app.route("/api/get_result", methods=["GET"])
 async def get_result():
     guid = request.args.get("guid")
+    status = "job not found"
+    fallback_error = [{"message": "Sorry, no products found"}]
+    results = None
     if guid:
         job = Job().get_item(id=guid)
         if job:
+            status = job.status
             shop_list_names = format_shop(shops=job.shop_list_names)
             match_acc = int(job.smatch or 0)
             low_to_high = json.JSONDecoder().decode(job.slh or "false")
@@ -95,12 +99,11 @@ async def get_result():
                     )
                 }
                 results.append(result)
-            if not results:
-                results = {"message": "Sorry, no products found"}
-        else:
-            results = {"message": "Sorry, no products found"}
 
-        output = {"status": job.status, "data": results}
+        if not results:
+            results = fallback_error
+
+        output = {"status": status, "data": results}
 
         return jsonify(output), 200
 
