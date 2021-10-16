@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import sys
 
 import coloredlogs
 
@@ -50,3 +51,15 @@ def generate_key():
     import uuid
 
     return str(uuid.uuid1()).replace("-", "").upper()
+
+
+def get_sys_args_kwargs():
+    args_lst = []
+    kwargs_dict = {}
+    for arg in sys.argv:
+        if "=" in arg:
+            arg = arg.split("=")
+            kwargs_dict[arg[0]] = arg[1]
+        else:
+            args_lst.append(arg)
+    return args_lst, kwargs_dict

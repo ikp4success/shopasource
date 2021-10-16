@@ -152,9 +152,18 @@ def truncate_data(data, length_cont, html_escape=False):
         return data
 
 
-def save_to_db(data):
+def save_shop_data(data):
     if data and int(os.environ.get("SAVE_TO_DB", 0)) != 1:
         from project.models import ShoppedData
 
         shop = ShoppedData(**data)
         shop.commit()
+
+
+def save_job(spider_name, job_id):
+    if job_id and int(os.environ.get("SAVE_TO_DB", 0)) != 1:
+        from project.models import Job
+
+        job = Job().get_item(id=job_id)
+        if job and job.meta:
+            job.meta[spider_name] = "done"

@@ -91,6 +91,7 @@ class Job(Model, ModelMixin):
     searched_keyword = db.Column(db.String, nullable=False)
     shop_list_names = db.Column(db.String, nullable=False)
     smatch = db.Column(db.String, nullable=False)
+    meta = db.Column(db.JSON, nullable=False)
     slh = db.Column(db.String, nullable=False)
     shl = db.Column(db.String, nullable=False)
     date_searched = db.Column(
@@ -105,6 +106,7 @@ class Job(Model, ModelMixin):
         self.slh = kwargs.get("slh")
         self.shl = kwargs.get("shl")
         self.smatch = kwargs.get("smatch")
+        self.meta = kwargs.get("meta")
 
     def __repr__(self):
         data_gen = {
@@ -114,6 +116,7 @@ class Job(Model, ModelMixin):
             "smatch": self.smatch,
             "slh": self.slh,
             "shl": self.shl,
+            "meta": self.meta,
             "date_searched": str(self.date_searched),
         }
         return json.dumps(data_gen)

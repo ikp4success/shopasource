@@ -31,7 +31,7 @@ def import_class(name):
     return getattr(module, name.title())
 
 
-def spider_runner(spider_name, search_keyword):
+def spider_runner(spider_name, search_keyword, job_id):
     spider_class = import_class(spider_name)
     logger.debug("Running spider {spider_class.name}")
     scrapy_settings = get_project_settings()
@@ -44,7 +44,7 @@ def spider_runner(spider_name, search_keyword):
         try:
             configure_logging()
             runner = SpiderRunner(settings=scrapy_settings)
-            runner.crawl(spider_class, search_keyword=search_keyword)
+            runner.crawl(spider_class, search_keyword=search_keyword, job_id=job_id)
             runner.run()
             q.put(None)
         except Exception as e:

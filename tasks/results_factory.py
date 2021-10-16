@@ -1,7 +1,7 @@
 import json
 import traceback
 from datetime import datetime, timezone
-from multiprocessing import Process
+from subprocess import call  # nosec
 
 from dateutil import parser
 from sqlalchemy import or_
@@ -62,6 +62,8 @@ def run_search(
     low_to_high,
     high_to_low,
     is_cache=False,
+    is_async=True,
+    job_id=None,
 ):
     results = {}
     try:
@@ -77,7 +79,7 @@ def run_search(
 
         if search_keyword is not None and search_keyword.strip() != "":
             if len(search_keyword) < 2:
-                results = {"message": "Sorry, no products found"}
+                results = [{"message": "Sorry, no products found"}]
                 return results
             search_keyword = truncate_data(search_keyword, 75, html_escape=True)
 
@@ -88,34 +90,45 @@ def run_search(
                 low_to_high,
                 high_to_low,
                 is_cache,
+                is_async,
+                job_id,
             )
-            if results is None or len(results) == 0:
-                results = {"message": "Sorry, no products found"}
+            if not results:
+                results = [{"message": "Sorry, no products found"}]
             return results
     except Exception as e:
-        results = {
-            "message": "Sorry, error encountered during search, try again or contact admin if error persist"
-        }
+        results = [
+            {
+                "message": "Sorry, error encountered during search, try again or contact admin if error persist"
+            }
+        ]
         logger.warning(e)
         logger.warning(traceback.format_exc())
         return results
     return results
 
 
-def start_search(shop_names, search_keyword):
-    process = []
+def start_search(shop_names, search_keyword, is_async, job_id):
     for shop_name in shop_names:
-        process_func = Process(target=launch_spiders, args=(shop_name, search_keyword))
-        process_func.start()
-        process.append(process_func)
-
-    for proc in process:
-        proc.join()
+        launch_spiders(shop_name, search_keyword, is_async, job_id)
 
 
-def launch_spiders(sn, sk):
+def launch_spiders(sn, sk, is_async, job_id):
     if is_shop_active(sn) and sk:
-        spider_runner(sn, sk)
+        if is_async:
+            call(  # nosec
+                [
+                    "scrapy",
+                    "crawl",
+                    f"{sn.upper()}",
+                    "-a",
+                    f"search_keyword={sk}",
+                    "-a",
+                    f"job_id={job_id}",
+                ]
+            )
+        else:
+            spider_runner(sn, sk)
     else:
         raise Exception("Name and Search_keyword required")
 
@@ -276,7 +289,14 @@ def delete_data_by_shop_sk(shop_name, search_keyword):
 
 
 def get_json_db_results(
-    shop_names_list, search_keyword, match_acc, low_to_high, high_to_low, is_cache
+    shop_names_list,
+    search_keyword,
+    match_acc,
+    low_to_high,
+    high_to_low,
+    is_cache,
+    is_async,
+    job_id=None,
 ):
 
     results = get_data_from_db(
@@ -297,7 +317,7 @@ def get_json_db_results(
             else:
                 delete_data_by_shop_sk(shop_name, search_keyword)
                 if not is_cache:
-                    start_search([shop_name], search_keyword)
+                    start_search([shop_name], search_keyword, is_async, job_id)
         else:
             new_result.extend(results)
 
@@ -316,7 +336,7 @@ def get_json_db_results(
     elif is_cache:
         return []
     else:
-        start_search(shop_names_list, search_keyword)
+        start_search(shop_names_list, search_keyword, is_async, job_id)
         results = get_data_from_db_contains(
             shop_names_list=shop_names_list,
             searched_keyword=search_keyword,

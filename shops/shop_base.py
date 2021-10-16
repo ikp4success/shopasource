@@ -9,7 +9,8 @@ from shops.shop_util.extra_function import (
     prepend_domain,
     safe_grab,
     safe_json,
-    save_to_db,
+    save_job,
+    save_shop_data,
 )
 from shops.shop_util.shop_setup_functions import find_shop_configuration
 from support import Config, get_logger
@@ -20,6 +21,7 @@ Config().intialize_sentry()
 class ShopBase(scrapy.Spider):
     name = None
     _search_keyword = None
+    _job_id = None
     shop_url = None
     domain_url = None
     headers = {}
@@ -27,10 +29,11 @@ class ShopBase(scrapy.Spider):
     user_agent = USER_AGENT
     logger = get_logger(__name__)
 
-    def __init__(self, search_keyword):
+    def __init__(self, search_keyword, job_id=None):
         self.name = self.find_shop_configuration()["name"]
         self.shop_url = self.find_shop_configuration()["url"]
         self._search_keyword = search_keyword
+        self._job_id = job_id
 
     def start_requests(self):
         self.logger.info(f"USER_AGENT: {self.user_agent}")
@@ -41,10 +44,14 @@ class ShopBase(scrapy.Spider):
         yield get_request(
             url=shop_url,
             domain_url=self.domain_url,
-            callback=self.parse_results,
+            callback=self.parse_pre_results,
             headers=self.headers,
             meta=self.meta,
         )
+
+    def parse_pre_results(self, response):
+        yield from self.parse_results(response)
+        save_job(self.name, self._job_id)
 
     def get_request(self, url, callback, domain_url=None, meta=None, headers=None):
         return get_request(
@@ -81,7 +88,7 @@ class ShopBase(scrapy.Spider):
             date_searched=date_searched,
         )
         if gen_result and gen_result.get(searched_keyword):
-            save_to_db(gen_result[searched_keyword])
+            save_shop_data(gen_result[searched_keyword])
         return gen_result
 
     def safe_json(self, data):

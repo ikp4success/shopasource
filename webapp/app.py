@@ -6,9 +6,11 @@ from quart import Quart, jsonify, render_template, request
 
 from project.models import Job, Model, engine
 from shops.shop_util.shop_setup_functions import get_shops
-from support import Config
+from support import Config, get_logger
 from tasks.results_factory import run_search
 from webapp.config import configure_app
+
+logger = get_logger(__name__)
 
 Config().intialize_sentry()
 
@@ -76,6 +78,9 @@ async def get_result():
     status = "job not found"
     fallback_error = [{"message": "Sorry, no products found"}]
     results = None
+    import pdb
+
+    pdb.set_trace()
     if guid:
         job = Job().get_item(id=guid)
         if job:
@@ -91,7 +96,22 @@ async def get_result():
                 low_to_high,
                 high_to_low,
                 is_cache=True,
+                job_id=job.id,
             )
+            in_progress_shops = []
+            if job.meta and status != "done":
+                for k, v in job.meta.items():
+                    if v != "done":
+                        in_progress_shops.append(k)
+
+                status = "done"
+                if in_progress_shops:
+                    logger.debug("{in_progress_shops} still in progress.")
+                    status = "in_progress"
+            elif job.meta:
+                for k, _ in job.meta.items():
+                    job.meta[k] = "done"
+                job.commit()
 
         if not results:
             results = fallback_error
@@ -125,6 +145,10 @@ def start_api_search(**kwargs):
         update_status(status="error", guid=kwargs.get("guid"))
         return (results, 404)
 
+    is_async = True
+    if kwargs.get("async") == "0":
+        is_async = False
+
     results = run_search(
         shop_list_names,
         search_keyword,
@@ -132,6 +156,8 @@ def start_api_search(**kwargs):
         low_to_high,
         high_to_low,
         is_cache=False,
+        is_async=is_async,
+        job_id=kwargs.get("guid"),
     )
 
     if results and len(results) > 0 and results[0] != "null":
@@ -152,6 +178,7 @@ async def api_search():
     kwargs = {**request.args}
 
     if int(kwargs.get("async", "0")) == 1:
+        shop_list_names = format_shop(**kwargs)
         job = Job(
             status="started",
             searched_keyword=request.args.get("sk"),
@@ -159,6 +186,7 @@ async def api_search():
             smatch=request.args.get("smatch") or match_acc,
             slh=request.args.get("slh") or low_to_high,
             shl=request.args.get("shl") or high_to_low,
+            meta={shop_list_name: "started" for shop_list_name in shop_list_names},
         )
         job.commit()
         kwargs["guid"] = str(job.id)
