@@ -1,6 +1,6 @@
 import scrapy
-
 from debug_app.manual_debug_funcs import printHtmlToFile
+
 from shops.scrapy_settings.shop_settings import USER_AGENT
 from shops.shop_connect.shop_request import get_request
 from shops.shop_util.extra_function import (
