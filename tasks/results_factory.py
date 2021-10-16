@@ -116,6 +116,7 @@ def start_search(shop_names, search_keyword, is_async, job_id):
 def launch_spiders(sn, sk, is_async, job_id):
     if is_shop_active(sn) and sk:
         if is_async:
+            # HACK:  scrapy blocks process, so using python subprocess
             call(  # nosec
                 [
                     "scrapy",
@@ -128,6 +129,7 @@ def launch_spiders(sn, sk, is_async, job_id):
                 ]
             )
         else:
+            # actual scrapy designed thread runs, this will block
             spider_runner(sn, sk, job_id)
     else:
         raise Exception("Name and Search_keyword required")
