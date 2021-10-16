@@ -85,6 +85,9 @@ $ make run_db && make run_docker
 $ make run_spider SPIDER=AMAZON SEARCH_KEYWORD=shirts
 ```
 
+##### deploys
+project currently runs on heroku, you can setup your own heroku instance and deploy. for more information goto https://devcenter.heroku.com/articles/git.
+
 
 **API**
 
