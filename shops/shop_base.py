@@ -1,5 +1,6 @@
+import os
+
 import scrapy
-from debug_app.manual_debug_funcs import printHtmlToFile
 
 from shops.scrapy_settings.shop_settings import USER_AGENT
 from shops.shop_connect.shop_request import get_request
@@ -102,7 +103,18 @@ class ShopBase(scrapy.Spider):
         return prepend_domain(url, domain_url, ignore_domain_splice)
 
     def printHtmlToFile(self, html, page_name=None):
-        return printHtmlToFile(html, page_name)
+        if page_name is None:
+            page_name = "spider_test"
+        filename = "scraped_sites/spidertest_" + page_name + ".html"
+        if not os.path.exists(os.path.dirname(filename)):
+            os.makedirs(os.path.dirname(filename))
+            file = open(filename, "w")
+            file.write(html)
+            file.close()
+        else:
+            file = open(filename, "w")
+            file.write(html)
+            file.close()
 
     def extract_items(self, items):
         return extract_items(items)

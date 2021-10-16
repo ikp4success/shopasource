@@ -18,6 +18,7 @@ DB_PASS ?= admin
 DB_USER ?= admin
 DB_PORT ?= 5432
 DB_NAME ?= shopasource
+DB_DOMAIN ?= localhost
 
 SAVE_TO_DB ?= 1
 SEARCH_KEYWORD ?= wallet
@@ -68,6 +69,8 @@ run:
 	DB_PASS=$(DB_PASS) \
 	DB_PORT=$(DB_PORT) \
 	DB_NAME=$(DB_NAME) \
+	DB_DOMAIN=$(DB_DOMAIN) \
+	SAVE_TO_DB=$(SAVE_TO_DB) \
 	quart run --host=$(HOST) --port=$(PORT)
 
 
@@ -97,7 +100,7 @@ load_db:
 .PHONY: run_spider
 run_spider:
 	. $(VENV_ACTIVATE) ;\
-	SAVE_TO_DB=$(SAVE_TO_DB) \
+	SAVE_TO_DB=0 \
 	ENV_CONFIGURATION=$(STAGE) \
 	SKIP_SENTRY=1 \
 	STAGE=$(STAGE) \
@@ -105,6 +108,7 @@ run_spider:
 	DB_PASS=$(DB_PASS) \
 	DB_PORT=$(DB_PORT) \
 	DB_NAME=$(DB_NAME) \
+	DB_DOMAIN=$(DB_DOMAIN) \
 	$(VENV)/bin/scrapy crawl $(SPIDER) -a search_keyword=$(SEARCH_KEYWORD) -o json_shop_results/$(SPIDER)_RESULTS.json
 
 
@@ -113,18 +117,8 @@ docker_build: docker_build
 	docker build -t shopasource . \
 
 .PHONY: run_docker
-run_docker:
-	docker network create mynet \
-	docker run \
-		--network mynet \
-		--name $(DK_NAME) \
-		-v $(pwd)/datadir:/var/lib/postgresql/data \
-		-e POSTGRES_PASSWORD=$(DB_PASS) \
-    -e POSTGRES_USER=$(DB_USER) \
-    -e POSTGRES_DB=$(DB_NAME) \
-    -p $(DB_PORT):$(DB_PORT) \
-		-d postgres
-	docker run --network mynet -ti \
+run_docker: docker_build
+	docker run -it --net=host \
 	  -e QUART_ENV=$(QUART_ENV) \
 		-e QUART_APP=$(QUART_APP) \
 		-e ENV_CONFIGURATION=$(STAGE) \
@@ -134,6 +128,7 @@ run_docker:
 		-e DB_PASS=$(DB_PASS) \
 		-e DB_PORT=$(DB_PORT) \
 		-e DB_NAME=$(DB_NAME) \
+		-e DB_DOMAIN=$(DB_DOMAIN) \
 		-e SAVE_TO_DB=$(SAVE_TO_DB) \
 		-p $(PORT):$(PORT) \
 		shopasource

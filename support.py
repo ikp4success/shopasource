@@ -19,7 +19,7 @@ class Config:
         for k, v in config.items():
             setattr(self, k, v)
         if self.ENVIRONMENT == "debug":
-            self.POSTGRESS_DB_URL = f"postgresql://{os.environ['DB_USER']}:{os.environ['DB_PASS']}@localhost:{os.environ['DB_PORT']}/{os.environ['DB_NAME']}"
+            self.POSTGRESS_DB_URL = f"postgresql://{os.environ['DB_USER']}:{os.environ['DB_PASS']}@{os.environ['DB_DOMAIN']}:{os.environ['DB_PORT']}/{os.environ['DB_NAME']}"
 
     def load_config(self):
         config = get_config()
