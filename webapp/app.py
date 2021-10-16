@@ -78,9 +78,7 @@ async def get_result():
     status = "job not found"
     fallback_error = [{"message": "Sorry, no products found"}]
     results = None
-    import pdb
 
-    pdb.set_trace()
     if guid:
         job = Job().get_item(id=guid)
         if job:
@@ -139,9 +137,11 @@ def start_api_search(**kwargs):
         if not low_to_high:  # fail safe
             high_to_low = True
     except Exception:
-        results = {
-            "message": "Sorry, error encountered during search, try again or contact admin if error persist"
-        }
+        results = [
+            {
+                "message": "Sorry, error encountered during search, try again or contact admin if error persist"
+            }
+        ]
         update_status(status="error", guid=kwargs.get("guid"))
         return (results, 404)
 
@@ -164,7 +164,7 @@ def start_api_search(**kwargs):
         results = results[0]
         update_status(status="done", guid=kwargs.get("guid"))
     else:
-        results = {"message": "Sorry, no products found"}
+        results = [{"message": "Sorry, no products found"}]
         update_status(status="error", guid=kwargs.get("guid"))
 
     return results
