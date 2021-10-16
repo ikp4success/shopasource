@@ -136,3 +136,6 @@ run_docker: docker_build
 
 clean:
 	rm -rf $(VENV)
+	docker rm $(DK_NAME)
+	docker image prune -f
+	docker container prune

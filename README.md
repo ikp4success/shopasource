@@ -73,6 +73,13 @@ $ make stop_db
 $ make load_db # psql interactive db shell
 ```
 
+##### run flask project in docker
+```bash
+$ make run_docker  # debug is default
+# make sure db is running or ..
+$ make run_db && make run_docker
+```
+
 ##### run individual spider
 ```bash
 $ make run_spider SPIDER=AMAZON SEARCH_KEYWORD=shirts
