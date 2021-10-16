@@ -16,8 +16,8 @@ COPY requirements.txt .
 
 RUN pip install --upgrade pip && pip --no-cache-dir install -r requirements.txt
 
-EXPOSE 5001
+EXPOSE 5003
 WORKDIR /
 ADD . .
 # Run the application.
-CMD ["gunicorn", "-b", "0.0.0.0:5003", "webapp.app:webapp.app"]
+CMD ["quart", "run", "--host=0.0.0.0", "--port=5003"]
