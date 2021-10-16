@@ -14,7 +14,7 @@ http://www.shopasource.com/
 
 Shop A Source provide easy access to search multiple shopping websites via one source. Website users can manage products and decide what product is best. Shop A Source could also be used to compare prices of a product.
 
-**ScreenShots**
+**Screenshots**
 
 ![s1](https://github.com/ikp4success/shopasource/blob/master/screenshots/s1.png)
 ![s2](https://github.com/ikp4success/shopasource/blob/master/screenshots/s2.png)
@@ -86,7 +86,7 @@ $ make run_spider SPIDER=AMAZON SEARCH_KEYWORD=shirts
 ```
 
 ##### deploys
-project currently runs on heroku, you can setup your own heroku instance and deploy. for more information goto https://devcenter.heroku.com/articles/git.
+project currently runs on Heroku, you can setup your own app-instance and deploy. for more information go to https://devcenter.heroku.com/articles/git. You could also use another service to host the project.
 
 
 **API**
