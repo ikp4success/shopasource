@@ -97,6 +97,7 @@ async def get_result():
                 job_id=job.id,
             )
             in_progress_shops = []
+            meta_print = None
             if job.meta and status != "done":
                 for k, v in job.meta.items():
                     if v != "done":
@@ -104,17 +105,14 @@ async def get_result():
 
                 status = "done"
                 if in_progress_shops:
-                    logger.debug("{in_progress_shops} still in progress.")
+                    meta_print = f"{in_progress_shops} still in progress."
+                    logger.debug(meta_print)
                     status = "in_progress"
-            elif job.meta:
-                for k, _ in job.meta.items():
-                    job.meta[k] = "done"
-                job.commit()
 
         if not results:
             results = fallback_error
 
-        output = {"status": status, "data": results}
+        output = {"status": status, "data": results, "meta": meta_print}
 
         return jsonify(output), 200
 

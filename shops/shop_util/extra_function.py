@@ -3,6 +3,7 @@ import html
 import json
 import os
 import re
+from copy import deepcopy
 from urllib import parse as urlparse
 
 
@@ -166,7 +167,8 @@ def save_job(spider_name, job_id):
 
         job = Job().get_item(id=job_id)
 
-        print(job)
-        print("over here")
         if job and job.meta:
-            job.meta[spider_name] = "done"
+            meta = deepcopy(job.meta)
+            meta[spider_name] = "done"
+            job.meta = meta
+            job.commit()
