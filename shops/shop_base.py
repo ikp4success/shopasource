@@ -38,6 +38,7 @@ class ShopBase(scrapy.Spider):
     def start_requests(self):
         self.logger.info(f"USER_AGENT: {self.user_agent}")
         self.logger.info(f"Search Keyword: {self._search_keyword}")
+        self.logger.info(f"Job ID: {self._job_id}")
         shop_url = self.shop_url.format(keyword=self._search_keyword)
         self.headers["Referer"] = shop_url
         self.headers["USER-AGENT"] = self.user_agent

@@ -165,5 +165,8 @@ def save_job(spider_name, job_id):
         from project.models import Job
 
         job = Job().get_item(id=job_id)
+
+        print(job)
+        print("over here")
         if job and job.meta:
             job.meta[spider_name] = "done"

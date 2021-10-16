@@ -128,7 +128,7 @@ def launch_spiders(sn, sk, is_async, job_id):
                 ]
             )
         else:
-            spider_runner(sn, sk)
+            spider_runner(sn, sk, job_id)
     else:
         raise Exception("Name and Search_keyword required")
 
