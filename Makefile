@@ -108,5 +108,36 @@ run_spider:
 	$(VENV)/bin/scrapy crawl $(SPIDER) -a search_keyword=$(SEARCH_KEYWORD) -o json_shop_results/$(SPIDER)_RESULTS.json
 
 
+.PHONY: docker_build
+docker_build: docker_build
+	docker build -t shopasource . \
+
+.PHONY: run_docker
+run_docker:
+	docker network create mynet \
+	docker run \
+		--network mynet \
+		--name $(DK_NAME) \
+		-v $(pwd)/datadir:/var/lib/postgresql/data \
+		-e POSTGRES_PASSWORD=$(DB_PASS) \
+    -e POSTGRES_USER=$(DB_USER) \
+    -e POSTGRES_DB=$(DB_NAME) \
+    -p $(DB_PORT):$(DB_PORT) \
+		-d postgres
+	docker run --network mynet -ti \
+	  -e QUART_ENV=$(QUART_ENV) \
+		-e QUART_APP=$(QUART_APP) \
+		-e ENV_CONFIGURATION=$(STAGE) \
+		-e SKIP_SENTRY=1 \
+		-e STAGE=$(STAGE) \
+		-e DB_USER=$(DB_USER) \
+		-e DB_PASS=$(DB_PASS) \
+		-e DB_PORT=$(DB_PORT) \
+		-e DB_NAME=$(DB_NAME) \
+		-e SAVE_TO_DB=$(SAVE_TO_DB) \
+		-p $(PORT):$(PORT) \
+		shopasource
+
+
 clean:
 	rm -rf $(VENV)

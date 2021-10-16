@@ -7,11 +7,11 @@
 # Usage:
 #
 #   sudo docker build -t shopasource .
-#   sudo docker run -it -p 5001:5001 shopasource
+#   sudo docker run -it -p 5003:5003 shopasource
 #
 # Pull the base image.
-FROM python:3
-ENV proj_env_shop_a_source 1.0
+FROM python:3.8
+ENV .venv 1.0
 COPY requirements.txt .
 
 RUN pip install --upgrade pip && pip --no-cache-dir install -r requirements.txt
@@ -20,4 +20,4 @@ EXPOSE 5001
 WORKDIR /
 ADD . .
 # Run the application.
-CMD ["gunicorn", "-b", "0.0.0.0:5001", "app:app"]
+CMD ["gunicorn", "-b", "0.0.0.0:5003", "webapp.app:webapp.app"]
