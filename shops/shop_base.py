@@ -73,7 +73,6 @@ class ShopBase(scrapy.Spider):
     def parse_pre_results(self, response):
         self.logger.info("Parsing result..")
         yield from self.parse_results(response)
-        save_job(self.name, self._job_id, status="error")
 
     def parse_errcallback(self, failure):
         self.logger.info("Parse errcallback")
