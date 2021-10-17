@@ -4,7 +4,7 @@ from functools import partial
 
 from project.models import Job
 from support import get_logger
-from tasks.results_factory import ResultsFactory, format_shop_list_names
+from tasks.results_factory import ResultsFactory, format_shop_names_list
 
 logger = get_logger(__name__)
 
@@ -21,7 +21,7 @@ def validate_params(**kwargs):
     try:
         cleaned = {
             "search_keyword": kwargs["sk"],
-            "shop_list_names": kwargs["shops"],
+            "shop_names_list": kwargs["shops"],
             "match_acc": int(kwargs.get("smatch") or 0),
             "low_to_high": json.JSONDecoder().decode(kwargs.get("slh") or "false"),
             "high_to_low": json.JSONDecoder().decode(kwargs.get("shl") or "false"),
@@ -59,7 +59,7 @@ def start_async_requests(**kwargs):
         status="started",
         meta={
             shop_list_name: "started"
-            for shop_list_name in format_shop_list_names(kwargs.get("shop_list_names"))
+            for shop_list_name in format_shop_names_list(kwargs.get("shop_names_list"))
         },
         **kwargs,
     )
@@ -84,7 +84,7 @@ def get_results(**kwargs):
         job = Job().get_item(id=guid)
         if job:
             status = job.status
-            params = job.repr()
+            params = json.loads(job.__repr__())
             res_factory = ResultsFactory(**params, is_cache=True)
             results = res_factory.run_search()
             in_progress_shops = []

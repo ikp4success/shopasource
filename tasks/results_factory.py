@@ -30,18 +30,17 @@ possible_match_abbrev = {
 }
 
 
-def format_shop_list_names(**kwargs):
-    shop_list_names = kwargs.get("shops")
-    if shop_list_names:
-        shop_list_names = shop_list_names.strip()
-        if "," in shop_list_names:
-            shop_list_names = [
-                shn.strip().upper() for shn in shop_list_names.split(",") if shn.strip()
+def format_shop_names_list(shop_names_list):
+    if shop_names_list:
+        shop_names_list = shop_names_list.strip()
+        if "," in shop_names_list:
+            shop_names_list = [
+                shn.strip().upper() for shn in shop_names_list.split(",") if shn.strip()
             ]
         else:
-            shop_list_names = [shop_list_names.upper()]
+            shop_names_list = [shop_names_list.upper()]
 
-    return shop_list_names
+    return shop_names_list
 
 
 class ResultsFactory:
@@ -58,11 +57,11 @@ class ResultsFactory:
         self.search_keyword = kwargs.get("search_keyword")
         self.job_id = kwargs.get("job_id")
         self.shop_names_list = self.validate_shop_list(
-            format_shop_list_names(kwargs.get("shop_names_list"))
+            format_shop_names_list(kwargs.get("shop_names_list"))
         )
         if not self.shop_names_list:
             raise Exception("Shops are required.")
-        self.match_acc = kwargs.get("match_acc")
+        self.match_acc = int(kwargs.get("match_acc", 0))
         self.low_to_high = kwargs.get("low_to_high")
         self.high_to_low = kwargs.get("high_to_low")
         self.is_cache = kwargs.get("is_cache")
@@ -75,8 +74,8 @@ class ResultsFactory:
                 valid_shops.append(shop_name)
         return valid_shops
 
-    def match_sk(self, searched_item, match_sk_set):
-        if match_sk_set == 0:
+    def match_sk(self, searched_item):
+        if self.match_acc == 0:
             return True
         if not self.search_keyword or not searched_item:
             return False
@@ -93,7 +92,7 @@ class ResultsFactory:
 
         if match_count > 0:
             percentage_sk_match = (match_count / len(search_keyword_arr)) * 100
-            if percentage_sk_match >= match_sk_set:
+            if percentage_sk_match >= self.match_acc:
                 return True
         return False
 
@@ -137,8 +136,9 @@ class ResultsFactory:
             return results
         return results
 
-    def start_search(self, shop_names=None):
-        for shop_name in self.shop_names:
+    def start_search(self, shop_names_list=None):
+        shop_names_list = shop_names_list or self.shop_names_list
+        for shop_name in shop_names_list:
             launch_spiders(shop_name, self.search_keyword, self.is_async, self.job_id)
 
     def get_data_from_db_by_date_asc(self, shop_name=None):
@@ -146,14 +146,14 @@ class ResultsFactory:
         if not shop_name:
             results_db.append(
                 ShoppedData.query.filter(
-                    ShoppedData.searched_keyword == self.searched_keyword
+                    ShoppedData.searched_keyword == self.search_keyword
                 )
                 .order_by(ShoppedData.date_searched.asc())
                 .first()
             )
         results_db.append(
             ShoppedData.query.filter(
-                ShoppedData.searched_keyword == self.searched_keyword,
+                ShoppedData.searched_keyword == self.search_keyword,
                 ShoppedData.shop_name == shop_name,
             )
             .order_by(ShoppedData.date_searched.asc())
@@ -170,11 +170,9 @@ class ResultsFactory:
                     ShoppedData.query.filter(
                         # ShoppedData.searched_keyword.contains(searched_keyword),
                         or_(
-                            ShoppedData.searched_keyword.contains(
-                                self.searched_keyword
-                            ),
+                            ShoppedData.searched_keyword.contains(self.search_keyword),
                             ShoppedData.content_description.contains(
-                                self.searched_keyword
+                                self.search_keyword
                             ),
                         ),
                         ShoppedData.shop_name.in_(self.shop_names_list),
@@ -188,11 +186,9 @@ class ResultsFactory:
                     ShoppedData.query.filter(
                         # ShoppedData.searched_keyword.contains(searched_keyword),
                         or_(
-                            ShoppedData.searched_keyword.contains(
-                                self.searched_keyword
-                            ),
+                            ShoppedData.searched_keyword.contains(self.search_keyword),
                             ShoppedData.content_description.contains(
-                                self.searched_keyword
+                                self.search_keyword
                             ),
                         ),
                         ShoppedData.shop_name.in_(self.shop_names_list),
@@ -206,11 +202,9 @@ class ResultsFactory:
                     ShoppedData.query.filter(
                         # ShoppedData.searched_keyword.contains(searched_keyword),
                         or_(
-                            ShoppedData.searched_keyword.contains(
-                                self.searched_keyword
-                            ),
+                            ShoppedData.searched_keyword.contains(self.search_keyword),
                             ShoppedData.content_description.contains(
-                                self.searched_keyword
+                                self.search_keyword
                             ),
                         )
                     )
@@ -222,11 +216,9 @@ class ResultsFactory:
                     ShoppedData.query.filter(
                         # ShoppedData.searched_keyword.contains(searched_keyword),
                         or_(
-                            ShoppedData.searched_keyword.contains(
-                                self.searched_keyword
-                            ),
+                            ShoppedData.searched_keyword.contains(self.search_keyword),
                             ShoppedData.content_description.contains(
-                                self.searched_keyword
+                                self.search_keyword
                             ),
                         )
                     )
@@ -237,7 +229,7 @@ class ResultsFactory:
             if results:
                 results_1 = []
                 for result in results:
-                    result.searched_keyword = self.searched_keyword
+                    result.searched_keyword = self.search_keyword
                     results_1.append(result)
                 results_centre = [res.__str__() for res in results_1]
         return results_centre
@@ -249,7 +241,7 @@ class ResultsFactory:
             if self.high_to_low:
                 results_db.append(
                     ShoppedData.query.filter(
-                        ShoppedData.searched_keyword == self.searched_keyword,
+                        ShoppedData.searched_keyword == self.search_keyword,
                         ShoppedData.shop_name.in_(self.shop_names_list),
                     )
                     .order_by(ShoppedData.numeric_price.desc())
@@ -258,7 +250,7 @@ class ResultsFactory:
             elif self.low_to_high:
                 results_db.append(
                     ShoppedData.query.filter(
-                        ShoppedData.searched_keyword == self.searched_keyword,
+                        ShoppedData.searched_keyword == self.search_keyword,
                         ShoppedData.shop_name.in_(self.shop_names_list),
                     )
                     .order_by(ShoppedData.numeric_price.asc())
@@ -268,7 +260,7 @@ class ResultsFactory:
             if self.high_to_low:
                 results_db.append(
                     ShoppedData.query.filter(
-                        ShoppedData.searched_keyword == self.searched_keyword
+                        ShoppedData.searched_keyword == self.search_keyword
                     )
                     .order_by(ShoppedData.numeric_price.desc())
                     .all()
@@ -276,7 +268,7 @@ class ResultsFactory:
             elif self.low_to_high:
                 results_db.append(
                     ShoppedData.query.filter(
-                        ShoppedData.searched_keyword == self.searched_keyword
+                        ShoppedData.searched_keyword == self.search_keyword
                     )
                     .order_by(ShoppedData.numeric_price.asc())
                     .all()
@@ -291,11 +283,7 @@ class ResultsFactory:
         mk_results = []
         for item_r in results:
             item_r = safe_json(item_r)
-            if self.match_sk(
-                self.searched_keyword,
-                safe_grab(item_r, [self.searched_keyword, "title"]),
-                self.match_acc,
-            ):
+            if self.match_sk(safe_grab(item_r, [self.search_keyword, "title"]),):
                 mk_results.append(json.dumps(item_r))
         return mk_results
 

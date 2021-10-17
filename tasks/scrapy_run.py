@@ -74,6 +74,7 @@ def launch_spiders(sn, sk, is_async, job_id):
             )
         else:
             # actual scrapy designed thread runs, this will block.
+            # TODO:  this should be its own queue-server.
             spider_runner(sn, sk, job_id)
     else:
         raise Exception("Name and Search_keyword required")

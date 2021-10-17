@@ -88,34 +88,33 @@ class Job(Model, ModelMixin):
     __tablename__ = "job"
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     status = db.Column(db.String, nullable=False)
-    searched_keyword = db.Column(db.String, nullable=False)
-    shop_list_names = db.Column(db.String, nullable=False)
-    smatch = db.Column(db.String, nullable=False)
+    search_keyword = db.Column(db.String, nullable=False)
+    shop_names_list = db.Column(db.String, nullable=False)
+    match_acc = db.Column(db.String, nullable=False)
     meta = db.Column(db.JSON, nullable=False)
-    slh = db.Column(db.String, nullable=False)
-    shl = db.Column(db.String, nullable=False)
+    low_to_high = db.Column(db.String, nullable=False)
+    high_to_low = db.Column(db.String, nullable=False)
     date_searched = db.Column(
         db.DateTime(timezone=True), default=datetime.datetime.utcnow
     )
 
     def __init__(self, *args, **kwargs):
         self.status = kwargs.get("status")
-        self.searched_keyword = kwargs.get("searched_keyword")
-        self.shop_list_names = kwargs.get("shop_list_names")
-        self.smatch = kwargs.get("smatch")
-        self.slh = kwargs.get("slh")
-        self.shl = kwargs.get("shl")
-        self.smatch = kwargs.get("smatch")
+        self.search_keyword = kwargs.get("search_keyword")
+        self.shop_names_list = kwargs.get("shop_names_list")
+        self.match_acc = kwargs.get("match_acc")
+        self.low_to_high = kwargs.get("low_to_high")
+        self.high_to_low = kwargs.get("high_to_low")
         self.meta = kwargs.get("meta")
 
     def __repr__(self):
         data_gen = {
             "status": self.status,
-            "searched_keyword": self.searched_keyword,
-            "shop_list_names": self.shop_list_names,
-            "smatch": self.smatch,
-            "slh": self.slh,
-            "shl": self.shl,
+            "search_keyword": self.search_keyword,
+            "shop_names_list": self.shop_names_list,
+            "match_acc": self.match_acc,
+            "low_to_high": self.low_to_high,
+            "high_to_low": self.high_to_low,
             "meta": self.meta,
             "date_searched": str(self.date_searched),
         }

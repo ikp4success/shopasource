@@ -65,7 +65,7 @@ async def api_search():
     if not params[1]:
         return (params, 400)
 
-    if int(params[0].get("async", "0")) == 1:
+    if params[0]["is_async"]:
         start_data = start_async_requests(**params[0])
         return {**start_data}, 200
     else:
