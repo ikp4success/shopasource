@@ -100,4 +100,4 @@ def get_results(**kwargs):
     else:
         results = [{"message": "job_id is required"}]
 
-    return {"status": status, "data": results, "meta": job.meta}
+    return {"status": status, "data": results, "logs": job.meta}
