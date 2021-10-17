@@ -1,9 +1,10 @@
 import os
 
 import scrapy
+from scrapy import signals
 
 from shops.scrapy_settings.shop_settings import USER_AGENT
-from shops.shop_connect.shop_request import get_request
+from shops.shop_connect.shop_request import get_request, parse_default_errcallback
 from shops.shop_util.extra_function import (
     extract_items,
     generate_result_meta,
@@ -29,6 +30,7 @@ class ShopBase(scrapy.Spider):
     meta = {}
     user_agent = USER_AGENT
     logger = get_logger(__name__)
+    is_error = True
 
     def __init__(self, search_keyword, job_id=None):
         self.name = self.find_shop_configuration()["name"]
@@ -43,22 +45,48 @@ class ShopBase(scrapy.Spider):
         shop_url = self.shop_url.format(keyword=self._search_keyword)
         self.headers["Referer"] = shop_url
         self.headers["user-agent"] = self.user_agent
-        yield get_request(
+        yield self.get_request(
             url=shop_url,
             domain_url=self.domain_url,
             callback=self.parse_pre_results,
+            errcallback=self.parse_errcallback,
             headers=self.headers,
             meta=self.meta,
         )
 
-    def parse_pre_results(self, response):
-        yield from self.parse_results(response)
+    @classmethod
+    def from_crawler(cls, crawler, *args, **kwargs):
+        spider = super(ShopBase, cls).from_crawler(crawler, *args, **kwargs)
+        crawler.signals.connect(spider.spider_closed, signal=signals.spider_closed)
+        crawler.signals.connect(spider.spider_error, signal=signals.spider_error)
+        return spider
+
+    def spider_closed(self, spider, reason):
+        spider.logger.info("Spider closed: %s Reason: %s", spider.name, reason)
         save_job(self.name, self._job_id)
 
-    def get_request(self, url, callback, domain_url=None, meta=None, headers=None):
+    def spider_error(self, failure, response, spider):
+        spider.logger.info("Spider error: %s", spider.name)
+        save_job(self.name, self._job_id, status="error")
+        parse_default_errcallback(failure)
+
+    def parse_pre_results(self, response):
+        self.logger.info("Parsing result..")
+        yield from self.parse_results(response)
+        save_job(self.name, self._job_id, status="error")
+
+    def parse_errcallback(self, failure):
+        self.logger.info("Parse errcallback")
+        save_job(self.name, self._job_id, status="error")
+        parse_default_errcallback(failure)
+
+    def get_request(
+        self, url, callback, errcallback=None, domain_url=None, meta=None, headers=None
+    ):
         return get_request(
             url=url,
             callback=callback,
+            errcallback=errcallback,
             domain_url=domain_url,
             meta=meta,
             headers=headers,
@@ -78,7 +106,7 @@ class ShopBase(scrapy.Spider):
         shop_name=None,
         date_searched=None,
     ):
-
+        save_job(self.name, self._job_id, status="in_progress")
         gen_result = generate_result_meta(
             shop_link=shop_link,
             searched_keyword=searched_keyword,

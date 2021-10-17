@@ -79,7 +79,6 @@ def get_results(**kwargs):
     fallback_error = [{"message": "Sorry, no products found"}]
     results = None
 
-    meta_print = None
     if job_id:
         job = Job().get_item(id=job_id)
         if job:
@@ -87,21 +86,18 @@ def get_results(**kwargs):
             params = json.loads(job.__repr__())
             res_factory = ResultsFactory(**params, is_cache=True)
             results = res_factory.run_search()
-            in_progress_shops = []
+            in_progress = False
             if job.meta and status != "done":
-                for k, v in job.meta.items():
-                    if v != "done":
-                        in_progress_shops.append(k)
+                for _, v in job.meta.items():
+                    if v not in ["done", "error"]:
+                        in_progress = True
+                        break
 
-                status = "done"
-                if in_progress_shops:
-                    meta_print = f"{in_progress_shops} still in progress."
-                    logger.debug(meta_print)
-                    status = "in_progress"
+                status = "in_progress" if in_progress else "done"
 
         if not results:
             results = fallback_error
     else:
         results = [{"message": "job_id is required"}]
 
-    return {"status": status, "data": results, "meta": meta_print}
+    return {"status": status, "data": results, "meta": job.meta}

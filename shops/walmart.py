@@ -9,6 +9,9 @@ class Walmart(ShopBase):
     }
     download_delay = 4
 
+    def fuck(self, response):
+        print("dang")
+
     def parse_results(self, response):
         items = response.css(".mb1 a")
 

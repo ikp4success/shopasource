@@ -161,14 +161,16 @@ def save_shop_data(data):
         shop.commit()
 
 
-def save_job(spider_name, job_id):
+def save_job(spider_name, job_id, status="done"):
     if job_id and int(os.environ.get("SAVE_TO_DB", 0)) == 1:
         from project.models import Job
 
         job = Job().get_item(id=job_id)
 
         if job and job.meta:
+            if job.meta.get(spider_name, "started") == "error":
+                return
             meta = deepcopy(job.meta)
-            meta[spider_name] = "done"
+            meta[spider_name] = status
             job.meta = meta
             job.commit()
