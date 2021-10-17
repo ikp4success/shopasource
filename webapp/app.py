@@ -53,8 +53,8 @@ async def robots():
 
 @app.route("/api/get_result", methods=["GET"])
 async def get_result():
-    if not request.args.get("guid"):
-        return ([{"message": "guid is required."}], 400)
+    if not request.args.get("job_id"):
+        return ([{"message": "job_id is required."}], 400)
     return jsonify(get_results(**request.args)), 200
 
 

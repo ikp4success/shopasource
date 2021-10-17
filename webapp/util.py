@@ -10,8 +10,8 @@ logger = get_logger(__name__)
 
 
 def update_status(**kwargs):
-    if kwargs.get("guid"):
-        job = Job().get_item(id=kwargs.get("guid"))
+    if kwargs.get("job_id"):
+        job = Job().get_item(id=kwargs.get("job_id"))
         if job and kwargs.get("status"):
             job.status = kwargs.get("status")
             job.commit()
@@ -35,7 +35,7 @@ def validate_params(**kwargs):
         return cleaned, True
     except Exception:
         results = [{"message": "Parameters are invalid"}]
-        update_status(status="error", guid=kwargs.get("guid"))
+        update_status(status="error", job_id=kwargs.get("job_id"))
         return results, False
 
 
@@ -46,10 +46,10 @@ def start_shop_search(**kwargs):
     if not res_factory.is_async:
         if results and len(results) > 0 and results[0] != "null":
             results = results[0]
-            update_status(status="done", guid=kwargs.get("guid"))
+            update_status(status="done", job_id=kwargs.get("job_id"))
         else:
             results = [{"message": "Sorry, no products found"}]
-            update_status(status="error", guid=kwargs.get("guid"))
+            update_status(status="error", job_id=kwargs.get("job_id"))
 
         return results
 
@@ -65,8 +65,8 @@ def start_async_requests(**kwargs):
     )
     job.commit()
     kwargs["status"] = job.status
-    kwargs["guid"] = str(job.id)
-    kwargs["result"] = f"/api/get_result?guid={str(job.id)}"
+    kwargs["job_id"] = str(job.id)
+    kwargs["result"] = f"/api/get_result?job_id={str(job.id)}"
     signature = partial(start_shop_search, **kwargs)
     loop = asyncio.get_running_loop()
     loop.run_in_executor(None, signature)
@@ -74,14 +74,14 @@ def start_async_requests(**kwargs):
 
 
 def get_results(**kwargs):
-    guid = kwargs["guid"]
+    job_id = kwargs["job_id"]
     status = "job not found"
     fallback_error = [{"message": "Sorry, no products found"}]
     results = None
 
     meta_print = None
-    if guid:
-        job = Job().get_item(id=guid)
+    if job_id:
+        job = Job().get_item(id=job_id)
         if job:
             status = job.status
             params = json.loads(job.__repr__())
@@ -102,6 +102,6 @@ def get_results(**kwargs):
         if not results:
             results = fallback_error
     else:
-        results = [{"message": "guid is required"}]
+        results = [{"message": "job_id is required"}]
 
     return {"status": status, "data": results, "meta": meta_print}
