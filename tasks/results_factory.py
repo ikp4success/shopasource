@@ -30,6 +30,20 @@ possible_match_abbrev = {
 }
 
 
+def format_shop_list_names(**kwargs):
+    shop_list_names = kwargs.get("shops")
+    if shop_list_names:
+        shop_list_names = shop_list_names.strip()
+        if "," in shop_list_names:
+            shop_list_names = [
+                shn.strip().upper() for shn in shop_list_names.split(",") if shn.strip()
+            ]
+        else:
+            shop_list_names = [shop_list_names.upper()]
+
+    return shop_list_names
+
+
 class ResultsFactory:
     search_keyword = None
     shop_names_list = None
@@ -40,27 +54,19 @@ class ResultsFactory:
     is_async = (True,)
     job_id = (None,)
 
-    def __init__(
-        self,
-        search_keyword,
-        shop_names_list,
-        match_acc,
-        low_to_high,
-        high_to_low,
-        is_cache=False,
-        is_async=True,
-        job_id=None,
-    ):
-        self.search_keyword = search_keyword
-        self.job_id = job_id
-        self.shop_names_list = self.validate_shop_list(shop_names_list)
+    def __init__(self, *args, **kwargs):
+        self.search_keyword = kwargs.get("search_keyword")
+        self.job_id = kwargs.get("job_id")
+        self.shop_names_list = self.validate_shop_list(
+            format_shop_list_names(kwargs.get("shop_names_list"))
+        )
         if not self.shop_names_list:
             raise Exception("Shops are required.")
-        self.match_acc = match_acc
-        self.low_to_high = low_to_high
-        self.high_to_low = high_to_low
-        self.is_cache = is_cache
-        self.is_async = is_async
+        self.match_acc = kwargs.get("match_acc")
+        self.low_to_high = kwargs.get("low_to_high")
+        self.high_to_low = kwargs.get("high_to_low")
+        self.is_cache = kwargs.get("is_cache")
+        self.is_async = kwargs.get("is_async")
 
     def validate_shop_list(self, shop_names_list):
         valid_shops = []

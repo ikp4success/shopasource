@@ -61,11 +61,11 @@ async def get_result():
 @app.route("/api/shop/search", methods=["GET"])
 async def api_search():
     # http://0.0.0.0:5003/api/shop/search?sk=tissue&smatch=0&shl=false&slh=true&shops=TARGET,AMAZON&async=1
-    params = validate_params({**request.args})
+    params = validate_params(**{**request.args})
     if not params[1]:
         return (params, 400)
 
-    if int(params.get("async", "0")) == 1:
+    if int(params[0].get("async", "0")) == 1:
         start_data = start_async_requests(**params[0])
         return {**start_data}, 200
     else:

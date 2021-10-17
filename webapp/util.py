@@ -4,7 +4,7 @@ from functools import partial
 
 from project.models import Job
 from support import get_logger
-from tasks.results_factory import ResultsFactory
+from tasks.results_factory import ResultsFactory, format_shop_list_names
 
 logger = get_logger(__name__)
 
@@ -17,26 +17,11 @@ def update_status(**kwargs):
             job.commit()
 
 
-def format_shop_list_names(**kwargs):
-    shop_list_names = kwargs.get("shops")
-    if shop_list_names:
-        shop_list_names = shop_list_names.strip()
-        if "," in shop_list_names:
-            shop_list_names = [
-                shn.strip().upper() for shn in shop_list_names.split(",") if shn.strip()
-            ]
-        else:
-            shop_list_names = [shop_list_names.upper()]
-
-    return shop_list_names
-
-
 def validate_params(**kwargs):
     try:
         cleaned = {
             "search_keyword": kwargs["sk"],
-            "shop_list_names_str": kwargs["shops"],
-            "shop_list_names": format_shop_list_names(**kwargs),
+            "shop_list_names": kwargs["shops"],
             "match_acc": int(kwargs.get("smatch") or 0),
             "low_to_high": json.JSONDecoder().decode(kwargs.get("slh") or "false"),
             "high_to_low": json.JSONDecoder().decode(kwargs.get("shl") or "false"),
@@ -47,11 +32,11 @@ def validate_params(**kwargs):
         cleaned["is_async"] = True
         if int(kwargs.get("async", 0)) == 0:
             cleaned["is_async"] = False
-        return cleaned
+        return cleaned, True
     except Exception:
         results = [{"message": "Parameters are invalid"}]
         update_status(status="error", guid=kwargs.get("guid"))
-        return (results, False)
+        return results, False
 
 
 def start_shop_search(**kwargs):
@@ -70,13 +55,11 @@ def start_shop_search(**kwargs):
 
 
 def start_async_requests(**kwargs):
-    shop_list_names_str = kwargs.get("shop_list_names")
     job = Job(
         status="started",
-        shop_list_names=shop_list_names_str,
         meta={
             shop_list_name: "started"
-            for shop_list_name in kwargs.get("shop_list_names")
+            for shop_list_name in format_shop_list_names(kwargs.get("shop_list_names"))
         },
         **kwargs,
     )
@@ -96,18 +79,15 @@ def get_results(**kwargs):
     fallback_error = [{"message": "Sorry, no products found"}]
     results = None
 
+    meta_print = None
     if guid:
         job = Job().get_item(id=guid)
         if job:
             status = job.status
             params = job.repr()
-            params["shop_list_names"] = format_shop_list_names(
-                shops=job.shop_list_names
-            )
             res_factory = ResultsFactory(**params, is_cache=True)
             results = res_factory.run_search()
             in_progress_shops = []
-            meta_print = None
             if job.meta and status != "done":
                 for k, v in job.meta.items():
                     if v != "done":
@@ -121,5 +101,7 @@ def get_results(**kwargs):
 
         if not results:
             results = fallback_error
+    else:
+        results = [{"message": "guid is required"}]
 
-        return {"status": status, "data": results, "meta": meta_print}
+    return {"status": status, "data": results, "meta": meta_print}
