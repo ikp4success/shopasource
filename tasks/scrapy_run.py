@@ -1,5 +1,6 @@
 import importlib
 from multiprocessing import Process, Queue
+from subprocess import call  # nosec
 
 from scrapy.crawler import CrawlerRunner
 from scrapy.utils.log import configure_logging
@@ -54,3 +55,25 @@ def spider_runner(spider_name, search_keyword, job_id):
     p = Process(target=crawl, args=(q,))
     p.start()
     p.join()
+
+
+def launch_spiders(sn, sk, is_async, job_id):
+    if sn and sk:
+        if is_async:
+            # HACK:  scrapy blocks process, so using python subprocess for now.
+            call(  # nosec
+                [
+                    "scrapy",
+                    "crawl",
+                    f"{sn.upper()}",
+                    "-a",
+                    f"search_keyword={sk}",
+                    "-a",
+                    f"job_id={job_id}",
+                ]
+            )
+        else:
+            # actual scrapy designed thread runs, this will block.
+            spider_runner(sn, sk, job_id)
+    else:
+        raise Exception("Name and Search_keyword required")
