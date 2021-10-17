@@ -3,13 +3,14 @@ from shops.shop_base import ShopBase
 
 class Walmart(ShopBase):
     name = "WALMART"
+    headers = {
+        "service-worker-navigation-preload": "true",
+        "upgrade-insecure-requests": "1",
+    }
+    download_delay = 4
 
     def parse_results(self, response):
-        items = response.css(
-            "#searchProductResult .search-result-gridview-items a.product-title-link"
-        ) or response.css(
-            "#searchProductResult .search-result-listview-items a.product-title-link"
-        )
+        items = response.css(".mb1 a")
 
         for item in items:
             item_url = item.css("::attr(href)").extract_first()
