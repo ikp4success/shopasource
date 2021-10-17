@@ -1,5 +1,6 @@
 import datetime
 import json
+import time
 import uuid
 
 import sqlalchemy as db
@@ -9,7 +10,9 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.sql import func
 
 from shops.shop_util.extra_function import generate_result_meta
-from support import Config
+from support import Config, get_logger
+
+logger = get_logger(__name__)
 
 engine = db.create_engine(Config().POSTGRESS_DB_URL, convert_unicode=True,)
 
@@ -29,9 +32,18 @@ Model.query = db_session.query_property()
 class ModelMixin:
     session = db_session
 
-    def commit(self):
-        self.session.add(self)
-        self.session.commit()
+    def commit(self, retry=0):
+        try:
+            self.session.add(self)
+            self.session.commit()
+        except Exception as ex:
+            # HACK: Failed commits
+            if retry > 5:
+                raise
+            retry += 1
+            logger.warning(f"{ex}, retrying in {retry} seconds, {retry}x.")
+            time.sleep(retry)
+            self.commit(retry)
 
     def get_item(self, **kwargs):
         return self.query.get(kwargs)
