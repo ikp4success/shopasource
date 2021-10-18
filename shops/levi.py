@@ -1,7 +1,7 @@
 from shops.shop_base import ShopBase
 
 
-class LEVI(ShopBase):
+class Levi(ShopBase):
     name = "LEVI"
 
     def parse_results(self, response):

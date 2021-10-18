@@ -1,7 +1,7 @@
 from shops.shop_base import ShopBase
 
 
-class BigLots(ShopBase):
+class Biglots(ShopBase):
     name = "BIGLOTS"
 
     def parse_results(self, response):

@@ -2,7 +2,7 @@
 from shops.shop_base import ShopBase
 
 
-class JcPenney(ShopBase):
+class Jcpenney(ShopBase):
     name = "JCPENNEY"
 
     def parse_results(self, response):

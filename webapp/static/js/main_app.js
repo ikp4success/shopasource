@@ -200,7 +200,7 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
           for(shop_index in data){
             shop_name = data[shop_index]
             search_params = "sk=" + sk + "&smatch=" + s_match + "&shl=" + s_hl + "&slh=" + s_lh + "&shops=" + shop_name
-            sk_url = "/api/shop/search?" + search_params;
+            sk_url = "/api/shop/search?" + search_params + "&async=0";
 
             api_request = $.getJSON(sk_url,
                 function(data) {

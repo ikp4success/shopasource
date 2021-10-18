@@ -1,7 +1,7 @@
 from shops.shop_base import ShopBase
 
 
-class StyleRunner(ShopBase):
+class Stylerunner(ShopBase):
     name = "STYLERUNNER"
 
     def parse_results(self, response):

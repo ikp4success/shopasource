@@ -1,5 +1,5 @@
 from shops.nordstrom_rack import NordstromRack
 
 
-class HauteLook(NordstromRack):
+class Hautelook(NordstromRack):
     name = "HAUTELOOK"

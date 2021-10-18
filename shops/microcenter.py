@@ -1,7 +1,7 @@
 from shops.shop_base import ShopBase
 
 
-class MicroCenter(ShopBase):
+class Microcenter(ShopBase):
     name = "MICROCENTER"
 
     def parse_results(self, response):

@@ -3,7 +3,7 @@ import re
 from shops.shop_base import ShopBase
 
 
-class NordStrom(ShopBase):
+class Nordstrom(ShopBase):
     name = "NORDSTROM"
 
     headers = {

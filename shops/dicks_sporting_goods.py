@@ -3,7 +3,7 @@ import re
 from shops.shop_base import ShopBase
 
 
-class DicksSportingGoods(ShopBase):
+class Dickssportinggoods(ShopBase):
     name = "DICKSSPORTINGGOODS"
 
     def parse_results(self, response):

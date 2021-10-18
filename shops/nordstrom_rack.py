@@ -1,7 +1,7 @@
 from shops.shop_base import ShopBase
 
 
-class NordstromRack(ShopBase):
+class Nordstromrack(ShopBase):
     name = "NORDSTROMRACK"
 
     def parse_results(self, response):

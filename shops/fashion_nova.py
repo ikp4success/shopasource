@@ -1,7 +1,7 @@
 from shops.shop_base import ShopBase
 
 
-class FashionNova(ShopBase):
+class Fashionnova(ShopBase):
     name = "FASHIONNOVA"
 
     def start_requests(self):

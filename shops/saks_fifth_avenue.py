@@ -1,7 +1,7 @@
 from shops.shop_base import ShopBase
 
 
-class SaksFifthAvenue(ShopBase):
+class Saksfifthavenue(ShopBase):
     name = "SAKSFIFTHAVENUE"
 
     headers = {

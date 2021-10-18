@@ -1,7 +1,7 @@
 from shops.shop_base import ShopBase
 
 
-class MvmtWatches(ShopBase):
+class Mvmtwatches(ShopBase):
     name = "MVMTWATCHES"
 
     def parse_results(self, response):

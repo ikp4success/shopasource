@@ -1,7 +1,7 @@
 from shops.shop_base import ShopBase
 
 
-class SpiritualGangster(ShopBase):
+class Spiritualgangster(ShopBase):
     name = "SPIRITUALGANGSTER"
 
     def parse_results(self, response):

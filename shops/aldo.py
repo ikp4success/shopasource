@@ -3,7 +3,7 @@ import re
 from shops.shop_base import ShopBase
 
 
-class ALDO(ShopBase):
+class Aldo(ShopBase):
     name = "ALDO"
     headers = {
         "Host": "www.aldoshoes.com",

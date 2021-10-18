@@ -1,7 +1,7 @@
 from shops.shop_base import ShopBase
 
 
-class GroupOn(ShopBase):
+class Groupon(ShopBase):
     name = "GROUPON"
     headers = {
         "Host": "www.groupon.com",
