@@ -67,7 +67,7 @@ class ShoppedData(Model, ModelMixin):
     numeric_price = db.Column(db.Numeric, nullable=False)
     title = db.Column(db.String, nullable=False)
     content_description = db.Column(db.String)
-    date_searched = db.Column(db.DateTime(timezone=True), server_default=func.now())
+    date_searched = db.Column(db.DateTime(timezone=True), default=datetime.datetime.utcnow)
 
     def __init__(self, *args, **kwargs):
         self.searched_keyword = kwargs.get("searched_keyword")

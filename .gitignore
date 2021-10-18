@@ -3,5 +3,5 @@ json_shop_results/*
 __pycache__/
 scraped_sites/
 .venv/
-/logs/*
-/configs/dev.json
+logs/*
+configs/dev.json
