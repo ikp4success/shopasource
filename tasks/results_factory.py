@@ -109,9 +109,7 @@ class ResultsFactory:
             if len(self.shop_names_list) == 1 and not is_shop_active(
                 self.shop_names_list[0]
             ):
-                results = {
-                    "error": "Shop is inactive at the moment, check back again"
-                }
+                results = {"error": "Shop is inactive at the moment, check back again"}
                 return results
 
             if self.search_keyword.strip():
@@ -287,7 +285,11 @@ class ResultsFactory:
                         if shop_name not in shops_with_data:
                             shops_with_data.append(shop_name)
 
-        return [shop_name for shop_name in self.shop_names_list if shop_name not in shops_with_data]
+        return [
+            shop_name
+            for shop_name in self.shop_names_list
+            if shop_name not in shops_with_data
+        ]
 
     def get_json_db_results(self):
 

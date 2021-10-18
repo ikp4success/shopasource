@@ -2,7 +2,7 @@ from quart import Quart, jsonify, render_template, request
 
 from db.models import Model, engine
 from shops.shop_util.shop_setup_functions import get_shops
-from support import Config, get_logger, CustomEncoder
+from support import Config, CustomEncoder, get_logger
 from webapp.config import configure_app
 from webapp.util import (
     get_results,

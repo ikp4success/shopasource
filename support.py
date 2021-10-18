@@ -1,9 +1,9 @@
+import datetime
+import decimal
 import json
 import logging
 import os
 import sys
-import datetime
-import decimal
 
 import coloredlogs
 
