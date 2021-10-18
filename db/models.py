@@ -35,15 +35,11 @@ class ModelMixin:
     def commit(self, retry=0):
         try:
             self.session.add(self)
+            self.session.flush()
             self.session.commit()
         except Exception as ex:
-            # HACK: Failed commits
-            if retry > 5:
-                raise
-            retry += 1
-            logger.warning(f"{ex}, retrying in {retry} seconds, {retry}x.")
-            time.sleep(retry)
-            self.commit(retry)
+            logger.warning(ex)
+            self.session.rollback()
 
     def get_item(self, **kwargs):
         return self.query.get(kwargs)

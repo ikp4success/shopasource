@@ -23,6 +23,7 @@ var regx = /^[A-Za-z0-9 _.-\\'\\,\\-]+$/;
 var shops_drop = null
 var scraped_shops = []
 shop_loaded_data = {}
+shop_job_ids = []
 shop_size = 0
 shops_completed = 0
 is_filter = false
@@ -175,12 +176,13 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
 
   if(fil_shop_name){
     search_params = "sk=" + sk + "&smatch=" + s_match + "&shl=" + s_hl + "&slh=" + s_lh + "&shops=" + fil_shop_name
-    sk_url = "/api/shop/search?" + search_params + "&async=0";
+    sk_url = "/api/shop/search?" + search_params + "&async=1";
     shop_loaded_data = clear_dict_obj(shop_loaded_data)
     api_request = $.getJSON(sk_url,
         function(data) {
           if(!data["error"]){
-            shop_loaded_data = data
+            shop_job_ids.push(data)
+            load_job([data], sk)
           }
           shops_completed = shop_size
     }).fail(
@@ -200,11 +202,12 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
           for(shop_index in data){
             shop_name = data[shop_index]
             search_params = "sk=" + sk + "&smatch=" + s_match + "&shl=" + s_hl + "&slh=" + s_lh + "&shops=" + shop_name
-            sk_url = "/api/shop/search?" + search_params + "&async=0";
+            sk_url = "/api/shop/search?" + search_params + "&async=1";
 
-            api_request = $.getJSON(sk_url,
-                function(data) {
-                  load_data_container(data, sk)
+            $api_request = $.getJSON(sk_url,
+                function(data, sk) {
+                  shop_job_ids.push(data)
+                  load_job([data], sk)
             }).fail(
               function()
               {
@@ -219,11 +222,12 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
     for(shop_index in gs_data){
       shop_name = gs_data[shop_index]
       search_params = "sk=" + sk + "&smatch=" + s_match + "&shl=" + s_hl + "&slh=" + s_lh + "&shops=" +  shop_name
-      sk_url = "/api/shop/search?" + search_params + "&async=0";
+      sk_url = "/api/shop/search?" + search_params + "&async=1";
 
       $api_request = $.getJSON(sk_url,
           function(gs_data) {
-            load_data_container(gs_data, sk)
+            shop_job_ids.push(data)
+            load_job([data], sk)
       }).fail(
         function()
         {
@@ -233,6 +237,38 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
   }
   return false
 }
+
+function load_job(data, sk){
+  if($api_request != null){
+    $api_request.abort()
+    $api_request = null
+  }
+
+  if($shop_request != null) {
+    $shop_request.abort()
+    $shop_request = null
+  }
+
+  $.ajaxSetup({
+    async: true
+  });
+
+  if (data == null){
+    data = shop_job_ids
+  }
+
+  for (job_id_index in data){
+    job_id = shop_job_ids[job_id_index]
+    jb_url = "/api/get_result?job_id=" + job_id;
+    $api_request = $.getJSON(jb_url,
+        function(gs_data) {
+          if (gs_data["status"] != "done"){
+            load_data_container(gs_data, sk)
+          }
+    })
+  }
+}
+
 
 function load_data_container(data, sk){
   if(data==null){
@@ -413,6 +449,7 @@ function shop_web_search(){
 
   cancel_search = !cancel_search
   shop_loaded_data = clear_dict_obj(shop_loaded_data)
+  shop_job_ids = []
   if(cancel_search){
     item_size = 0
     max_item_size = 30
@@ -764,7 +801,7 @@ function consume_l_data(){
 }
 
 function kickstart_initial_api_search(){
-  initial_api_search(current_sk)
+  load_job(shop_job_ids, current_sk)
 }
 
 function refresh_shop_data(){
