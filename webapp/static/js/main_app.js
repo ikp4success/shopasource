@@ -179,7 +179,7 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
     shop_loaded_data = clear_dict_obj(shop_loaded_data)
     api_request = $.getJSON(sk_url,
         function(data) {
-          if(!data["message"]){
+          if(!data["error"]){
             shop_loaded_data = data
           }
           shops_completed = shop_size
@@ -255,7 +255,7 @@ function load_data_container(data, sk){
     initial_api_search(current_sk)
     return false
   }
-  if(!data["message"]){
+  if(!data["error"]){
     d_shop_data = data
     if(d_shop_data || d_shop_data.length > 0){
       var shop_sk_index
@@ -265,7 +265,7 @@ function load_data_container(data, sk){
       var shop_sk_index
       for(shop_sk_index in d_shop_data){
         dshjson = d_shop_data[shop_sk_index]
-        l_s_name = dshjson[sk]["shop_name"]
+        l_s_name = dshjson["shop_name"]
         if(l_s_name){
           if(!scraped_shops.includes(l_s_name)){
             scraped_shops.push(l_s_name)
@@ -570,16 +570,9 @@ function count_returned_item(re_item){
       re_item = shop_loaded_data[shop_index_k]
       for(shop_each_index_k in re_item){
         try{
-          shop_each_d_v = JSON.parse(shop_loaded_data_v[shop_each_index_k])
+          shop_each_d_v = shop_loaded_data_v[shop_each_index_k]
 
-          shop_each_d_v = JSON.parse(shop_loaded_data_v[shop_each_index_k])
           if(!shop_each_d_v){
-            continue
-          }
-          sk = decodeURIComponent(sk)
-          sk = truncate_str(sk, 75)
-          sk_shop_each_d_v = shop_each_d_v[sk]
-          if (!sk_shop_each_d_v){
             continue
           }
 
@@ -593,18 +586,7 @@ function count_returned_item(re_item){
   }else{
     for(shop_each_index_k in re_item){
       try{
-        shop_each_d_v = JSON.parse(shop_loaded_data_v[shop_each_index_k])
-
-        shop_each_d_v = JSON.parse(shop_loaded_data_v[shop_each_index_k])
-        if(!shop_each_d_v){
-          continue
-        }
-        sk = decodeURIComponent(sk)
-        sk = truncate_str(sk, 75)
-        sk_shop_each_d_v = shop_each_d_v[sk]
-        if (!sk_shop_each_d_v){
-          continue
-        }
+        shop_each_d_v = shop_loaded_data_v[shop_each_index_k]
 
         count++
       }catch(err){
@@ -625,30 +607,23 @@ function consume_l_data_child(shop_loaded_data_v, sk){
       if(item_size == max_item_size){
         break;
       }
-      shop_each_d_v = JSON.parse(shop_loaded_data_v[shop_each_index_k])
 
-      shop_each_d_v = JSON.parse(shop_loaded_data_v[shop_each_index_k])
+      shop_each_d_v = shop_loaded_data_v[shop_each_index_k]
       if(!shop_each_d_v){
-        continue
-      }
-      sk = decodeURIComponent(sk)
-      sk = truncate_str(sk, 75)
-      sk_shop_each_d_v = shop_each_d_v[sk]
-      if (!sk_shop_each_d_v){
         continue
       }
 
       res_react = $('#resultreact_default').html();
       res_react_html = document.createElement("div")
       res_react_html.innerHTML = res_react
-      res_react_html.querySelectorAll("#p_link")[0].href = sk_shop_each_d_v["shop_link"] || ""
-      res_react_html.querySelector("#p_img_link").src = sk_shop_each_d_v["image_url"] || ""
-      res_react_html.querySelector("#p_img_link").alt = sk_shop_each_d_v["title"] || ""
-      res_react_html.querySelectorAll("#p_link")[1].href = sk_shop_each_d_v["shop_link"] || ""
-      res_react_html.querySelectorAll("#p_link")[1].innerText=(sk_shop_each_d_v["title"] || "")
-      res_react_html.querySelector("#p_description").innerText=(sk_shop_each_d_v["content_description"] || "")
-      res_react_html.querySelector("#p_price").innerText=("Price: " + sk_shop_each_d_v["price"] || "")
-      res_react_html.querySelector("#p_shopname").innerText=("Shop: " + sk_shop_each_d_v["shop_name"] || "")
+      res_react_html.querySelectorAll("#p_link")[0].href = shop_each_d_v["shop_link"] || ""
+      res_react_html.querySelector("#p_img_link").src = shop_each_d_v["image_url"] || ""
+      res_react_html.querySelector("#p_img_link").alt = shop_each_d_v["title"] || ""
+      res_react_html.querySelectorAll("#p_link")[1].href = shop_each_d_v["shop_link"] || ""
+      res_react_html.querySelectorAll("#p_link")[1].innerText=(shop_each_d_v["title"] || "")
+      res_react_html.querySelector("#p_description").innerText=(shop_each_d_v["content_description"] || "")
+      res_react_html.querySelector("#p_price").innerText=("Price: " + shop_each_d_v["price"] || "")
+      res_react_html.querySelector("#p_shopname").innerText=("Shop: " + shop_each_d_v["shop_name"] || "")
       if(res_react_bucket_child.includes($(res_react_html).html())){
         continue
       }

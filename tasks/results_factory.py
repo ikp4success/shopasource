@@ -144,16 +144,17 @@ class ResultsFactory:
                     ShoppedData.searched_keyword == self.search_keyword
                 )
                 .order_by(ShoppedData.date_searched.asc())
-                .first()
+                .all()
             )
-        results_db.extend(
-            ShoppedData.query.filter(
-                ShoppedData.searched_keyword == self.search_keyword,
-                ShoppedData.shop_name == shop_name,
+        else:
+            results_db.extend(
+                ShoppedData.query.filter(
+                    ShoppedData.searched_keyword == self.search_keyword,
+                    ShoppedData.shop_name == shop_name,
+                )
+                .order_by(ShoppedData.date_searched.asc())
+                .all()
             )
-            .order_by(ShoppedData.date_searched.asc())
-            .first()
-        )
         return self.join_results_db(results_db)
 
     def get_data_from_db_contains(self):
@@ -265,7 +266,7 @@ class ResultsFactory:
         for item_r in results:
             item_r = safe_json(item_r)
             if self.match_sk(safe_grab(item_r, ["title"]),):
-                mk_results.append(json.dumps(item_r))
+                mk_results.append(item_r)
         return mk_results
 
     def delete_data_by_shop_sk(self, shop_name):
@@ -336,7 +337,7 @@ class ResultsFactory:
             if result and isinstance(result, list) and len(result) > 0:
                 result = result[0]
             date_searched = safe_grab(result, ["date_searched"])
-            if date_searched is not None:
+            if date_searched:
                 date_searched_parse = parser.parse(date_searched)
                 dt_time_diff = datetime.now(timezone.utc) - date_searched_parse
                 if dt_time_diff.days < SHOP_CACHE_MAX_EXPIRY_TIME:
