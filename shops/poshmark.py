@@ -1,7 +1,7 @@
 from shops.shop_base import ShopBase
 
 
-class Postmark(ShopBase):
+class Poshmark(ShopBase):
     name = "POSHMARK"
 
     def parse_results(self, response):

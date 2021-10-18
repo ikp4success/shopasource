@@ -175,7 +175,7 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
 
   if(fil_shop_name){
     search_params = "sk=" + sk + "&smatch=" + s_match + "&shl=" + s_hl + "&slh=" + s_lh + "&shops=" + fil_shop_name
-    sk_url = "/api/shop/search?" + search_params;
+    sk_url = "/api/shop/search?" + search_params + "&async=0";
     shop_loaded_data = clear_dict_obj(shop_loaded_data)
     api_request = $.getJSON(sk_url,
         function(data) {
@@ -219,7 +219,7 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
     for(shop_index in gs_data){
       shop_name = gs_data[shop_index]
       search_params = "sk=" + sk + "&smatch=" + s_match + "&shl=" + s_hl + "&slh=" + s_lh + "&shops=" +  shop_name
-      sk_url = "/api/shop/search?" + search_params;
+      sk_url = "/api/shop/search?" + search_params + "&async=0";
 
       $api_request = $.getJSON(sk_url,
           function(gs_data) {
@@ -264,7 +264,7 @@ function load_data_container(data, sk){
 
       var shop_sk_index
       for(shop_sk_index in d_shop_data){
-        dshjson = JSON.parse(d_shop_data[shop_sk_index])
+        dshjson = d_shop_data[shop_sk_index]
         l_s_name = dshjson[sk]["shop_name"]
         if(l_s_name){
           if(!scraped_shops.includes(l_s_name)){

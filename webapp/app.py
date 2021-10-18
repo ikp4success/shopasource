@@ -1,8 +1,8 @@
 from quart import Quart, jsonify, render_template, request
 
-from project.models import Model, engine
+from db.models import Model, engine
 from shops.shop_util.shop_setup_functions import get_shops
-from support import Config, get_logger
+from support import Config, get_logger, CustomEncoder
 from webapp.config import configure_app
 from webapp.util import (
     get_results,
@@ -16,6 +16,8 @@ logger = get_logger(__name__)
 Config().intialize_sentry()
 
 app = Quart(__name__, template_folder="web_content")
+app.config["JSONIFY_PRETTYPRINT_REGULAR"] = True
+app.json_encoder = CustomEncoder
 configure_app(app)
 Model.metadata.create_all(engine)
 
@@ -54,8 +56,8 @@ async def robots():
 @app.route("/api/get_result", methods=["GET"])
 async def get_result():
     if not request.args.get("job_id"):
-        return ([{"message": "job_id is required."}], 400)
-    return jsonify(get_results(**request.args)), 200
+        return ({"message": "job_id is required."}, 400)
+    return get_results(**request.args), 200
 
 
 @app.route("/api/shop/search", methods=["GET"])
@@ -69,7 +71,7 @@ async def api_search():
         start_data = start_async_requests(**params[0])
         return {**start_data}, 200
     else:
-        return jsonify(start_shop_search(**params[0]), 200)
+        return start_shop_search(**params[0]), 200
 
 
 @app.route("/websearch/shops-active.json", methods=["GET"])

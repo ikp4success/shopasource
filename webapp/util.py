@@ -2,7 +2,7 @@ import asyncio
 import json
 from functools import partial
 
-from project.models import Job
+from db.models import Job
 from support import get_logger
 from tasks.results_factory import ResultsFactory, format_shop_names_list
 
@@ -48,7 +48,7 @@ def start_shop_search(**kwargs):
             results = results[0]
             update_status(status="done", job_id=kwargs.get("job_id"))
         else:
-            results = [{"message": "Sorry, no products found"}]
+            results = {"message": "Sorry, no products found"}
             update_status(status="error", job_id=kwargs.get("job_id"))
 
         return results
@@ -76,7 +76,7 @@ def start_async_requests(**kwargs):
 def get_results(**kwargs):
     job_id = kwargs["job_id"]
     status = "job not found"
-    fallback_error = [{"message": "Sorry, no products found"}]
+    fallback_error = {"message": "Sorry, no products found"}
     results = None
 
     if job_id:
@@ -98,6 +98,6 @@ def get_results(**kwargs):
         if not results:
             results = fallback_error
     else:
-        results = [{"message": "job_id is required"}]
+        results = {"message": "job_id is required"}
 
     return {"status": status, "data": results, "logs": job.meta}

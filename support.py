@@ -2,6 +2,8 @@ import json
 import logging
 import os
 import sys
+import datetime
+import decimal
 
 import coloredlogs
 
@@ -63,3 +65,14 @@ def get_sys_args_kwargs():
         else:
             args_lst.append(arg)
     return args_lst, kwargs_dict
+
+
+class CustomEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, decimal.Decimal):
+            return float(obj)
+        if isinstance(obj, (datetime.datetime, datetime.date, datetime.time)):
+            return obj.isoformat()
+        elif isinstance(obj, datetime.timedelta):
+            return (datetime.datetime.min + obj).time().isoformat()
+        return super(CustomEncoder, self).default(obj)

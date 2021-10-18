@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from dateutil import parser
 from sqlalchemy import or_
 
-from project.models import ShoppedData
+from db.models import Model, ShoppedData
 from shops.shop_util.extra_function import safe_grab, safe_json, truncate_data
 from shops.shop_util.shop_setup import SHOP_CACHE_LOOKUP_SET, SHOP_CACHE_MAX_EXPIRY_TIME
 from shops.shop_util.shop_setup_functions import find_shop, is_shop_active
@@ -115,7 +115,7 @@ class ResultsFactory:
 
             if self.search_keyword is not None and self.search_keyword.strip() != "":
                 if len(self.search_keyword) < 2:
-                    results = [{"message": "Sorry, no products found"}]
+                    results = {"message": "Sorry, no products found"}
                     return results
                 self.search_keyword = truncate_data(
                     self.search_keyword, 75, html_escape=True
@@ -123,7 +123,7 @@ class ResultsFactory:
 
                 results = self.get_json_db_results()
                 if not results:
-                    results = [{"message": "Sorry, no products found"}]
+                    results = {"message": "Sorry, no products found"}
                 return results
         except Exception as e:
             results = [
@@ -144,14 +144,14 @@ class ResultsFactory:
     def get_data_from_db_by_date_asc(self, shop_name=None):
         results_db = []
         if not shop_name:
-            results_db.append(
+            results_db.extend(
                 ShoppedData.query.filter(
                     ShoppedData.searched_keyword == self.search_keyword
                 )
                 .order_by(ShoppedData.date_searched.asc())
                 .first()
             )
-        results_db.append(
+        results_db.extend(
             ShoppedData.query.filter(
                 ShoppedData.searched_keyword == self.search_keyword,
                 ShoppedData.shop_name == shop_name,
@@ -159,14 +159,14 @@ class ResultsFactory:
             .order_by(ShoppedData.date_searched.asc())
             .first()
         )
-        return [res.__str__() for res in results_db]
+        return self.arrange_results_by_shop_name(results_db)
 
     def get_data_from_db_contains(self):
         results_db = []
-        results_centre = []
+
         if self.shop_names_list:
             if self.high_to_low:
-                results_db.append(
+                results_db.extend(
                     ShoppedData.query.filter(
                         # ShoppedData.searched_keyword.contains(searched_keyword),
                         or_(
@@ -182,7 +182,7 @@ class ResultsFactory:
                 )
 
             elif self.low_to_high:
-                results_db.append(
+                results_db.extend(
                     ShoppedData.query.filter(
                         # ShoppedData.searched_keyword.contains(searched_keyword),
                         or_(
@@ -198,7 +198,7 @@ class ResultsFactory:
                 )
         else:
             if self.high_to_low:
-                results_db.append(
+                results_db.extend(
                     ShoppedData.query.filter(
                         # ShoppedData.searched_keyword.contains(searched_keyword),
                         or_(
@@ -212,7 +212,7 @@ class ResultsFactory:
                     .all()
                 )
             elif self.low_to_high:
-                results_db.append(
+                results_db.extend(
                     ShoppedData.query.filter(
                         # ShoppedData.searched_keyword.contains(searched_keyword),
                         or_(
@@ -225,21 +225,14 @@ class ResultsFactory:
                     .order_by(ShoppedData.numeric_price.asc())
                     .all()
                 )
-        for results in results_db:
-            if results:
-                results_1 = []
-                for result in results:
-                    result.searched_keyword = self.search_keyword
-                    results_1.append(result)
-                results_centre = [res.__str__() for res in results_1]
-        return results_centre
+
+        return self.arrange_results_by_shop_name(results_db)
 
     def get_data_from_db(self):
         results_db = []
-        results_centre = []
         if self.shop_names_list:
             if self.high_to_low:
-                results_db.append(
+                results_db.extend(
                     ShoppedData.query.filter(
                         ShoppedData.searched_keyword == self.search_keyword,
                         ShoppedData.shop_name.in_(self.shop_names_list),
@@ -248,7 +241,7 @@ class ResultsFactory:
                     .all()
                 )
             elif self.low_to_high:
-                results_db.append(
+                results_db.extend(
                     ShoppedData.query.filter(
                         ShoppedData.searched_keyword == self.search_keyword,
                         ShoppedData.shop_name.in_(self.shop_names_list),
@@ -258,7 +251,7 @@ class ResultsFactory:
                 )
         else:
             if self.high_to_low:
-                results_db.append(
+                results_db.extend(
                     ShoppedData.query.filter(
                         ShoppedData.searched_keyword == self.search_keyword
                     )
@@ -266,7 +259,7 @@ class ResultsFactory:
                     .all()
                 )
             elif self.low_to_high:
-                results_db.append(
+                results_db.extend(
                     ShoppedData.query.filter(
                         ShoppedData.searched_keyword == self.search_keyword
                     )
@@ -274,16 +267,14 @@ class ResultsFactory:
                     .all()
                 )
 
-        for results in results_db:
-            if results is not None and len(results) > 0:
-                results_centre = [res.__str__() for res in results]
-        return results_centre
+        import pdb; pdb.set_trace()
+        return self.arrange_results_by_shop_name(results_db)
 
     def match_results_by_sk(self, results):
         mk_results = []
         for item_r in results:
             item_r = safe_json(item_r)
-            if self.match_sk(safe_grab(item_r, [self.search_keyword, "title"]),):
+            if self.match_sk(safe_grab(item_r, [self.shop_name, "title"]),):
                 mk_results.append(json.dumps(item_r))
         return mk_results
 
@@ -332,10 +323,22 @@ class ResultsFactory:
             result = safe_json(result)
             if result and isinstance(result, list) and len(result) > 0:
                 result = result[0]
-            date_searched = safe_grab(result, [self.search_keyword, "date_searched"])
+            date_searched = safe_grab(result, [self.shop_name, "date_searched"])
             if date_searched is not None:
                 date_searched_parse = parser.parse(date_searched)
                 dt_time_diff = datetime.now(timezone.utc) - date_searched_parse
                 if dt_time_diff.days < SHOP_CACHE_MAX_EXPIRY_TIME:
                     return SHOP_CACHE_LOOKUP_SET
         return False
+
+    def arrange_results_by_shop_name(self, results):
+        arranged_result = {}
+        for result in results:
+            if isinstance(result, Model):
+                result = json.loads(result.__repr__())
+            for _, v in result.items():
+                if not arranged_result.get("shop_name"):
+                    arranged_result[v["shop_name"]] = []
+                arranged_result[v["shop_name"]].append(v)
+
+        return arranged_result

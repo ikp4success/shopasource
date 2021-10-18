@@ -3,7 +3,7 @@
 from shops.shop_base import ShopBase
 
 
-class Champsports(ShopBase):
+class Champssports(ShopBase):
     name = "CHAMPSSPORTS"
     download_delay = 2.5
     headers = {

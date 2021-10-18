@@ -155,7 +155,7 @@ def truncate_data(data, length_cont, html_escape=False):
 
 def save_shop_data(data):
     if data and int(os.environ.get("SAVE_TO_DB", 0)) == 1:
-        from project.models import ShoppedData
+        from db.models import ShoppedData
 
         shop = ShoppedData(**data)
         shop.commit()
@@ -163,7 +163,7 @@ def save_shop_data(data):
 
 def save_job(spider_name, job_id, status="done"):
     if job_id and int(os.environ.get("SAVE_TO_DB", 0)) == 1:
-        from project.models import Job
+        from db.models import Job
 
         job = Job().get_item(id=job_id)
 
