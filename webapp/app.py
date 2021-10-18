@@ -56,7 +56,7 @@ async def robots():
 @app.route("/api/get_result", methods=["GET"])
 async def get_result():
     if not request.args.get("job_id"):
-        return ({"message": "job_id is required."}, 400)
+        return ({"error": "job_id is required."}, 400)
     return get_results(**request.args), 200
 
 
@@ -69,9 +69,9 @@ async def api_search():
 
     if params[0]["is_async"]:
         start_data = start_async_requests(**params[0])
-        return {**start_data}, 200
+        return jsonify({**start_data}), 200
     else:
-        return start_shop_search(**params[0]), 200
+        return jsonify(start_shop_search(**params[0])), 200
 
 
 @app.route("/websearch/shops-active.json", methods=["GET"])

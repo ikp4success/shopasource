@@ -22,7 +22,7 @@ def authorize(app):
                 logger.error("User could not authenticate!")
                 status = {
                     "status": "Unauthorized",
-                    "message": "You have failed authentication!",
+                    "error": "You have failed authentication!",
                 }
                 return (
                     status,

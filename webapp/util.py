@@ -8,6 +8,8 @@ from tasks.results_factory import ResultsFactory, format_shop_names_list
 
 logger = get_logger(__name__)
 
+fallback_error = {"error": "Sorry, no products found"}
+
 
 def update_status(**kwargs):
     if kwargs.get("job_id"):
@@ -34,7 +36,7 @@ def validate_params(**kwargs):
             cleaned["is_async"] = False
         return cleaned, True
     except Exception:
-        results = [{"message": "Parameters are invalid"}]
+        results = {"error": "Parameters are invalid"}
         update_status(status="error", job_id=kwargs.get("job_id"))
         return results, False
 
@@ -44,11 +46,10 @@ def start_shop_search(**kwargs):
     results = res_factory.run_search()
 
     if not res_factory.is_async:
-        if results and len(results) > 0 and results[0] != "null":
-            results = results[0]
+        if results and not isinstance(results, dict):
             update_status(status="done", job_id=kwargs.get("job_id"))
         else:
-            results = {"message": "Sorry, no products found"}
+            results = fallback_error
             update_status(status="error", job_id=kwargs.get("job_id"))
 
         return results
@@ -76,7 +77,7 @@ def start_async_requests(**kwargs):
 def get_results(**kwargs):
     job_id = kwargs["job_id"]
     status = "job not found"
-    fallback_error = {"message": "Sorry, no products found"}
+
     results = None
 
     if job_id:
@@ -94,10 +95,9 @@ def get_results(**kwargs):
                         break
 
                 status = "in_progress" if in_progress else "done"
-
         if not results:
             results = fallback_error
     else:
-        results = {"message": "job_id is required"}
+        results = {"error": "job_id is required"}
 
     return {"status": status, "data": results, "logs": job.meta}
