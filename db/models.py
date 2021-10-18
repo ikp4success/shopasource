@@ -14,7 +14,7 @@ from support import Config, get_logger
 
 logger = get_logger(__name__)
 
-engine = db.create_engine(Config().POSTGRESS_DB_URL, convert_unicode=True,)
+engine = db.create_engine(Config().POSTGRESS_DB_URL, convert_unicode=True, pool_size=100, max_overflow=200)
 
 db_session = scoped_session(
     sessionmaker(autocommit=False, autoflush=False, bind=engine)

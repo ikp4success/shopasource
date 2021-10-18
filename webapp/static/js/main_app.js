@@ -205,7 +205,7 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
             sk_url = "/api/shop/search?" + search_params + "&async=1";
 
             $api_request = $.getJSON(sk_url,
-                function(data, sk) {
+                function(data) {
                   shop_job_ids.push(data)
                   load_job([data], sk)
             }).fail(
@@ -258,13 +258,11 @@ function load_job(data, sk){
   }
 
   for (job_id_index in data){
-    job_id = shop_job_ids[job_id_index]
+    job_id = shop_job_ids[job_id_index]["job_id"]
     jb_url = "/api/get_result?job_id=" + job_id;
     $api_request = $.getJSON(jb_url,
         function(gs_data) {
-          if (gs_data["status"] != "done"){
-            load_data_container(gs_data, sk)
-          }
+          load_data_container(gs_data, sk)
     })
   }
 }
