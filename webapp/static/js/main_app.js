@@ -262,7 +262,7 @@ function load_job(data, sk){
     jb_url = "/api/get_result?job_id=" + job_id;
     $api_request = $.getJSON(jb_url,
         function(gs_data) {
-          load_data_container(gs_data, sk)
+          load_data_container(gs_data["data"], sk)
     })
   }
 }
