@@ -1,20 +1,20 @@
 import datetime
 import json
-import time
 import uuid
 
 import sqlalchemy as db
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
-from sqlalchemy.sql import func
 
 from shops.shop_util.extra_function import generate_result_meta
 from support import Config, get_logger
 
 logger = get_logger(__name__)
 
-engine = db.create_engine(Config().POSTGRESS_DB_URL, convert_unicode=True, pool_size=100, max_overflow=200)
+engine = db.create_engine(
+    Config().POSTGRESS_DB_URL, convert_unicode=True, pool_size=100, max_overflow=200
+)
 
 db_session = scoped_session(
     sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -63,7 +63,9 @@ class ShoppedData(Model, ModelMixin):
     numeric_price = db.Column(db.Numeric, nullable=False)
     title = db.Column(db.String, nullable=False)
     content_description = db.Column(db.String)
-    date_searched = db.Column(db.DateTime(timezone=True), default=datetime.datetime.utcnow)
+    date_searched = db.Column(
+        db.DateTime(timezone=True), default=datetime.datetime.utcnow
+    )
 
     def __init__(self, *args, **kwargs):
         self.searched_keyword = kwargs.get("searched_keyword")
@@ -100,8 +102,8 @@ class Job(Model, ModelMixin):
     shop_names_list = db.Column(db.String, nullable=False)
     match_acc = db.Column(db.String, nullable=False)
     meta = db.Column(db.JSON, nullable=False)
-    low_to_high = db.Column(db.String, nullable=False)
-    high_to_low = db.Column(db.String, nullable=False)
+    low_to_high = db.Column(db.Boolean, default=False)
+    high_to_low = db.Column(db.Boolean, default=True)
     date_searched = db.Column(
         db.DateTime(timezone=True), default=datetime.datetime.utcnow
     )
