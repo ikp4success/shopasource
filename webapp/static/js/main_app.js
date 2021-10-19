@@ -31,7 +31,7 @@ item_size = 0
 max_item_size = 30
 current_count = 0
 returned_item_size = max_item_size
-width_prog_check = 49
+width_prog_check = 2
 
 $(function(){
   $(document).on("submit", "#search_form", function(e){
@@ -181,6 +181,7 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
     api_request = $.getJSON(sk_url,
         function(data) {
           if(!data["error"]){
+            shop_job_ids = []
             shop_job_ids.push(data)
             load_job([data], sk)
           }
@@ -192,6 +193,7 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
       });
   }
   else if(gs_data.length == 0){
+    shop_job_ids = []
     shops_url = "/websearch/shops-active.json";
     $shop_request = $.getJSON(shops_url,
         function(data) {
@@ -207,7 +209,6 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
             $api_request = $.getJSON(sk_url,
                 function(data) {
                   shop_job_ids.push(data)
-                  load_job([data], sk)
             }).fail(
               function()
               {
@@ -216,6 +217,7 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
           }
     });
   }else{
+    shop_job_ids = []
     shop_size = gs_data.length
     gs_data.sort(() => Math.random() - 0.5)
     var shop_index;
@@ -227,7 +229,6 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
       $api_request = $.getJSON(sk_url,
           function(gs_data) {
             shop_job_ids.push(data)
-            load_job([data], sk)
       }).fail(
         function()
         {
@@ -470,7 +471,7 @@ function shop_web_search(){
     $("#err_msg").hide()
     $(".loading").show()
     load_search_progress_bar()
-    set_search_time_out()
+    set_search_time_out(20, true)
   }else{
     shop_searching = false
     reset_controls()
@@ -584,10 +585,9 @@ function refresh_time_out(){
 
 function set_search_time_out(obj_so, refresh_api){
   if(refresh_api){
-    sk = get_sk_refined()
     width_progress = document.getElementById("searchProgressBar").style.width
     if(parseInt(width_progress.replace("%", "")) > width_prog_check){
-      width_prog_check = width_prog_check + 50
+      width_prog_check = width_prog_check + 1
       kickstart_initial_api_search()
     }
   }
@@ -600,28 +600,15 @@ function set_search_time_out(obj_so, refresh_api){
 
 function count_returned_item(re_item){
   count = 0
-  if(!is_filter){
-    for (shop_index_k in shop_loaded_data){
-      re_item = shop_loaded_data[shop_index_k]
-      for(shop_each_index_k in re_item){
-        try{
-          shop_each_d_v = shop_loaded_data_v[shop_each_index_k]
-
-          if(!shop_each_d_v){
-            continue
-          }
-
-          count++
-        }catch(err){
-          count++
-          continue
-        }
-      }
-    }
-  }else{
+  for (shop_index_k in shop_loaded_data){
+    re_item = shop_loaded_data[shop_index_k]
     for(shop_each_index_k in re_item){
       try{
         shop_each_d_v = shop_loaded_data_v[shop_each_index_k]
+
+        if(!shop_each_d_v){
+          continue
+        }
 
         count++
       }catch(err){
@@ -678,13 +665,9 @@ function consume_l_data(){
   res_react_bucket = []
   var shop_index_k;
   sld = shop_loaded_data
-  if(!is_filter){
-    for (shop_index_k in shop_loaded_data){
-      shop_loaded_data_v = shop_loaded_data[shop_index_k]
-      res_react_bucket.push.apply(res_react_bucket, consume_l_data_child(shop_loaded_data_v, sk))
-    }
-  }else{
-    res_react_bucket.push.apply(res_react_bucket, consume_l_data_child(shop_loaded_data, sk))
+  for (shop_index_k in shop_loaded_data){
+    shop_loaded_data_v = shop_loaded_data[shop_index_k]
+    res_react_bucket.push.apply(res_react_bucket, consume_l_data_child(shop_loaded_data_v, sk))
   }
 
   if(res_react_bucket.length == 0){
@@ -697,11 +680,10 @@ function consume_l_data(){
       }
     }
     width_progress = document.getElementById("searchProgressBar").style.width
-    // if(time_check_default != max_t_chk_def){
     if(width_progress != "100%"){
       shop_searching = true
       time_check_default = time_check_default + 1
-      set_search_time_out(150, true)
+      set_search_time_out(30, true)
     }else{
       $(".alert").html("<strong>Sorry, no products found</strong>, refine search criteria.")
       $(".alert").show()
@@ -807,10 +789,9 @@ function refresh_shop_data(){
     return
   }
   consume_l_data()
-  // if(load_next_btn){
-  //   refresh_time_out()
-  //   load_time_out = setTimeout(kickstart_initial_api_search, 500)
-  // }
+  if(load_next_btn){
+    kickstart_initial_api_search()
+  }
   return false
 }
 
