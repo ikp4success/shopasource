@@ -9,5 +9,5 @@
   "SHOP_CACHE_LOOKUP_SET": true,
   "SUPER_USER": false,
   "SAVE_TO_DB": true,
-  "LOG_LEVEL": "WARNING"
+  "SET_LOG_LEVEL": "WARNING"
 }

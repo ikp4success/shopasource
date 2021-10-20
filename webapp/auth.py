@@ -1,11 +1,11 @@
-import logging
 from functools import wraps
 
 from quart import request
 
+from support import get_logger
 from webapp.util import get_api_key
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 def authorize(app):

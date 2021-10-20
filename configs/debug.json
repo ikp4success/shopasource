@@ -9,5 +9,5 @@
   "SHOP_CACHE_LOOKUP_SET": true,
   "SUPER_USER": true,
   "SAVE_TO_DB": true,
-  "LOG_LEVEL": "DEBUG"
+  "SET_LOG_LEVEL": "DEBUG"
 }

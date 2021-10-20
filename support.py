@@ -32,7 +32,7 @@ def safe_int(num_str):
 class Config:
     SKIP_SENTRY = os.environ.get("SKIP_SENTRY", False)
     ENVIRONMENT = os.environ.get("ENVIRONMENT")
-    LOG_LEVEL = os.environ.get("LOG_LEVEL", "WARNING").upper()
+    SET_LOG_LEVEL = os.environ.get("SET_LOG_LEVEL", "WARNING").upper()
     API_KEY = os.environ.get("API_KEY")
     DATABASE_URL = os.environ.get("DATABASE_URL")
     SENTRY_DSN = os.environ.get("SENTRY_DSN")
@@ -138,9 +138,11 @@ except AttributeError:
 
 
 def get_logger(name):
+    import pdb
+
+    pdb.set_trace()
     logger = logging.getLogger(name)
-    if hasattr(logging, "basicconfig"):
-        logging.basicconfig()
-    logging.getLogger().setLevel(getattr(logging, config.LOG_LEVEL))
-    coloredlogs.install(level=config.LOG_LEVEL)
+    logging.basicconfig()
+    logging.getLogger().setLevel(getattr(logging, config.SET_LOG_LEVEL))
+    coloredlogs.install(level=config.SET_LOG_LEVEL)
     return logger
