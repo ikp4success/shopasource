@@ -15,8 +15,8 @@ def get_config(env=None):
     try:
         with open("configs/{}.json".format(env)) as file:
             return json.load(file)
-    except Exception as ex:
-        logger.warning(f"{env} Config not found. \n{ex}")
+    except FileNotFoundError:
+        logger.warning(f"{env} Config not found.")
     return {}
 
 
