@@ -30,6 +30,7 @@ class Config:
     API_MAX_USAGE_DAYS = os.environ.get("API_MAX_USAGE_DAYS", 2)
     SHOP_CACHE_MAX_EXPIRY_TIME = os.environ.get("SHOP_CACHE_MAX_EXPIRY_TIME", 3)
     SHOP_CACHE_LOOKUP_SET = os.environ.get("SHOP_CACHE_LOOKUP_SET", True)
+    SUPER_USER = os.environ.get("SUPER_USER")
 
     def apply_env_variables(self, config):
         for k, v in config.items():
