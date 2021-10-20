@@ -1,7 +1,7 @@
 Flask==1.0.2
 Scrapy==1.8.1
 django
-gunicorn
+hypercorn
 django-heroku
 requests
 python-dateutil
