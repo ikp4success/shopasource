@@ -9,18 +9,10 @@ import threading
 import coloredlogs
 
 local = threading.local()
-
-
-def get_logger(name):
-    logger = logging.getLogger(name)
-    logging.basicconfig()
-    logging.getLogger().setLevel(getattr(logging, config.LOG_LEVEL))
-    coloredlogs.install(level=config.LOG_LEVEL)
-    return logger
+logger = logging.getLogger(__name__)
 
 
 def get_config(env=None):
-    logger = get_logger(__name__)
     env = env or os.getenv("ENV_CONFIGURATION", "debug")
     try:
         with open("configs/{}.json".format(env)) as file:
@@ -38,7 +30,6 @@ def safe_int(num_str):
 
 
 class Config:
-    logger = get_logger(__name__)
     SKIP_SENTRY = os.environ.get("SKIP_SENTRY", False)
     ENVIRONMENT = os.environ.get("ENVIRONMENT")
     LOG_LEVEL = os.environ.get("LOG_LEVEL", "WARNING").upper()
@@ -75,23 +66,23 @@ class Config:
         elif not self.ENVIRONMENT:
             raise Exception("Environment is required.")
         if not self.DATABASE_URL:
-            self.logger.warning("DATABASE_URL is required.")
+            logger.warning("DATABASE_URL is required.")
         elif self.DATABASE_URL.startswith("postgres://"):
             # https://docs.sqlalchemy.org/en/14/changelog/changelog_14.html#change-3687655465c25a39b968b4f5f6e9170b
             self.DATABASE_URL = self.DATABASE_URL.replace(
                 "postgres://", "postgresql://"
             )
         if not self.SKIP_SENTRY and not self.SENTRY_DSN:
-            self.logger.warning("SENTRY_DSN is not set, skipping sentry.")
+            logger.warning("SENTRY_DSN is not set, skipping sentry.")
             self.SKIP_SENTRY = True
         if not self.API_KEY:
-            self.logger.warning("API_KEY is not set, using default.")
+            logger.warning("API_KEY is not set, using default.")
 
     def config_display(self):
         display = ""
         for k in vars(self).keys():
             display += f"{k}: {getattr(self, k)}\n"
-        self.logger.info(display)
+        logger.info(display)
 
     def load_config(self):
         config = get_config()
@@ -142,5 +133,14 @@ class CustomEncoder(json.JSONEncoder):
 try:
     config = local.config
 except AttributeError:
-    config = config
+    config = Config()
     local.config = config
+
+
+def get_logger(name):
+    logger = logging.getLogger(name)
+    if hasattr(logging, "basicconfig"):
+        logging.basicconfig()
+    logging.getLogger().setLevel(getattr(logging, config.LOG_LEVEL))
+    coloredlogs.install(level=config.LOG_LEVEL)
+    return logger
