@@ -331,7 +331,6 @@ class ResultsFactory:
         return results
 
     def is_new_data(self, results):
-        return False
         for result in results:
             result = safe_json(result)
             if result and isinstance(result, list) and len(result) > 0:
