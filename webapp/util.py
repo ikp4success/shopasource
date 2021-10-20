@@ -112,7 +112,7 @@ def get_api_key(user):
     if Config().ENVIRONMENT != "debug" or Config().SUPER_USER != user:
         api = APIUsage().get_item(user=user)
         if api:
-            usage_count = api.usage_count
+            usage_count = api.usage_count or 0
             if usage_count > Config().API_MAX_USAGE:
                 dt_time_diff = datetime.now(timezone.utc) - api.date_usage
                 if dt_time_diff.days > Config().API_MAX_USAGE_DAYS:
