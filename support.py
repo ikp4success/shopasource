@@ -20,6 +20,13 @@ def get_config(env=None):
     return {}
 
 
+def safe_int(num_str):
+    try:
+        return int(num_str)
+    except Exception:
+        return None
+
+
 class Config:
     SKIP_SENTRY = os.environ.get("SKIP_SENTRY", False)
     ENVIRONMENT = os.environ.get("ENVIRONMENT")
@@ -42,10 +49,12 @@ class Config:
     def convert_bool_integers_to_bool(self):
         # converts integer used as bool in env variables or config
         for env in self.bool_envs:
-            if getattr(self, env) == 1:
-                setattr(self, env, True)
-            else:
-                setattr(self, env, False)
+            env_v = safe_int(getattr(self, env))  # handle's '1', '0'
+            if env_v:
+                if env_v == 1:
+                    setattr(self, env, True)
+                else:
+                    setattr(self, env, False)
 
     def apply_fallback(self):
         if self.ENVIRONMENT == "debug":
