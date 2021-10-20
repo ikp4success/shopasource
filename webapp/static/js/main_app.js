@@ -238,7 +238,7 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
 
       $api_request = $.getJSON(sk_url,
           function(gs_data) {
-            shop_job_ids.push(data)
+            shop_job_ids.push(gs_data)
       }).fail(
         function()
         {
