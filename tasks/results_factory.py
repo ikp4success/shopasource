@@ -7,7 +7,6 @@ from sqlalchemy import or_
 
 from db.models import ShoppedData
 from shops.shop_util.extra_function import safe_grab, safe_json, truncate_data
-from shops.shop_util.shop_setup import SHOP_CACHE_LOOKUP_SET, SHOP_CACHE_MAX_EXPIRY_TIME
 from shops.shop_util.shop_setup_functions import find_shop, is_shop_active
 from support import Config, get_logger
 from tasks.scrapy_run import launch_spiders
@@ -340,8 +339,8 @@ class ResultsFactory:
             if date_searched:
                 date_searched_parse = parser.parse(date_searched)
                 dt_time_diff = datetime.now(timezone.utc) - date_searched_parse
-                if dt_time_diff.days < SHOP_CACHE_MAX_EXPIRY_TIME:
-                    return SHOP_CACHE_LOOKUP_SET
+                if dt_time_diff.days < Config().SHOP_CACHE_MAX_EXPIRY_TIME:
+                    return Config().SHOP_CACHE_LOOKUP_SET
         return False
 
     def join_results_db(self, results):

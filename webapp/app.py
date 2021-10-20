@@ -6,6 +6,7 @@ from support import Config, CustomEncoder, get_logger
 from webapp.auth import authorize
 from webapp.config import configure_app
 from webapp.util import (
+    get_api_key,
     get_results,
     start_async_requests,
     start_shop_search,
@@ -88,7 +89,10 @@ async def shop_list_active():
 
 @app.route("/api/public_api_key", methods=["GET"])
 async def get_public_api_key():
-    return {"public_api_key": Config().API_KEY}, 200
+    api_key_info = get_api_key(user=request.remote_addr)
+    if api_key_info.get("error"):
+        return api_key_info, 429
+    return api_key_info, 200
 
 
 async def home():

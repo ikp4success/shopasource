@@ -129,3 +129,25 @@ class Job(Model, ModelMixin):
             "date_searched": str(self.date_searched),
         }
         return json.dumps(data_gen)
+
+
+class APIUsage(Model, ModelMixin):
+    __tablename__ = "api_usage"
+    user = db.Column(db.String, primary_key=True)
+    api_key = db.Column(db.String, nullable=False)
+    usage_count = db.Column(db.Integer, nullable=False)
+    date_usage = db.Column(db.DateTime(timezone=True), default=datetime.datetime.utcnow)
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.get("user")
+        self.api_key = kwargs.get("api_key")
+        self.usage_count = kwargs.get("usage_count")
+
+    def __repr__(self):
+        data_gen = {
+            "user": self.user,
+            "api_key": self.api_key,
+            "usage_count": self.usage_count,
+            "date_usage": str(self.date_usage),
+        }
+        return json.dumps(data_gen)

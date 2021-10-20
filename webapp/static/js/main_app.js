@@ -261,8 +261,18 @@ function load_public_api_key(){
   api_url = "/api/public_api_key";
   $api_request = $.getJSON(api_url,
       function(data) {
-        public_api_key = data["public_api_key"]
-  })
+        public_api_key = data.public_api_key
+        shop_web_search()
+
+  }).fail(
+    function(data)
+    {
+      res = data.responseJSON
+      if(res.error){
+        $(".alert").html(`<strong>API Error</strong> - ` + res.error)
+        $(".alert").show()
+      }
+    });
 }
 
 function load_job(data, sk){
@@ -488,8 +498,6 @@ function shop_web_search(){
   }
   if (!public_api_key || public_api_key == null){
     load_public_api_key()
-    refresh_time_out()
-    load_time_out = setTimeout(shop_web_search, 8)
     return
   }
 

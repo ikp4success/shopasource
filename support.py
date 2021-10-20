@@ -22,21 +22,30 @@ class Config:
     API_KEY = os.environ.get("API_KEY")
     POSTGRESS_DB_URL = os.environ.get("POSTGRESS_DB_URL")
     SENTRY_DSN = os.environ.get("SENTRY_DSN")
+    API_MAX_USAGE = os.environ.get("API_MAX_USAGE")
+    API_MAX_USAGE_DAYS = os.environ.get("API_MAX_USAGE_DAYS", 2)
+    SHOP_CACHE_MAX_EXPIRY_TIME = os.environ.get("SHOP_CACHE_MAX_EXPIRY_TIME", 3)
+    SHOP_CACHE_LOOKUP_SET = os.environ.get("SHOP_CACHE_LOOKUP_SET", True)
 
     def apply_env_variables(self, config):
         for k, v in config.items():
+            # variables set in config takes precedence over environ variables.
             setattr(self, k, v)
         if self.ENVIRONMENT == "debug":
-            self.POSTGRESS_DB_URL = f"postgresql://{os.environ['DB_USER']}:{os.environ['DB_PASS']}@{os.environ['DB_DOMAIN']}:{os.environ['DB_PORT']}/{os.environ['DB_NAME']}"
+            if not self.POSTGRESS_DB_URL:
+                self.POSTGRESS_DB_URL = f"postgresql://{os.environ['DB_USER']}:{os.environ['DB_PASS']}@{os.environ['DB_DOMAIN']}:{os.environ['DB_PORT']}/{os.environ['DB_NAME']}"
         elif not self.ENVIRONMENT:
             raise Exception("Environment is required.")
         if not self.POSTGRESS_DB_URL:
             logger.warning("POSTGRESS_DB_URL is required.")
         if not self.SKIP_SENTRY and not self.SENTRY_DSN:
-            logger.warning("SENTRY_DSN is not set.")
+            logger.warning("SENTRY_DSN is not set, skipping sentry.")
             self.SKIP_SENTRY = True
         if not self.API_KEY:
-            logger.warning("API_KEY is not set.")
+            logger.warning("API_KEY is not set, using default.")
+        if not self.SUPER_USER:
+            logger.warning("SUPER_USER is not set, using default.")
+            self.SUPER_USER = "127.0.0.1"
 
     def load_config(self):
         config = get_config()

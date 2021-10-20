@@ -30,7 +30,7 @@ configs = {
 
 def configure_app(app, config_name=None):
     if not config_name:
-        config_name = os.getenv("ENV_CONFIGURATION", "test")
+        config_name = os.getenv("ENV_CONFIGURATION", "dev")
     app.config.from_object(configs[config_name])
     env = app.config["CONFIG_PREFIX"]
     app.config.update(get_config(env))

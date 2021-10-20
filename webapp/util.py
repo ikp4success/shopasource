@@ -1,9 +1,10 @@
 import asyncio
 import json
+from datetime import datetime, timezone
 from functools import partial
 
-from db.models import Job
-from support import get_logger
+from db.models import APIUsage, Job
+from support import Config, get_logger
 from tasks.results_factory import ResultsFactory, format_shop_names_list
 
 logger = get_logger(__name__)
@@ -104,3 +105,25 @@ def get_results(**kwargs):
         results = {"error": "job_id is required"}
 
     return {"status": status, "data": results, "logs": logs}
+
+
+def get_api_key(user):
+    api_key = Config().API_KEY
+    if Config().ENVIRONMENT != "debug" or Config().SUPER_USER != user:
+        api = APIUsage().get_item(user=user)
+        if api:
+            usage_count = api.usage_count
+            if usage_count > Config().API_MAX_USAGE:
+                dt_time_diff = datetime.now(timezone.utc) - api.date_usage
+                if dt_time_diff.days > Config().API_MAX_USAGE_DAYS:
+                    usage_count = 0
+                else:
+                    return {
+                        "error": f"API rate limit is exceeded, try again in {Config().API_MAX_USAGE_DAYS} day(s)."
+                    }
+            api.update_item(usage_count=usage_count + 1)
+        else:
+            api = APIUsage(user=user, usage_count=1, api_key=api_key,)
+            api.commit()
+
+    return {"public_api_key": api_key}
