@@ -252,7 +252,7 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
   return false
 }
 
-function load_public_api_key(){
+function load_public_api_key(req_func=null){
   if($api_request != null){
     $api_request.abort()
     $api_request = null
@@ -271,7 +271,12 @@ function load_public_api_key(){
   $api_request = $.getJSON(api_url,
       function(data) {
         public_api_key = data.public_api_key
-        shop_web_search()
+        if (req_func != null){
+          window[req_func]()
+        }else{
+          // default
+          shop_web_search()
+        }
 
   }).fail(
     function(data)
@@ -395,6 +400,11 @@ function load_shops_cb(){
     replace_shop_find(shops_drop)
     $("#loading_shop").hide()
     return
+  }
+
+  if (public_api_key == null){
+      load_public_api_key("load_shops_cb")
+      return
   }
   shops_url = "/api/shops-active.json";
   if($shop_active_request != null) {
