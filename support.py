@@ -96,8 +96,8 @@ def get_logger(name):
         logging.getLogger().setLevel(logging.DEBUG)
         coloredlogs.install(level="DEBUG")
     else:
-        logging.getLogger().setLevel(logging.WARNING)
-        coloredlogs.install(level="WARNING")
+        logging.getLogger().setLevel(logging.INFO)
+        coloredlogs.install(level="INFO")
     return logger
 
 
