@@ -55,9 +55,6 @@ class Config:
             self.SKIP_SENTRY = True
         if not self.API_KEY:
             logger.warning("API_KEY is not set, using default.")
-        if not self.SUPER_USER:
-            logger.warning("SUPER_USER is not set, using default.")
-            self.SUPER_USER = "127.0.0.1"
 
     def load_config(self):
         config = get_config()

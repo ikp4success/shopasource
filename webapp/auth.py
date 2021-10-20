@@ -19,7 +19,7 @@ def authorize(app):
                 headers_lower_case[k] = v
             auth = headers_lower_case.get("x-api-key")
             # check api usage limit
-            api_key_info = get_api_key(user=request.remote_addr)
+            api_key_info = get_api_key(request)
             if api_key_info.get("error"):
                 return api_key_info, 429
 

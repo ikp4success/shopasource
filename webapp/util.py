@@ -107,9 +107,10 @@ def get_results(**kwargs):
     return {"status": status, "data": results, "logs": logs}
 
 
-def get_api_key(user):
+def get_api_key(request):
+    user = get_ip(request)
     api_key = Config().API_KEY
-    if Config().ENVIRONMENT != "debug" and Config().SUPER_USER != user:
+    if Config().ENVIRONMENT != "debug" and Config().SUPER_USER:
         api = APIUsage().get_item(user=user)
         if api:
             usage_count = api.usage_count
@@ -127,3 +128,10 @@ def get_api_key(user):
             api.commit()
 
     return {"public_api_key": api_key}
+
+
+def get_ip(request):
+    print(request.headers)
+    if not request.headers.getlist("X-Forwarded-For"):
+        return request.remote_addr
+    return request.headers.getlist("X-Forwarded-For")[0] or request.remote_addr

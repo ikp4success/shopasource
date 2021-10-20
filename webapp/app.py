@@ -89,7 +89,7 @@ async def shop_list_active():
 
 @app.route("/api/public_api_key", methods=["GET"])
 async def get_public_api_key():
-    api_key_info = get_api_key(user=request.remote_addr)
+    api_key_info = get_api_key(request)
     if api_key_info.get("error"):
         return api_key_info, 429
     return api_key_info, 200
