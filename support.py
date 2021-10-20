@@ -45,6 +45,11 @@ class Config:
             raise Exception("Environment is required.")
         if not self.DATABASE_URL:
             logger.warning("DATABASE_URL is required.")
+        elif self.DATABASE_URL.startswith("postgres://"):
+            # https://docs.sqlalchemy.org/en/14/changelog/changelog_14.html#change-3687655465c25a39b968b4f5f6e9170b
+            self.DATABASE_URL = self.DATABASE_URL.replace(
+                "postgres://", "postgresql://"
+            )
         if not self.SKIP_SENTRY and not self.SENTRY_DSN:
             logger.warning("SENTRY_DSN is not set, skipping sentry.")
             self.SKIP_SENTRY = True
