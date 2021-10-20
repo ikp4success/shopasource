@@ -134,4 +134,4 @@ def get_ip(request):
     print(request.headers)
     if not request.headers.getlist("X-Forwarded-For"):
         return request.remote_addr
-    return request.headers.getlist("X-Forwarded-For")[0] or request.remote_addr
+    return request.headers.getlist("X-Forwarded-For")[-1] or request.remote_addr
