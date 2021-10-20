@@ -10,6 +10,10 @@
 
 http://www.shopasource.com/
 
+**API**
+
+https://github.com/ikp4success/shopasource/blob/master/api.md
+
 **About**
 
 Shop A Source provide easy access to search multiple shopping websites via one source. Website users can manage products and decide what product is best. Shop A Source could also be used to compare prices of a product.
@@ -20,16 +24,6 @@ Shop A Source provide easy access to search multiple shopping websites via one s
 ![s2](https://github.com/ikp4success/shopasource/blob/master/screenshots/s2.png)
 ![s3](https://github.com/ikp4success/shopasource/blob/master/screenshots/s3.png)
 
-**Technologies**
-
-Python,
-Html,
-Flask,
-Heroku,
-Postgres,
-sqlalchemy
-JavaScript
-Css
 
 Hybrid of: https://github.com/ikp4success/bestlows-java
 
@@ -92,11 +86,6 @@ project currently runs on Heroku, you can setup your own app-instance and deploy
 ```bash
 $ make generate_key
 ```
-
-
-**API**
-
-http://www.shopasource.com/api
 
 
 **Author**
