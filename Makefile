@@ -139,3 +139,9 @@ clean:
 	docker rm $(DK_NAME)
 	docker image prune -f
 	docker container prune
+
+
+.PHONY: generate_key
+generate_key: $(VENV)
+	. $(VENV_ACTIVATE) ;\
+	python -c 'from support import generate_key; print(generate_key())'

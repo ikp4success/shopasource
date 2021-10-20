@@ -88,6 +88,11 @@ $ make run_spider SPIDER=AMAZON SEARCH_KEYWORD=shirts
 ##### deploys
 project currently runs on Heroku, you can setup your own app-instance and deploy. for more information go to https://devcenter.heroku.com/articles/git. You could also use another service to host the project.
 
+##### other
+```bash
+$ make generate_key
+```
+
 
 **API**
 

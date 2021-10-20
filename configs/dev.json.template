@@ -2,7 +2,7 @@
   "SENTRY_DSN": "sentry log key goto https://sentry.io/",
   "API_KEY": "ur api key",
   "ENVIRONMENT": "dev",
-  "POSTGRESS_DB_URL": "your postgres url",
+  "DATABASE_URL": "your postgres url",
   "API_MAX_USAGE": 100,
   "API_MAX_USAGE_DAYS": 2,
   "SHOP_CACHE_MAX_EXPIRY_TIME": 30,

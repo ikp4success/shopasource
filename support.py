@@ -20,7 +20,7 @@ class Config:
     SKIP_SENTRY = os.environ.get("SKIP_SENTRY", False)
     ENVIRONMENT = os.environ.get("ENVIRONMENT")
     API_KEY = os.environ.get("API_KEY")
-    POSTGRESS_DB_URL = os.environ.get("POSTGRESS_DB_URL")
+    DATABASE_URL = os.environ.get("DATABASE_URL")
     SENTRY_DSN = os.environ.get("SENTRY_DSN")
     API_MAX_USAGE = os.environ.get("API_MAX_USAGE")
     API_MAX_USAGE_DAYS = os.environ.get("API_MAX_USAGE_DAYS", 2)
@@ -32,12 +32,12 @@ class Config:
             # variables set in config takes precedence over environ variables.
             setattr(self, k, v)
         if self.ENVIRONMENT == "debug":
-            if not self.POSTGRESS_DB_URL:
-                self.POSTGRESS_DB_URL = f"postgresql://{os.environ['DB_USER']}:{os.environ['DB_PASS']}@{os.environ['DB_DOMAIN']}:{os.environ['DB_PORT']}/{os.environ['DB_NAME']}"
+            if not self.DATABASE_URL:
+                self.DATABASE_URL = f"postgresql://{os.environ['DB_USER']}:{os.environ['DB_PASS']}@{os.environ['DB_DOMAIN']}:{os.environ['DB_PORT']}/{os.environ['DB_NAME']}"
         elif not self.ENVIRONMENT:
             raise Exception("Environment is required.")
-        if not self.POSTGRESS_DB_URL:
-            logger.warning("POSTGRESS_DB_URL is required.")
+        if not self.DATABASE_URL:
+            logger.warning("DATABASE_URL is required.")
         if not self.SKIP_SENTRY and not self.SENTRY_DSN:
             logger.warning("SENTRY_DSN is not set, skipping sentry.")
             self.SKIP_SENTRY = True
@@ -76,7 +76,7 @@ def get_logger(name):
 def generate_key():
     import uuid
 
-    return str(uuid.uuid1()).replace("-", "").upper()
+    return str(uuid.uuid1()).replace("-", "").lower()
 
 
 def get_sys_args_kwargs():
