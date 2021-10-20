@@ -13,7 +13,7 @@ local = threading.local()
 
 def get_logger(name):
     logger = logging.getLogger(name)
-    logging.basicconfig
+    logging.basicconfig()
     logging.getLogger().setLevel(getattr(logging, config.LOG_LEVEL))
     coloredlogs.install(level=config.LOG_LEVEL)
     return logger
