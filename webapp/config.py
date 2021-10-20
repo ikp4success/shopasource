@@ -34,5 +34,5 @@ def configure_app(app, config_name=None):
     app.config.from_object(configs[config_name])
     env = app.config["CONFIG_PREFIX"]
     app.config.update(get_config(env))
-    if os.environ.get("SKIP_SENTRY"):
+    if not os.environ.get("SENTRY_DSN"):
         app.config["SKIP_SENTRY"] = True

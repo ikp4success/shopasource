@@ -2,7 +2,7 @@ from quart import Quart, jsonify, render_template, request
 
 from db.models import Model, engine
 from shops.shop_util.shop_setup_functions import get_shops
-from support import Config, CustomEncoder, get_logger
+from support import CustomEncoder, config, get_logger
 from webapp.auth import authorize
 from webapp.config import configure_app
 from webapp.util import (
@@ -15,7 +15,7 @@ from webapp.util import (
 
 logger = get_logger(__name__)
 
-Config().intialize_sentry()
+config.intialize_sentry()
 
 app = Quart(__name__, template_folder="web_content")
 app.config["JSONIFY_PRETTYPRINT_REGULAR"] = True
@@ -75,7 +75,7 @@ async def api_search():
         start_data = start_async_requests(**params[0])
         return jsonify({**start_data}), 201
     else:
-        if Config().ENVIRONMENT == "debug":
+        if config.ENVIRONMENT == "debug":
             return jsonify(start_shop_search(**params[0])), 200
         else:
             return {"error": "sync api search allowed only in debug mode."}, 400

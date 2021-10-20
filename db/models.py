@@ -8,12 +8,12 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 from shops.shop_util.extra_function import generate_result_meta
-from support import Config, get_logger
+from support import config, get_logger
 
 logger = get_logger(__name__)
 
 engine = db.create_engine(
-    Config().DATABASE_URL, convert_unicode=True, pool_size=100, max_overflow=200
+    config.DATABASE_URL, convert_unicode=True, pool_size=100, max_overflow=200
 )
 
 db_session = scoped_session(
