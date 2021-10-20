@@ -109,7 +109,7 @@ def get_results(**kwargs):
 
 def get_api_key(user):
     api_key = Config().API_KEY
-    if Config().ENVIRONMENT != "debug" or Config().SUPER_USER != user:
+    if Config().ENVIRONMENT != "debug" and Config().SUPER_USER != user:
         api = APIUsage().get_item(user=user)
         if api:
             usage_count = api.usage_count
