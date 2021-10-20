@@ -68,8 +68,8 @@ class Config:
 
     def config_display(self):
         display = ""
-        for k, v in vars(self).items():
-            display += f"{k}: {v}\n"
+        for k in vars(self).keys():
+            display += f"{k}: {getattr(self, k)}\n"
         logger.info(display)
 
     def load_config(self):
