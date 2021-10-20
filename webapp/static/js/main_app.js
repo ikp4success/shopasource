@@ -357,6 +357,12 @@ function load_shops_cb(){
     $shop_active_request.abort()
     $shop_active_request = null
   }
+  $.ajaxSetup({
+    async: true,
+    headers: {
+      'x-api-key': public_api_key,
+    }
+  });
   $shop_active_request = $.getJSON(shops_url,
       function(data) {
         shops_drop = data
@@ -432,6 +438,12 @@ function find_shop(){
     $shop_active_request.abort()
     $shop_active_request = null
   }
+  $.ajaxSetup({
+    async: true,
+    headers: {
+      'x-api-key': public_api_key,
+    }
+  });
   $shop_active_request = $.getJSON(shops_url,
       function(data) {
         shops_drop = data
@@ -474,8 +486,13 @@ function shop_web_search(){
     $(".alert").show()
     return false
   }
+  if (!public_api_key || public_api_key == null){
+    load_public_api_key()
+    refresh_time_out()
+    load_time_out = setTimeout(shop_web_search, 8)
+    return
+  }
 
-  load_public_api_key()
   cancel_search = !cancel_search
   shop_loaded_data = clear_dict_obj(shop_loaded_data)
   shop_job_ids = []
