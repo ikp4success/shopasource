@@ -1,0 +1,210 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta name="Title" content="Search any product or item via one source">
+<meta name="Description" content="Shop A Source provide easy access to search multiple shopping websites via one source. Website users can manage products and decide what product is best. Shop A Source could also be used to compare prices of a product.">
+<meta name="Keywords" content="shops, product, shopping, market, sell, search, compare, online shopping site, online shopping, compare prices, price comparison, best price, shopping list, shoppers guide">
+<meta name="google-site-verification" content="1FzRHrFNFAtDLWm8f0xeZl8GGV_Z-9w_GZDG0Hy0IvY" />
+
+<script type="text/javascript" src="https://cdn.ywxi.net/js/1.js" async></script>
+
+	<script
+		src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+		integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+		crossorigin="anonymous">
+	</script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+	integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+	crossorigin="anonymous">
+	</script>
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+	integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+	crossorigin="anonymous">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+crossorigin="anonymous">
+</script>
+
+<script
+	src="https://code.jquery.com/jquery-3.3.1.min.js">
+</script>
+
+	<!-- <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+	<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+	<script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+	<script src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script> -->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/4column.css')}}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css')}}">
+<script src="{{ url_for('static', filename='js/main_app.js')}}"></script>
+<title>Shop A Source</title>
+</head>
+<body>
+	<div class="navbar navbar-expand-lg fixed-top navbar-light bg-light">
+		<div class="container">
+			<a href="/" class="navbar-brand">Shop A Source</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse"
+				data-target="#navbarResponsive" aria-controls="navbarResponsive"
+				aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarResponsive">
+				<ul class="navbar-nav">
+					<li class="nav-item active"><a class="nav-link"
+						href="/">Home</a></li>
+					<li class="nav-item"><a class="nav-link"
+						href="https://github.com/ikp4success/shopasource#readme">About</a></li>
+					<li class="nav-item"><a class="nav-link"
+						href="https://github.com/ikp4success/shopasource/blob/master/api.md">API</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div id="shopsearch" class="Search" onclick="this.className='ResultSearch'">
+		<div id="search_form" class="input-group">
+  	<input id="searchbar" type="text" class="form-control input-large" aria-label="Text input with segmented dropdown button" placeholder="e.g television" style="width: 85%;" name="search">
+  <div class="input-group-append">
+    <button type="button" id="searchButton" class="btn btn-search" onclick="shop_web_search()">Search</button>
+		<button type="button" id="cancelSearchButton" class="btn btn-danger" onclick="ini_reset_controls()" style="display: none;">Cancel</button>
+    <button type="button" onclick="load_shops_cb()" class="btn btn-dark dropdown-toggle dropdown-toggle-split" data-toggle="collapse" data-target="#cont-fil" aria-haspopup="true" aria-expanded="false">
+      <span class="sr-only">Toggle Dropdown</span>
+    </button>
+  </div>
+</div>
+<div class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
+	<strong>Invalid Search Criteria - </strong> textBox is empty or invalid.
+</div>
+		<div id="searchProgress" class="loading progress" style="display: none;">
+  <div id="searchProgressBar" class="progress-bar progress-bar-striped bg-warning" role="progressbar"></div>
+	</div>
+	<div id="cont-fil" class='fil-container collapse'>
+	<div class="card bg-info text-white mb-3" style="max-width: 11rem; max-height: 25rem">
+	<div class="card-header">Refine By</div>
+	<div class="card-body">
+		<p class="sp">Match Accuracy</p>
+		<input id="rangeacc" class="sp" type="range" min="0" max="100" value="5" oninput="txtacc.value=rangeacc.value">
+		<input id="txtacc" class="sp" type="number" min="0" max="100" value="5" oninput="rangeacc.value=txtacc.value" />
+		<div class="form-check sp">
+		  <input type="radio" class="form-check-input" id="highlow" name="pricerefine" disabled>
+		  <label class="form-check-label" for="highlow">High To Low</label>
+		</div>
+		<div class="form-check sp">
+		  <input type="radio" class="form-check-input" id="lowhigh" name="pricerefine" disabled>
+		  <label class="form-check-label" for="lowhigh">Low To High</label>
+		</div>
+		<div class="form-check sp">
+			<button id="filterButton" class="btn btn-warning" type="button" onclick="exe_filter()" style="display: none;">Filter</button>
+			<button type="button" id="cancelFilterButton" class="btn btn-danger" onclick="ini_filter_reset_controls()" style="display: none;">Cancel</button>
+		</div>
+	</div>
+	</div>
+	<div class="card text-white bg-secondary mb-3 shops-cont">
+  <div class="card-header">Shops</div>
+  <div class="card-body">
+			<div class="input-group mb-3">
+	  <input name="shop_search" type="text" class="form-control" placeholder="find shop e.g Amazon" style="width: 24px;" aria-describedby="basic-addon2">
+	  <div class="input-group-append">
+	    <button class="btn btn-outline-success" type="button" onclick="find_shop()">Find</button>
+	  </div>
+	</div>
+	<div id="loading_shop" style="display: none;">
+		<div class="spinner-grow text-primary card-group" role="status">
+		  <span class="sr-only">Loading...</span>
+		</div>
+		<div class="spinner-grow text-success card-group" role="status">
+		  <span class="sr-only">Loading...</span>
+		</div>
+		<div class="spinner-grow text-danger card-group" role="status">
+		  <span class="sr-only">Loading...</span>
+		</div>
+		<div class="spinner-grow text-warning card-group" role="status">
+		  <span class="sr-only">Loading...</span>
+		</div>
+		<div class="spinner-grow text-info card-group" role="status">
+		  <span class="sr-only">Loading...</span>
+		</div>
+		<div class="spinner-grow text-light card-group" role="status">
+		  <span class="sr-only">Loading...</span>
+		</div>
+		<div class="spinner-grow text-dark card-group" role="status">
+		  <span class="sr-only">Loading...</span>
+		</div>
+</div>
+	<div id="shop_cb_place" class="card-group">
+	</div>
+</div>
+  </div>
+</div>
+<div class='container results_low'>
+	<div id="resultreact">
+	</div>
+</div>
+</div>
+
+
+<div id="shop_cb_default" style="display: none;">
+	<div class="custom-control custom-checkbox">
+		<input type="checkbox" class="custom-control-input" id="{shop_id}" name="{shop_name}">
+		<label class="custom-control-label" for="{shop_id}">{shop_name_friend}</label>
+</div>
+</div>
+<div id="resultreact_default" style="display: none;">
+	<div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+		<div class="card h-100">
+				<a id="p_link" target="_blank" href=""><img id="p_img_link" class="card-img-top" src="" alt=""/></a>
+				<div class="card-body">
+					<h4 class="card-title">
+						<a id="p_link" target="_blank" href=""></a>
+					</h4>
+					<p id="p_description" class="card-text"></p>
+					<p id="p_price" class="card-text"></p>
+					<p id="p_shopname" class="card-text"></p>
+				</div>
+		</div>
+	</div>
+	</div>
+
+</div>
+
+<div id="spin_shop_default" style="display: none;">
+	<div id="spin_shop" class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
+		<div class="card h-100">
+				<a href="#"><img class="card-img-top" src="" alt=""/></a>
+				<div class="card-body">
+					<h4 class="card-title">
+						<a target="_blank" href="">Loading...</a>
+					</h4>
+					<div class="spinner-border text-warning sp_spinner" role="status">
+						<span class="sr-only">Loading...</span>
+					</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="load_next_default" style="display: none;">
+	<div id="load_next" class="col-lg-3 col-md-4 col-sm-6 portfolio-item" style="display: none;">
+		<div class="card h-100">
+			<div class="card-body">
+				<h4 class="card-title">
+				</h4>
+				<button type="button" id="load_next_btn" class="btn btn-warning" onclick="load_next()">Load Next</button>
+				</div>
+		</div>
+	</div>
+</div>
+
+
+
+	<footer class="py-5 bg-light">
+	<div class="container">
+		<p class="m-0 text-center text-dark">Copyright &copy; Shop A Source 2021 Dev Release</p>
+	</div>
+	</footer>
+</body>
+
+</html>

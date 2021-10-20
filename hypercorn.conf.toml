@@ -1,0 +1,6 @@
+workers = 4
+preload_app = true
+accesslog = "-"
+keepalive = 10
+loglevel = "warn"
+umask = 777

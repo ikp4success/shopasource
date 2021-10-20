@@ -14,17 +14,19 @@ class Express(ShopBase):
         # "Referer": "",
         "DNT": "1",
         "Host": "",
-        "Upgrade-Insecure-Requests": "1"
+        "Upgrade-Insecure-Requests": "1",
     }
 
     def start_requests(self):
         api_host_name = "search.unbxdapi.com"
         # url_key = re.search(r'express_com-\"\:\"(.*?)\"', "".join(response.css("script ::text").extract()))
         api_key = "b3094e45838bdcf3acf786d57e4ddd98"
-        shop_url = self.shop_url.format(api_key, self._search_keyword, api_key)
+        shop_url = self.shop_url.format(api_key=api_key, keyword=self._search_keyword)
         self.headers["Host"] = api_host_name
         self.headers["Accept"] = "*/*"
-        self.headers["Referer"] = "https://www.express.com/exp/search?q={}".format(self._search_keyword)
+        self.headers["Referer"] = "https://www.express.com/exp/search?q={}".format(
+            self._search_keyword
+        )
         yield self.get_request(shop_url, self.parse_data, headers=self.headers)
 
     def parse_data(self, response):
@@ -41,7 +43,7 @@ class Express(ShopBase):
             if colorSwatch:
                 colorSwatchli = ""
                 for csw in colorSwatch:
-                    csw = re.search("(.*?)\:", csw)
+                    csw = re.search(r"(.*?)\:", csw)
                     if csw:
                         colorSwatchli += csw.group(1) + ", "
                 description = "Available in " + colorSwatchli
@@ -49,7 +51,9 @@ class Express(ShopBase):
             price = self.safe_grab(item, ["displaySalePrice"])
             if price == "$0.00":
                 price = self.safe_grab(item, ["displayPrice"])
-            url = self.prepend_domain(self.safe_grab(item, ["productUrl"]), response.url)
+            url = self.prepend_domain(
+                self.safe_grab(item, ["productUrl"]), response.url
+            )
             yield self.generate_result_meta(
                 shop_link=url,
                 image_url=image_url,
@@ -57,5 +61,5 @@ class Express(ShopBase):
                 price=price,
                 title=title,
                 searched_keyword=self._search_keyword,
-                content_description=description
+                content_description=description,
             )

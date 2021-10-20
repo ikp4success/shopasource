@@ -1,7 +1,7 @@
 from shops.shop_base import ShopBase
 
 
-class GroupOn(ShopBase):
+class Groupon(ShopBase):
     name = "GROUPON"
     headers = {
         "Host": "www.groupon.com",
@@ -20,16 +20,16 @@ class GroupOn(ShopBase):
         for item in items:
             item_url = item.css("a ::attr(href)").extract_first()
             yield self.get_request(
-                url=item_url,
-                callback=self.parse_data,
-                domain_url=response.url
+                url=item_url, callback=self.parse_data, domain_url=response.url
             )
 
     def parse_data(self, response):
         image_url = response.css(".sleepy-load ::attr(src)").extract_first()
         title = self.extract_items(response.css(".deal-page-title ::text").extract())
         description = self.extract_items(response.css(".pitch ::text").extract())
-        price = response.css(".price-discount-wrapper ::text, .breakout-option-value ::text").extract_first()
+        price = response.css(
+            ".price-discount-wrapper ::text, .breakout-option-value ::text"
+        ).extract_first()
         yield self.generate_result_meta(
             shop_link=response.url,
             image_url=image_url,
@@ -37,5 +37,5 @@ class GroupOn(ShopBase):
             price=price,
             title=title,
             searched_keyword=self._search_keyword,
-            content_description=description
+            content_description=description,
         )

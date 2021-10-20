@@ -1,7 +1,7 @@
 from shops.shop_base import ShopBase
 
 
-class ZARA(ShopBase):
+class Zara(ShopBase):
     name = "ZARA"
 
     def parse_results(self, response):
@@ -15,17 +15,30 @@ class ZARA(ShopBase):
                 xmedia = xmedia[0]
                 path_img = self.safe_grab(xmedia, ["path"])
                 image_name = self.safe_grab(xmedia, ["name"])
-            image_url = "https://static.zara.net/photos///" + path_img + "/" + image_name + ".jpg"
-            description = self.safe_grab(item, ["section"]) + ", " + self.safe_grab(item, ["kind"])
+            image_url = (
+                "https://static.zara.net/photos///"
+                + path_img
+                + "/"
+                + image_name
+                + ".jpg"
+            )
+            description = (
+                self.safe_grab(item, ["section"])
+                + ", "
+                + self.safe_grab(item, ["kind"])
+            )
             price = self.safe_grab(item, ["price"])
             if price and len(str(price)) > 2:
                 price = str(price)
                 lst_2 = price[len(price) - 2] + price[len(price) - 1]
                 price = price.replace(lst_2, "." + lst_2)
             url = (
-                "https://www.zara.com/us/en/" + title.replace(" ", "-") + "-p" +
-                self.safe_grab(item, ["seo", "seoProductId"], default="") + ".html?v1=" +
-                self.safe_grab(item, ["seo", "discernProductId"], default="")
+                "https://www.zara.com/us/en/"
+                + title.replace(" ", "-")
+                + "-p"
+                + self.safe_grab(item, ["seo", "seoProductId"], default="")
+                + ".html?v1="
+                + self.safe_grab(item, ["seo", "discernProductId"], default="")
             )
             yield self.generate_result_meta(
                 shop_link=url,
@@ -34,5 +47,5 @@ class ZARA(ShopBase):
                 price=price,
                 title=title,
                 searched_keyword=self._search_keyword,
-                content_description=description
+                content_description=description,
             )

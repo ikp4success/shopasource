@@ -6,20 +6,23 @@ class Target(ShopBase):
 
     def parse_results(self, response):
         json_data = self.safe_json(response.text)
-        t_data = self.safe_grab(json_data, ["search_response", "items", "Item"], default=[])
+        t_data = self.safe_grab(json_data, ["data", "search", "products"], default=[])
 
         for item in t_data:
-            title = self.safe_grab(item, ["title"])
-            images = self.safe_grab(item, ["images"])[0]
-            base_url = self.safe_grab(images, ["base_url"])
-            primary = self.safe_grab(images, ["primary"])
-            image_url = "{}{}".format(base_url, primary)
-            description = self.safe_grab(item, ["description"])
-            price = (
-                self.safe_grab(item, ["list_price", "formatted_price"]) or
-                self.safe_grab(item, ["offer_price", "formatted_price"])
+            title = self.safe_grab(item, ["item", "product_description", "title"])
+            image_url = self.safe_grab(
+                item, ["item", "enrichment", "images", "primary_image_url"]
             )
-            url = self.prepend_domain(self.safe_grab(item, ["url"]), "https://www.target.com")
+            descriptions = self.safe_grab(
+                item, ["item", "product_description", "bullet_descriptions"]
+            )
+            description = [
+                descr.replace("<B>", "").replace("</B>", "")
+                for descr in descriptions
+                if descr
+            ]
+            price = self.safe_grab(item, ["price", "current_retail"])
+            url = self.safe_grab(item, ["item", "enrichment", "buy_url"])
             yield self.generate_result_meta(
                 shop_link=url,
                 image_url=image_url,
@@ -27,5 +30,5 @@ class Target(ShopBase):
                 price=price,
                 title=title,
                 searched_keyword=self._search_keyword,
-                content_description=description
+                content_description="".join(description),
             )

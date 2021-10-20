@@ -1,6 +1,7 @@
-project_shopasource_v/
 *.pyc
-utilities/__pycache__/DefaultResources.cpython-36.pyc
-json_shop_results/
+json_shop_results/*
 __pycache__/
 scraped_sites/
+.venv/
+logs/*
+configs/dev.json

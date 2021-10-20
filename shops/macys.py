@@ -25,14 +25,20 @@ class Macys(ShopBase):
                 url=item_url,
                 callback=self.parse_data,
                 domain_url=response.url,
-                meta={"price": price}
+                meta={"price": price},
             )
 
     def parse_data(self, response):
         image_url = response.css(".main-image img ::attr(src)").extract_first()
-        title = self.extract_items(response.xpath("//div[@data-auto='product-title']").css("::text").extract())
-        description = self.extract_items(response.xpath("//div[@data-el='product-details']").css("::text").extract())
-        price = response.css(".price ::text").extract_first() or self.safe_grab(response.meta, ["price"])
+        title = self.extract_items(
+            response.xpath("//div[@data-auto='product-title']").css("::text").extract()
+        )
+        description = self.extract_items(
+            response.xpath("//div[@data-el='product-details']").css("::text").extract()
+        )
+        price = response.css(".price ::text").extract_first() or self.safe_grab(
+            response.meta, ["price"]
+        )
         yield self.generate_result_meta(
             shop_link=response.url,
             image_url=image_url,
@@ -40,5 +46,5 @@ class Macys(ShopBase):
             price=price,
             title=title,
             searched_keyword=self._search_keyword,
-            content_description=description
+            content_description=description,
         )
