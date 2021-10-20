@@ -3,6 +3,8 @@ from functools import wraps
 
 from quart import request
 
+from webapp.util import get_api_key
+
 logger = logging.getLogger(__name__)
 
 
@@ -28,6 +30,10 @@ def authorize(app):
                     status,
                     401,
                 )
+            # check api usage limit
+            api_key_info = get_api_key(user=request.remote_addr)
+            if api_key_info.get("error"):
+                return api_key_info, 429
             return await func(*args, **kwargs)
 
         return wrapper

@@ -194,6 +194,9 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
       function()
       {
         shops_completed = shop_size
+        if (fail_rate(data)){
+          return
+        }
       });
   }
   else if(gs_data.length == 0){
@@ -217,6 +220,9 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
               function()
               {
                 shops_completed++
+                if (fail_rate(data)){
+                  return
+                }
               });
           }
     });
@@ -237,6 +243,9 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
         function()
         {
           shops_completed++
+          if (fail_rate(data)){
+            return
+          }
         });
     }
   }
@@ -267,10 +276,8 @@ function load_public_api_key(){
   }).fail(
     function(data)
     {
-      res = data.responseJSON
-      if(res.error){
-        $(".alert").html(`<strong>API Error</strong> - ` + res.error)
-        $(".alert").show()
+      if (fail_rate(data)){
+        return
       }
     });
 }
@@ -303,8 +310,35 @@ function load_job(data, sk){
     $api_request = $.getJSON(jb_url,
         function(gs_data) {
           load_data_container(gs_data["data"], sk)
-    })
+    }).fail(
+      function(data)
+      {
+        if (fail_rate(data)){
+          return
+        }
+      });
   }
+}
+
+function fail_rate(data){
+  res = data.responseJSON
+  if(res && res.error && res.error.includes("API rate limit")){
+    refresh_time_out()
+    $(".alert").html(`<strong>API Error</strong> - ` + res.error)
+    $(".alert").show()
+    shop_searching = false
+    $("#spin_shop").hide()
+    ini_reset_controls(true)
+    if(!is_filter){
+      $("#filterButton").hide()
+      $("#cancelFilterButton").hide()
+    }else{
+      $("#filterButton").show()
+      $("#cancelFilterButton").hide()
+    }
+    return true;
+  }
+  return false
 }
 
 

@@ -269,11 +269,11 @@ class ResultsFactory:
         return mk_results
 
     def delete_data_by_shop_sk(self, shop_name):
-        shop_data = ShoppedData.query.filter(
+        ShoppedData.query.filter(
             ShoppedData.searched_keyword == self.search_keyword,
             ShoppedData.shop_name == shop_name,
         ).delete()
-        shop_data.commit()
+        ShoppedData().commit()
         return
 
     def get_shops_without_data(self, results):
@@ -331,6 +331,7 @@ class ResultsFactory:
         return results
 
     def is_new_data(self, results):
+        return False
         for result in results:
             result = safe_json(result)
             if result and isinstance(result, list) and len(result) > 0:
