@@ -12,8 +12,12 @@ logger = logging.getLogger(__name__)
 
 def get_config(env=None):
     env = env or os.getenv("ENV_CONFIGURATION", "debug")
-    with open("configs/{}.json".format(env)) as file:
-        return json.load(file)
+    try:
+        with open("configs/{}.json".format(env)) as file:
+            return json.load(file)
+    except Exception as ex:
+        logger.warning(f"{env} Config not found. \n{ex}")
+    return {}
 
 
 class Config:
@@ -31,6 +35,8 @@ class Config:
         for k, v in config.items():
             # variables set in config takes precedence over environ variables.
             setattr(self, k, v)
+
+    def apply_fallback(self):
         if self.ENVIRONMENT == "debug":
             if not self.DATABASE_URL:
                 self.DATABASE_URL = f"postgresql://{os.environ['DB_USER']}:{os.environ['DB_PASS']}@{os.environ['DB_DOMAIN']}:{os.environ['DB_PORT']}/{os.environ['DB_NAME']}"
@@ -50,6 +56,7 @@ class Config:
     def load_config(self):
         config = get_config()
         self.apply_env_variables(config)
+        self.apply_fallback()
 
     def __init__(self):
         self.load_config()
