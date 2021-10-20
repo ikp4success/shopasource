@@ -131,7 +131,10 @@ def get_api_key(request):
 
 
 def get_ip(request):
-    print(request.headers)
+    logger.info(request.headers)
     if not request.headers.getlist("X-Forwarded-For"):
-        return request.remote_addr
+        if request.headers.get("X-Forwarded-For"):
+            return request.headers["X-Forwarded-For"]
+        else:
+            return request.remote_addr
     return request.headers.getlist("X-Forwarded-For")[-1] or request.remote_addr
