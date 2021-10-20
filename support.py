@@ -138,11 +138,8 @@ except AttributeError:
 
 
 def get_logger(name):
-    import pdb
-
-    pdb.set_trace()
     logger = logging.getLogger(name)
-    logging.basicconfig()
+    logging.basicConfig()
     logging.getLogger().setLevel(getattr(logging, config.SET_LOG_LEVEL))
     coloredlogs.install(level=config.SET_LOG_LEVEL)
     return logger
