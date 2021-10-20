@@ -32,6 +32,7 @@ max_item_size = 30
 current_count = 0
 returned_item_size = max_item_size
 width_prog_check = 2
+public_api_key = null
 
 $(function(){
   $(document).on("submit", "#search_form", function(e){
@@ -153,7 +154,10 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
   }
 
   $.ajaxSetup({
-    async: true
+    async: true,
+    headers: {
+      'x-api-key': public_api_key,
+    }
   });
 
   s_match = c_match || document.getElementById("rangeacc").value
@@ -194,7 +198,7 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
   }
   else if(gs_data.length == 0){
     shop_job_ids = []
-    shops_url = "/websearch/shops-active.json";
+    shops_url = "/api/shops-active.json";
     $shop_request = $.getJSON(shops_url,
         function(data) {
           shops_drop = data
@@ -239,7 +243,7 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
   return false
 }
 
-function load_job(data, sk){
+function load_public_api_key(){
   if($api_request != null){
     $api_request.abort()
     $api_request = null
@@ -252,6 +256,31 @@ function load_job(data, sk){
 
   $.ajaxSetup({
     async: true
+  });
+
+  api_url = "/api/public_api_key";
+  $api_request = $.getJSON(api_url,
+      function(data) {
+        public_api_key = data["public_api_key"]
+  })
+}
+
+function load_job(data, sk){
+  if($api_request != null){
+    $api_request.abort()
+    $api_request = null
+  }
+
+  if($shop_request != null) {
+    $shop_request.abort()
+    $shop_request = null
+  }
+
+  $.ajaxSetup({
+    async: true,
+    headers: {
+      'x-api-key': public_api_key,
+    }
   });
 
   if (data == null){
@@ -323,7 +352,7 @@ function load_shops_cb(){
     $("#loading_shop").hide()
     return
   }
-  shops_url = "/websearch/shops-active.json";
+  shops_url = "/api/shops-active.json";
   if($shop_active_request != null) {
     $shop_active_request.abort()
     $shop_active_request = null
@@ -398,7 +427,7 @@ function find_shop(){
     exe_find_shop(shops_drop)
     return
   }
-  shops_url = "/websearch/shops-active.json";
+  shops_url = "/api/shops-active.json";
   if($shop_active_request != null) {
     $shop_active_request.abort()
     $shop_active_request = null
@@ -446,6 +475,7 @@ function shop_web_search(){
     return false
   }
 
+  load_public_api_key()
   cancel_search = !cancel_search
   shop_loaded_data = clear_dict_obj(shop_loaded_data)
   shop_job_ids = []
@@ -498,15 +528,6 @@ function load_next(){
     load_next_btn = true
     refresh_time_out()
     load_time_out = setTimeout(refresh_shop_data, 1000)
-    // if(current_count == returned_item_size){
-    //   refresh_time_out()
-    //   load_time_out = setTimeout(refresh_shop_data, 1000)
-    // }
-    // else{
-    //   refresh_time_out()
-    //   load_time_out = setTimeout(refresh_shop_data, 12500)
-    // }
-
 }
 
 function clear_dict_obj(obj_dict){

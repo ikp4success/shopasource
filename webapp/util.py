@@ -79,6 +79,7 @@ def get_results(**kwargs):
     status = "job not found"
 
     results = None
+    logs = {}
 
     if job_id:
         job = Job().get_item(id=job_id)
@@ -88,11 +89,13 @@ def get_results(**kwargs):
             res_factory = ResultsFactory(**params, is_cache=True)
             results = res_factory.run_search()
             in_progress = False
-            if job.meta and status != "done":
-                for _, v in job.meta.items():
-                    if v not in ["done", "error"]:
-                        in_progress = True
-                        break
+            if job.meta:
+                logs = job.meta
+                if status != "done":
+                    for _, v in job.meta.items():
+                        if v not in ["done", "error"]:
+                            in_progress = True
+                            break
 
                 status = "in_progress" if in_progress else "done"
         if not results:
@@ -100,4 +103,4 @@ def get_results(**kwargs):
     else:
         results = {"error": "job_id is required"}
 
-    return {"status": status, "data": results, "logs": job.meta}
+    return {"status": status, "data": results, "logs": logs}

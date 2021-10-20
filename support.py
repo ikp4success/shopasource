@@ -7,6 +7,8 @@ import sys
 
 import coloredlogs
 
+logger = logging.getLogger(__name__)
+
 
 def get_config(env=None):
     env = env or os.getenv("ENV_CONFIGURATION", "debug")
@@ -16,12 +18,25 @@ def get_config(env=None):
 
 class Config:
     SKIP_SENTRY = os.environ.get("SKIP_SENTRY", False)
+    ENVIRONMENT = os.environ.get("ENVIRONMENT")
+    API_KEY = os.environ.get("API_KEY")
+    POSTGRESS_DB_URL = os.environ.get("POSTGRESS_DB_URL")
+    SENTRY_DSN = os.environ.get("SENTRY_DSN")
 
     def apply_env_variables(self, config):
         for k, v in config.items():
             setattr(self, k, v)
         if self.ENVIRONMENT == "debug":
             self.POSTGRESS_DB_URL = f"postgresql://{os.environ['DB_USER']}:{os.environ['DB_PASS']}@{os.environ['DB_DOMAIN']}:{os.environ['DB_PORT']}/{os.environ['DB_NAME']}"
+        elif not self.ENVIRONMENT:
+            raise Exception("Environment is required.")
+        if not self.POSTGRESS_DB_URL:
+            logger.warning("POSTGRESS_DB_URL is required.")
+        if not self.SKIP_SENTRY and not self.SENTRY_DSN:
+            logger.warning("SENTRY_DSN is not set.")
+            self.SKIP_SENTRY = True
+        if not self.API_KEY:
+            logger.warning("API_KEY is not set.")
 
     def load_config(self):
         config = get_config()

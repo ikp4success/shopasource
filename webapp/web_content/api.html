@@ -26,39 +26,52 @@
               <a class="nav-link" href="/">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/about">About</a>
+              <a class="nav-link" href="https://github.com/ikp4success/shopasource#readme">About</a>
             </li>
             <li class="nav-item active"><a class="nav-link"
-  						href="/api">API</a>
+  						href="https://github.com/ikp4success/shopasource/blob/master/api.md">API</a>
             </li>
-
           </ul>
-
-
-
         </div>
       </div>
     </div>
     <div class="About">
       <h3>API Usage</h3>
-      <p>http://www.shopasource.com/api/shop/search?sk={keyword}&smatch={match_accuracy}&shl=true&slh=false&shops={shop_name}</p>
+      <p>HEADERS</p>
+      <ul>
+        <li>x-api-key: {API_KEY}</li>
+      </ul>
+      <p>GET /api/public_api_key</p>
+      <ul>
+        <li>returns current public api key.</li>
+      </ul>
+      <p>GET /api/shop/search?sk={keyword}&smatch={match_accuracy}&shl=true&slh=false&shops={shop_name}&async=1</p>
       <ul>
         <li>Match Accuracy - refine results based on keyword</li>
         <li>SHL - High to low</li>
         <li>SLH - Low to High</li>
-        <li>Shops - Shop Name, single shops http://www.shopasource.com/api/shop/search?sk=wallet&smatch=8&shl=true&slh=false&shops=AMAZON</li>
-        <li>Shops - Shop Name, multiple shops http://www.shopasource.com/api/shop/search?sk=wallet&smatch=8&shl=true&slh=false&shops=AMAZON,TARGET</li>
+        <li>Shops - Shop Name, single shops /api/shop/search?sk=wallet&smatch=8&shl=true&slh=false&shops=AMAZON&async=1</li>
+        <li>Shops - Shop Name, multiple shops /api/shop/search?sk=wallet&smatch=8&shl=true&slh=false&shops=AMAZON,TARGET&async=1</li>
         <li>Keyword - search keyword
+        <li>Async - 1 schedule result and assign to a job id (default).
+        <li>Async - 0 wait for result, not recommended. Great for debuging.
       </ul>
-      <p> Go to http://www.shopasource.com/websearch/shops-active.json to see list of shops available</p>
+      <p>GET /api/get_result?job_id={job_id}</p>
+      <ul>
+        <li>Job Id - job id from scheduled result above i.e /shop/search</li>
+      </ul>
+      <p>GET /api/shops-active.json</p>
+      <ul>
+        <li>Get's list of shops available</li>
+      </ul>
       <p> Contribute @ https://github.com/ikp4success/shopasource </p>
     <p/>
     <p/>
-      <p> Website not equipped to handle multiple requests, so scrape with a kind mind 😊 .</p>
+      <p> API not equipped to handle multiple requests, since its hosted on a free server, so web-scrape with a kind mind 😊.</p>
     </div>
 <footer class="py-5 bg-light">
       <div class="container">
-        <p class="m-0 text-center text-dark">Copyright &copy; Shop A Source 2018</p>
+        <p class="m-0 text-center text-dark">Copyright &copy; Shop A Source 2021 Dev Release</p>
       </div>
     </footer>
 </body>

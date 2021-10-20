@@ -3,6 +3,7 @@ from quart import Quart, jsonify, render_template, request
 from db.models import Model, engine
 from shops.shop_util.shop_setup_functions import get_shops
 from support import Config, CustomEncoder, get_logger
+from webapp.auth import authorize
 from webapp.config import configure_app
 from webapp.util import (
     get_results,
@@ -54,6 +55,7 @@ async def robots():
 
 
 @app.route("/api/get_result", methods=["GET"])
+@authorize(app)
 async def get_result():
     if not request.args.get("job_id"):
         return ({"error": "job_id is required."}, 400)
@@ -61,6 +63,7 @@ async def get_result():
 
 
 @app.route("/api/shop/search", methods=["GET"])
+@authorize(app)
 async def api_search():
     # http://0.0.0.0:5003/api/shop/search?sk=tissue&smatch=0&shl=false&slh=true&shops=TARGET,AMAZON&async=1
     params = validate_params(**{**request.args})
@@ -69,14 +72,23 @@ async def api_search():
 
     if params[0]["is_async"]:
         start_data = start_async_requests(**params[0])
-        return jsonify({**start_data}), 200
+        return jsonify({**start_data}), 201
     else:
-        return jsonify(start_shop_search(**params[0])), 200
+        if Config().ENVIRONMENT == "debug":
+            return jsonify(start_shop_search(**params[0])), 200
+        else:
+            return {"error": "sync api search allowed only in debug mode."}, 400
 
 
-@app.route("/websearch/shops-active.json", methods=["GET"])
+@app.route("/api/shops-active.json", methods=["GET"])
+@authorize(app)
 async def shop_list_active():
     return jsonify(get_shops(active=True)), 200
+
+
+@app.route("/api/public_api_key", methods=["GET"])
+async def get_public_api_key():
+    return {"public_api_key": Config().API_KEY}, 200
 
 
 async def home():

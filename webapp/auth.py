@@ -1,7 +1,7 @@
 import logging
 from functools import wraps
 
-from flask import request
+from quart import request
 
 logger = logging.getLogger(__name__)
 
@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 def authorize(app):
     def _authorize(func):
         @wraps(func)
-        def wrapper(*args, **kwargs):
+        async def wrapper(*args, **kwargs):
             headers = request.headers
             headers_lower_case = {}
             for k, v in headers.items():
@@ -28,7 +28,7 @@ def authorize(app):
                     status,
                     401,
                 )
-            return func(*args, **kwargs)
+            return await func(*args, **kwargs)
 
         return wrapper
 
