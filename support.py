@@ -26,9 +26,9 @@ class Config:
     API_KEY = os.environ.get("API_KEY")
     DATABASE_URL = os.environ.get("DATABASE_URL")
     SENTRY_DSN = os.environ.get("SENTRY_DSN")
-    API_MAX_USAGE = os.environ.get("API_MAX_USAGE")
-    API_MAX_USAGE_DAYS = os.environ.get("API_MAX_USAGE_DAYS", 2)
-    SHOP_CACHE_MAX_EXPIRY_TIME = os.environ.get("SHOP_CACHE_MAX_EXPIRY_TIME", 3)
+    API_MAX_USAGE = int(os.environ.get("API_MAX_USAGE", 100))
+    API_MAX_USAGE_DAYS = int(os.environ.get("API_MAX_USAGE_DAYS", 2))
+    SHOP_CACHE_MAX_EXPIRY_TIME = int(os.environ.get("SHOP_CACHE_MAX_EXPIRY_TIME", 3))
     SHOP_CACHE_LOOKUP_SET = os.environ.get("SHOP_CACHE_LOOKUP_SET", True)
     SUPER_USER = os.environ.get("SUPER_USER")
 
