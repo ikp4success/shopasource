@@ -1,10 +1,11 @@
 import datetime as dt
 import html
 import json
-import os
 import re
 from copy import deepcopy
 from urllib import parse as urlparse
+
+from support import Config
 
 
 def prepend_domain(url, domain_url, ignore_domain_splice=False):
@@ -154,7 +155,7 @@ def truncate_data(data, length_cont, html_escape=False):
 
 
 def save_shop_data(data):
-    if data and int(os.environ.get("SAVE_TO_DB", 0)) == 1:
+    if data and Config().SAVE_TO_DB:
         from db.models import ShoppedData
 
         shop = ShoppedData(**data)
@@ -162,7 +163,7 @@ def save_shop_data(data):
 
 
 def save_job(spider_name, job_id, status="done"):
-    if job_id and int(os.environ.get("SAVE_TO_DB", 0)) == 1:
+    if job_id and Config().SAVE_TO_DB:
         from db.models import Job
 
         job = Job().get_item(id=job_id)

@@ -7,5 +7,6 @@
   "API_MAX_USAGE_DAYS": 1,
   "SHOP_CACHE_MAX_EXPIRY_TIME": 25,
   "SHOP_CACHE_LOOKUP_SET": true,
-  "SUPER_USER": true
+  "SUPER_USER": true,
+  "SAVE_TO_DB": true
 }

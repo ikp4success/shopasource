@@ -31,11 +31,21 @@ class Config:
     SHOP_CACHE_MAX_EXPIRY_TIME = int(os.environ.get("SHOP_CACHE_MAX_EXPIRY_TIME", 3))
     SHOP_CACHE_LOOKUP_SET = os.environ.get("SHOP_CACHE_LOOKUP_SET", True)
     SUPER_USER = os.environ.get("SUPER_USER")
+    SAVE_TO_DB = os.environ.get("SAVE_TO_DB")
+    bool_envs = ["SAVE_TO_DB", "SUPER_USER", "SHOP_CACHE_LOOKUP_SET", "SKIP_SENTRY"]
 
     def apply_env_variables(self, config):
         for k, v in config.items():
             # variables set in config takes precedence over environ variables.
             setattr(self, k, v)
+
+    def convert_bool_integers_to_bool(self):
+        # converts integer used as bool in env variables or config
+        for env in self.bool_envs:
+            if getattr(self, env) == 1:
+                setattr(self, env, True)
+            else:
+                setattr(self, env, False)
 
     def apply_fallback(self):
         if self.ENVIRONMENT == "debug":
@@ -59,6 +69,7 @@ class Config:
     def load_config(self):
         config = get_config()
         self.apply_env_variables(config)
+        self.convert_bool_integers_to_bool()
         self.apply_fallback()
 
     def __init__(self):
