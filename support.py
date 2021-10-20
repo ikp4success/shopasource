@@ -66,11 +66,18 @@ class Config:
         if not self.API_KEY:
             logger.warning("API_KEY is not set, using default.")
 
+    def config_display(self):
+        display = ""
+        for k, v in vars(self).items():
+            display += f"{k}: {v}\n"
+        logger.info(display)
+
     def load_config(self):
         config = get_config()
         self.apply_env_variables(config)
         self.convert_bool_integers_to_bool()
         self.apply_fallback()
+        self.config_display()
 
     def __init__(self):
         self.load_config()
