@@ -44,7 +44,7 @@ class Config:
     SAVE_TO_DB = os.environ.get("SAVE_TO_DB")
     bool_envs = ["SAVE_TO_DB", "SUPER_USER", "SHOP_CACHE_LOOKUP_SET", "SKIP_SENTRY"]
 
-    def apply_env_variables(self, config):
+    def apply_config_variables(self, config):
         for k, v in config.items():
             # variables set in config takes precedence over environ variables.
             setattr(self, k, v)
@@ -53,7 +53,7 @@ class Config:
         # converts integer used as bool in env variables or config
         for env in self.bool_envs:
             env_v = safe_int(getattr(self, env))  # handle's '1', '0'
-            if env_v:
+            if env_v is not None:
                 if env_v == 1:
                     setattr(self, env, True)
                 else:
@@ -86,7 +86,7 @@ class Config:
 
     def load_config(self):
         config = get_config()
-        self.apply_env_variables(config)
+        self.apply_config_variables(config)
         self.convert_bool_integers_to_bool()
         self.apply_fallback()
         self.config_display()
