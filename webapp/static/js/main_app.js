@@ -318,6 +318,7 @@ function load_job(data, sk){
     }).fail(
       function(data)
       {
+        shops_completed++
         if (fail_rate(data)){
           return
         }
