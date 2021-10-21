@@ -110,17 +110,18 @@ def get_results(**kwargs):
 def get_api_key(request):
     user = get_ip(request)
     api_key = config.API_KEY
-    if config.ENVIRONMENT != "debug" and config.SUPER_USER:
+    if config.ENVIRONMENT != "debug" and not config.SUPER_USER:
         api = APIUsage().get_item(user=user)
         if api:
             usage_count = api.usage_count
-            dt_time_diff = datetime.now(timezone.utc) - api.date_usage
-            if dt_time_diff.days > config.API_MAX_USAGE_DAYS:
-                usage_count = 0
             if usage_count > config.API_MAX_USAGE:
-                return {
-                    "error": f"API rate limit is exceeded, try again in {config.API_MAX_USAGE_DAYS} day(s)."
-                }
+                dt_time_diff = datetime.now(timezone.utc) - api.date_usage
+                if dt_time_diff.days > config.API_MAX_USAGE_DAYS:
+                    usage_count = 0
+                else:
+                    return {
+                        "error": f"API rate limit is exceeded, try again in {config.API_MAX_USAGE_DAYS} day(s)."
+                    }
             api.update_item(usage_count=usage_count + 1)
         else:
             api = APIUsage(user=user, usage_count=1, api_key=api_key,)
