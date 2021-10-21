@@ -191,7 +191,7 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
           }
           shops_completed = shop_size
     }).fail(
-      function()
+      function(data)
       {
         shops_completed = shop_size
         if (fail_rate(data)){
@@ -217,7 +217,7 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
                 function(data) {
                   shop_job_ids.push(data)
             }).fail(
-              function()
+              function(data)
               {
                 shops_completed++
                 if (fail_rate(data)){
@@ -240,7 +240,7 @@ function initial_api_search(sk, fil_shop_name=null, c_match=null, c_hl=null, c_l
           function(gs_data) {
             shop_job_ids.push(gs_data)
       }).fail(
-        function()
+        function(data)
         {
           shops_completed++
           if (fail_rate(data)){
