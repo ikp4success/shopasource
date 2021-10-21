@@ -4,7 +4,9 @@
 * x-api-key: {API_KEY}
 
 #### GET /api/public_api_key ####
-* returns current public api key.
+* Returns current public api key.
+* Api key might change, and it's limited.
+* Usage of api, after max is reset.
 
 #### GET /api/shop/search?sk={keyword}&smatch={match_accuracy}&shl=true&slh=false&shops={shop_name}&async=1 ####
 * Match Accuracy - refine results based on keyword
