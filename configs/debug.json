@@ -1,7 +1,7 @@
 {
   "SKIP_SENTRY": 1,
   "API_KEY": "debug",
-  "ENVIRONMENT": "debug",
+  "ENV_CONFIGURATION": "debug",
   "DATABASE_URL": null,
   "API_MAX_USAGE": 5,
   "API_MAX_USAGE_DAYS": 1,

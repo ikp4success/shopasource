@@ -47,7 +47,11 @@ $ make pre-commit
 
 #### Settings
 
-Update values in configs/dev for dev environment and deploy's.
+* Update values in configs/dev for dev environment and deploy's.
+* A template dev.json.template is provided to setup a dev.json config files.
+* Use debug.json for debugging and testing.
+* dev.json is git-ignored to protect sensitive keys.
+
 
 
 ##### run flask project

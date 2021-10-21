@@ -110,7 +110,7 @@ def get_results(**kwargs):
 def get_api_key(request):
     user = get_ip(request)
     api_key = config.API_KEY
-    if config.ENVIRONMENT != "debug" and not config.SUPER_USER:
+    if config.ENV_CONFIGURATION != "debug" and not config.SUPER_USER:
         api = APIUsage().get_item(user=user)
         if api:
             usage_count = api.usage_count

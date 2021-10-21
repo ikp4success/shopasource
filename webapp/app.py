@@ -75,7 +75,7 @@ async def api_search():
         start_data = start_async_requests(**params[0])
         return jsonify({**start_data}), 201
     else:
-        if config.ENVIRONMENT == "debug":
+        if config.ENV_CONFIGURATION == "debug":
             return jsonify(start_shop_search(**params[0])), 200
         else:
             return {"error": "sync api search allowed only in debug mode."}, 400

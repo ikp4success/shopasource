@@ -31,7 +31,7 @@ def safe_int(num_str):
 
 class Config:
     SKIP_SENTRY = os.environ.get("SKIP_SENTRY", False)
-    ENVIRONMENT = os.environ.get("ENVIRONMENT")
+    ENV_CONFIGURATION = os.environ.get("ENV_CONFIGURATION")
     SET_LOG_LEVEL = os.environ.get("SET_LOG_LEVEL", "WARNING").upper()
     API_KEY = os.environ.get("API_KEY")
     DATABASE_URL = os.environ.get("DATABASE_URL")
@@ -60,11 +60,11 @@ class Config:
                     setattr(self, env, False)
 
     def apply_fallback(self):
-        if self.ENVIRONMENT == "debug":
+        if self.ENV_CONFIGURATION == "debug":
             if not self.DATABASE_URL:
                 self.DATABASE_URL = f"postgresql://{os.environ['DB_USER']}:{os.environ['DB_PASS']}@{os.environ['DB_DOMAIN']}:{os.environ['DB_PORT']}/{os.environ['DB_NAME']}"
-        elif not self.ENVIRONMENT:
-            raise Exception("Environment is required.")
+        elif not self.ENV_CONFIGURATION:
+            raise Exception("ENV_CONFIGURATION is required.")
         if not self.DATABASE_URL:
             logger.warning("DATABASE_URL is required.")
         elif self.DATABASE_URL.startswith("postgres://"):
