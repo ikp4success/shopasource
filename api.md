@@ -5,8 +5,8 @@
 
 #### GET /api/public_api_key ####
 * Returns current public api key.
-* Api key might change, and it's limited.
-* Usage of api, after max is reset.
+* Api key might change, and it's limited per day(s).
+* Usage of api/web, after max is reset per day(s).
 
 #### GET /api/shop/search?sk={keyword}&smatch={match_accuracy}&shl=true&slh=false&shops={shop_name}&async=1 ####
 * Match Accuracy - refine results based on keyword
