@@ -541,43 +541,48 @@ function shop_web_search(){
     $(".alert").show()
     return false
   }
-  if (!public_api_key || public_api_key == null){
-    load_public_api_key()
-    return
-  }
-
   cancel_search = !cancel_search
   shop_loaded_data = clear_dict_obj(shop_loaded_data)
   shop_job_ids = []
   if(cancel_search){
-    item_size = 0
-    max_item_size = 30
-    current_count = 0
-    returned_item_size = max_item_size
-    $("#load_next").hide()
-    $("#filterButton").hide()
-    $("#cancelFilterButton").hide()
-    disable_controls()
-    is_filter = false
-    scraped_shops = []
-    current_sk = sk
-    initial_api_search(current_sk)
-    shop_searching = true
-    document.getElementById("searchButton").disabled = true;
-    document.getElementById("searchbar").disabled = true;
-    $("#searchButton").hide()
-    $("#cancelSearchButton").show()
-    time_check_default = 0
-    $("#err_msg").hide()
-    $(".loading").show()
-    load_search_progress_bar()
+    if (!public_api_key || public_api_key == null){
+      set_control()
+      load_search_progress_bar()
+      load_public_api_key()
+      return
+    }else{
+      set_controls()
+      load_search_progress_bar()
+    }
     set_search_time_out(20, true)
   }else{
     shop_searching = false
     reset_controls()
   }
-
   return false
+}
+
+function set_controls(){
+  item_size = 0
+  max_item_size = 30
+  current_count = 0
+  returned_item_size = max_item_size
+  $("#load_next").hide()
+  $("#filterButton").hide()
+  $("#cancelFilterButton").hide()
+  disable_controls()
+  is_filter = false
+  scraped_shops = []
+  current_sk = sk
+  initial_api_search(current_sk)
+  shop_searching = true
+  document.getElementById("searchButton").disabled = true;
+  document.getElementById("searchbar").disabled = true;
+  $("#searchButton").hide()
+  $("#cancelSearchButton").show()
+  time_check_default = 0
+  $("#err_msg").hide()
+  $(".loading").show()
 }
 
 function load_next(){
