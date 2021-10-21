@@ -1,7 +1,7 @@
 #
 # ShopASource Dockerfile
 #
-# http://www.shopasource.com
+# https://shopasource.herokuapp.com/
 # Written by: Immanuel George <ikp4success@gmail.com>
 #
 # Usage:
