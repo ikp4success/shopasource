@@ -546,10 +546,11 @@ function shop_web_search(){
   shop_job_ids = []
   if(cancel_search){
     if (!public_api_key || public_api_key == null){
-      set_control()
+      set_controls()
       load_search_progress_bar()
       load_public_api_key()
-      return
+      cancel_search = false
+      return false
     }else{
       set_controls()
       load_search_progress_bar()
