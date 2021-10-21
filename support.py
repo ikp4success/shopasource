@@ -82,7 +82,7 @@ class Config:
         display = ""
         for k in vars(self).keys():
             display += f"{k}: {getattr(self, k)}\n"
-        logger.info(display)
+        print(display)
 
     def load_config(self):
         config = get_config()
