@@ -4,9 +4,9 @@
 * x-api-key: {API_KEY}
 
 #### GET /api/public_api_key ####
-* Returns current public api key.
-* Api key might change, and it's limited per day(s).
-* Usage of api/web, after max is reset per day(s).
+* Returns current public api key, and its rate limited.
+* Api key and rate limit might change, and it's limited per day(s). e.g 1000 hit per day.
+* Rate limit apply to web page https://shopasource.herokuapp.com/ as well.
 
 #### GET /api/shop/search?sk={keyword}&smatch={match_accuracy}&shl=true&slh=false&shops={shop_name}&async=1 ####
 * Match Accuracy - refine results based on keyword
