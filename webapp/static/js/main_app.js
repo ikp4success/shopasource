@@ -685,7 +685,7 @@ function set_search_time_out(obj_so, refresh_api){
     width_progress = document.getElementById("searchProgressBar").style.width
     if(parseInt(width_progress.replace("%", "")) > width_prog_check){
       width_prog_check = width_prog_check + 1
-      kickstart_initial_api_search()
+      kickstart_load_job_search()
     }
   }
 
@@ -877,7 +877,7 @@ function consume_l_data(){
   }
 }
 
-function kickstart_initial_api_search(){
+function kickstart_load_job_search(){
   load_job(shop_job_ids, current_sk)
 }
 
@@ -886,8 +886,9 @@ function refresh_shop_data(){
     return
   }
   consume_l_data()
-  if(load_next_btn){
-    kickstart_initial_api_search()
+  width_progress = document.getElementById("searchProgressBar").style.width
+  if(load_next_btn || width_progress != "100%"){
+    kickstart_load_job_search()
   }
   return false
 }
