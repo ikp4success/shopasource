@@ -9,6 +9,7 @@
 **Website**
 
 https://shopasource.herokuapp.com/
+http://www.shopasource.com/
 
 **API**
 
