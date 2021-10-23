@@ -94,4 +94,5 @@ $ make generate_key
 
 
 **Author**
-[***Immanuel George***](https://stackoverflow.com/cv/imgeorgeresume)
+
+* [***Immanuel George***](https://stackoverflow.com/cv/imgeorgeresume)
