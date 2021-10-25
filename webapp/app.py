@@ -64,7 +64,7 @@ async def robots():
 
 @app.route("/api/get_result", methods=["GET"])
 @authorize(app)
-@rate_limit(1000, timedelta(minutes=2))
+@rate_limit(10000, timedelta(minutes=2))
 async def get_result():
     if not request.args.get("job_id"):
         return ({"error": "job_id is required."}, 400)
