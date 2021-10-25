@@ -64,7 +64,7 @@ async def robots():
 
 @app.route("/api/get_result", methods=["GET"])
 @authorize(app)
-@rate_limit(100, timedelta(minutes=2))
+@rate_limit(1000, timedelta(minutes=2))
 async def get_result():
     if not request.args.get("job_id"):
         return ({"error": "job_id is required."}, 400)
@@ -93,14 +93,14 @@ async def api_search():
 @app.route("/api/shops-active.json", methods=["GET"])
 @docache(hours=1, content_type="json")
 @authorize(app)
-@rate_limit(500, timedelta(minutes=2))
+@rate_limit(5000, timedelta(minutes=2))
 async def shop_list_active():
     return jsonify(get_shops(active=True)), 200
 
 
 @app.route("/api/public_api_key", methods=["GET"])
 @docache(minutes=5, content_type="json")
-@rate_limit(100, timedelta(minutes=2))
+@rate_limit(1000, timedelta(minutes=2))
 async def get_public_api_key():
     api_key_info = get_api_key(request)
     if api_key_info.get("error"):
