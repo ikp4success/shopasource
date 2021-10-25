@@ -8,6 +8,7 @@ python-dateutil
 w3lib==1.19.0
 sentry-sdk==0.9.0
 pre-commit==2.9.2
-Quart==0.14.1
+Quart>=0.15
 coloredlogs
 sqlalchemy
+quart-rate-limiter==0.6.0
