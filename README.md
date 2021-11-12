@@ -8,8 +8,8 @@
 
 **Website**
 
-https://shopasource.herokuapp.com/
-http://www.shopasource.com/
+* https://shopasource.herokuapp.com/
+* http://www.shopasource.com/
 
 **API**
 
