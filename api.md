@@ -9,10 +9,15 @@ those from your query text instead.
 #### HEADERS ####
 * x-api-key: {API_KEY}
 
+#### GET /health ####
+* Liveness check, no api key required. Returns `{"status": "ok"}`.
+
+#### GET /openapi.json ####
+* Machine-readable OpenAPI 3.0 description of every endpoint below, no api key required.
+
 #### GET /api/public_api_key ####
 * Returns current public api key, and its rate limited.
 * Api key and rate limit might change, and it's limited per day(s). e.g 1000 hit per day.
-* Rate limit apply to web page https://shopasource.herokuapp.com/ as well.
 
 #### GET /api/shop/nl_search?q={free_text_query}&provider={model}&async=1 ####
 * Natural language search - the primary way to search. An LLM parses the free text

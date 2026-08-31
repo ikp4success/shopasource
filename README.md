@@ -25,7 +25,7 @@ pick whichever the server has a key for) works out the shops, sorting, and filte
 
 Hybrid of: https://github.com/ikp4success/bestlows-java
 
-#### Python Version: 3.10+
+#### Python Version: 3.13+ (Quart>=0.23.1 requires it)
 
 ### Setup
 
@@ -85,7 +85,8 @@ $ make run_spider SPIDER=AMAZON SEARCH_KEYWORD=shirts
 ```
 
 ##### deploys
-project currently runs on Heroku, you can setup your own app-instance and deploy. for more information go to https://devcenter.heroku.com/articles/git. You could also use another service to host the project.
+Ships with a `Procfile` and `Dockerfile`, so it can be deployed to Heroku (see
+https://devcenter.heroku.com/articles/git) or any other host that runs one of those.
 
 ##### other
 ```bash

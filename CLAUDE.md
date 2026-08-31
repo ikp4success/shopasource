@@ -23,7 +23,12 @@ hypercorn -b 0.0.0.0:5003 webapp.app:app
 
 with the same env vars `make run` sets (`ENV_CONFIGURATION`, `STAGE`, `DB_USER`/`DB_PASS`/`DB_PORT`/`DB_NAME`/`DB_DOMAIN`, `SAVE_TO_DB`, `SKIP_SENTRY=1`), plus whichever of `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` / `GEMINI_API_KEY` / `DEEPSEEK_API_KEY` you want NL search to use.
 
-No automated test suite runs today — `tests/` and `tasks/selector_test.py` exist but reference endpoints (`/health`, `/openapi.json`) the app doesn't implement; don't treat them as a working reference or as CI gating until that's reconciled.
+```bash
+API_KEY=testkey ENV_CONFIGURATION=debug SKIP_SENTRY=1 DB_USER=admin DB_PASS=admin DB_PORT=5432 DB_NAME=shopasource DB_DOMAIN=localhost SAVE_TO_DB=0 \
+  .venv/bin/pytest -q tests/               # run the test suite (needs a reachable Postgres, e.g. `make run_db`)
+```
+
+CI (`.github/workflows/ci.yml`) runs the same `flake8` + `pytest -q tests/` against a Postgres service container on every push/PR to `main`/`master`. `tasks/selector_test.py` is a separate standalone smoke-test script (hits every shop's live URL directly), not part of the pytest suite.
 
 Config: `configs/dev.json.template` documents every key; the real `configs/dev.json` is gitignored and picked by `ENV_CONFIGURATION`. Env vars are the fallback/override layer (`support.Config`) — config file values take precedence over env vars where both are set (`Config.apply_config_variables`).
 
