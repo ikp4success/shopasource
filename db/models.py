@@ -4,21 +4,16 @@ import uuid
 
 import sqlalchemy as db
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm import declarative_base, scoped_session, sessionmaker
 
 from shops.shop_util.extra_function import generate_result_meta
 from support import config, get_logger
 
 logger = get_logger(__name__)
 
-engine = db.create_engine(
-    config.DATABASE_URL, convert_unicode=True, pool_size=100, max_overflow=200
-)
+engine = db.create_engine(config.DATABASE_URL, pool_size=100, max_overflow=200)
 
-db_session = scoped_session(
-    sessionmaker(autocommit=False, autoflush=False, bind=engine)
-)
+db_session = scoped_session(sessionmaker(autoflush=False, bind=engine))
 
 
 def init_db():

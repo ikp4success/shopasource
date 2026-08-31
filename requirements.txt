@@ -3,11 +3,11 @@ hypercorn
 requests
 python-dateutil
 w3lib
-sentry-sdk
+sentry-sdk>=2.68.1
 pre-commit
-Quart>=0.15
+Quart>=0.23.1
 coloredlogs
-sqlalchemy<2
+sqlalchemy>=2.0.52
 psycopg2-binary
 quart-rate-limiter
 anthropic
