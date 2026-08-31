@@ -49,7 +49,7 @@ flowchart TB
 
     SEARCH --> FACTORY
     FACTORY --> JOBTBL
-    FACTORY -- "spawns one<br/>scrapy subprocess<br/>per shop" --> Spiders
+    FACTORY -- "spawns up to<br/>MAX_CONCURRENT_SHOPS shops<br/>at once (bounded pool);<br/>browser_fetch shops<br/>capped separately, smaller" --> Spiders
 
     DEFAULT -.->|"blocked by<br/>most sites now"| STORE
     DIRECT -->|"bypasses Scrapy/Twisted<br/>fingerprinting"| STORE
@@ -76,11 +76,13 @@ sequenceDiagram
     else provider = anthropic/openai/gemini/deepseek
         A->>L: parse query into JSON schema
         L-->>A: {search_keyword, shops, sort, match_accuracy}
-        Note over A,L: on 401/402/403/429 the error names the real<br/>cause instead of a generic "could not understand" message
+        Note over A,L: any 4xx/5xx from the SDK names the real<br/>cause instead of a generic "could not understand" message
     end
     A->>J: validate_params + start_async_requests
     J->>D: create Job row (status: started)
-    J->>S: subprocess.call("scrapy crawl <SHOP> ...") per shop
+    par per shop, bounded concurrency
+        J->>S: subprocess.call("scrapy crawl <SHOP> ...")
+    end
     S->>S: fetch via default / direct_fetch / browser_fetch
     S->>D: save ShoppedData rows, update Job status
     loop client polls
@@ -101,11 +103,19 @@ tier it actually needs, in `shop_base.py`:
 |---|---|---|---|
 | Default | *(none)* | Scrapy's own (Twisted) downloader | Sites with no meaningful bot detection (e.g. Newegg) |
 | Direct | `use_direct_fetch = True` | Python `requests`, bypassing Scrapy/Twisted's network stack | Sites that fingerprint Twisted's connection signature specifically, but not a plain HTTP client (e.g. Macy's, TJ Maxx) |
-| Browser | `use_browser_fetch = True` | Headless Chromium via Playwright, real Chrome channel, `sec-ch-ua` matched to the User-Agent | Sites with JS challenges or Client-Hints fingerprinting that block both of the above (e.g. Amazon, Nike) |
+| Browser | `use_browser_fetch = True` | Headless Chromium via Playwright, real Chrome channel, `sec-ch-ua` matched to the User-Agent | Sites with JS challenges or Client-Hints fingerprinting that block the other two (e.g. Amazon, Walmart, ASOS, Zara) |
 
-A handful of retailers (Walmart, H&M, Target's search API, ...) defeat all three
-and need infrastructure this project doesn't have - residential IP rotation, in
-Walmart's case, or a still-unidentified signing scheme for Target's API.
+Each search runs every active shop's spider concurrently rather than one at a
+time (`ResultsFactory.start_search`, bounded by `MAX_CONCURRENT_SHOPS`), with a
+separate, smaller cap (`MAX_CONCURRENT_BROWSER_SHOPS`) just for `browser_fetch`
+shops - each one launches a real headless Chromium process, so letting all of
+the general concurrency budget be browser shops at once can spike memory well
+past what a small deployment has. A shop whose launch fails doesn't abort the
+rest of the search; it's marked `error` and the others keep going.
+
+A dead shop (its site no longer responding at all, not just blocking scrapers)
+gets marked `active: False` in `shops/shop_util/shop_setup.py` rather than left
+to time out on every search - see the `CUSHINE` entry there for an example.
 
 ## LLM providers
 
@@ -120,3 +130,22 @@ cares which provider handled a given request.
 configured on the running server (plus the always-available `normal`
 pseudo-provider), which is what populates the model picker in the UI - so the
 set of choices a user sees always matches what will actually work.
+
+## Search relevance
+
+Every search - LLM-parsed or `normal` - is filtered through
+`ResultsFactory.match_sk()` with a minimum match-accuracy floor
+(`MIN_MATCH_ACCURACY` in `webapp/nl_search.py`), so a search never runs fully
+unfiltered. Without it, a shop that doesn't carry the searched item at all
+still contributes its unrelated inventory to the results, and the cheapest of
+that junk can end up misleadingly badged as "best price" client-side.
+Matching itself uses whole-word boundaries and ignores filler words like
+"for"/"with" (`STOPWORDS` in `tasks/results_factory.py`), rather than a plain
+substring check, which used to false-positive-match "for" inside "force".
+
+## Operational endpoints
+
+`GET /health` is a liveness check (no api key required). `GET /openapi.json`
+serves a machine-readable OpenAPI 3.0 description of the JSON API
+(`webapp/openapi_spec.py`), maintained by hand alongside `api.md` since Quart
+has no built-in OpenAPI generation.
