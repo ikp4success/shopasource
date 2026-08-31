@@ -1,7 +1,6 @@
 #
 # ShopASource Dockerfile
 #
-# https://shopasource.herokuapp.com/
 # Written by: Immanuel George <ikp4success@gmail.com>
 #
 # Usage:
@@ -10,14 +9,16 @@
 #   sudo docker run -it -p 5003:5003 shopasource
 #
 # Pull the base image.
-FROM python:3.8
-ENV .venv 1.0
+FROM python:3.13-slim
+
 COPY requirements.txt .
 
-RUN pip install --upgrade pip && pip --no-cache-dir install -r requirements.txt
+RUN pip install --upgrade pip && pip --no-cache-dir install -r requirements.txt \
+    && playwright install --with-deps chromium
 
 EXPOSE 5003
 WORKDIR /
 ADD . .
-# Run the application.
-CMD ["quart", "run", "--host=0.0.0.0", "--port=5003"]
+# Run the application. `quart run` fails here (package discovery breaks on the
+# stray root __init__.py) - run the ASGI app directly, matching the Procfile.
+CMD ["hypercorn", "-b", "0.0.0.0:5003", "webapp.app:app"]
