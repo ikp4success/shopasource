@@ -48,6 +48,10 @@ class Config:
     API_MAX_USAGE = int(os.environ.get("API_MAX_USAGE", 100))
     API_MAX_USAGE_DAYS = int(os.environ.get("API_MAX_USAGE_DAYS", 2))
     SHOP_CACHE_MAX_EXPIRY_TIME = int(os.environ.get("SHOP_CACHE_MAX_EXPIRY_TIME", 3))
+    MAX_CONCURRENT_SHOPS = int(os.environ.get("MAX_CONCURRENT_SHOPS", 8))
+    MAX_CONCURRENT_BROWSER_SHOPS = int(
+        os.environ.get("MAX_CONCURRENT_BROWSER_SHOPS", 3)
+    )
     SHOP_CACHE_LOOKUP_SET = os.environ.get("SHOP_CACHE_LOOKUP_SET", True)
     SUPER_USER = os.environ.get("SUPER_USER")
     SAVE_TO_DB = os.environ.get("SAVE_TO_DB")

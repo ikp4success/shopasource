@@ -4,6 +4,16 @@ from webapp.llm_providers import extract_structured
 
 logger = get_logger(__name__)
 
+# ResultsFactory.match_sk() treats match_acc == 0 as "no filtering at all" - every
+# scraped item from every shop passes, even ones with zero words in common with the
+# search. Since a search now always spans every active shop rather than a
+# user-picked subset, that means shops that don't carry the item at all (e.g.
+# Fashion Nova for "wallet for men") still contribute their unrelated inventory,
+# and the cheapest of those can end up junk-cheap and win "best price". A floor of
+# 1 is enough to require at least one keyword actually appear in the item, without
+# being so strict it drops genuine partial matches.
+MIN_MATCH_ACCURACY = 1
+
 _NL_QUERY_SCHEMA = {
     "type": "object",
     "properties": {
@@ -63,11 +73,12 @@ def parse_nl_query(query_text, is_async=True, provider=None):
         shops = allowed_shops
 
     high_to_low = parsed.get("sort_high_to_low", False)
+    match_accuracy = max(int(parsed.get("match_accuracy") or 0), MIN_MATCH_ACCURACY)
 
     return {
         "sk": parsed["search_keyword"],
         "shops": ",".join(shops),
-        "smatch": str(parsed.get("match_accuracy", 0)),
+        "smatch": str(match_accuracy),
         "shl": "true" if high_to_low else "false",
         "slh": "false" if high_to_low else "true",
         "async": "1" if is_async else "0",

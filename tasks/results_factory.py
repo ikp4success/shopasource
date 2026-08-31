@@ -1,19 +1,52 @@
 import json
+import re
 import traceback
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
+from threading import Semaphore
 
 from dateutil import parser
 from sqlalchemy import or_
 
 from db.models import ShoppedData
-from shops.shop_util.extra_function import safe_grab, safe_json, truncate_data
+from shops.shop_util.extra_function import safe_grab, safe_json, save_job, truncate_data
 from shops.shop_util.shop_setup_functions import find_shop, is_shop_active
 from support import config, get_logger
-from tasks.scrapy_run import launch_spiders
+from tasks.scrapy_run import import_class, launch_spiders
 
 logger = get_logger(__name__)
 
 config.intialize_sentry()
+
+# use_browser_fetch shops each launch a real headless Chromium instance, which is
+# far heavier than the default/direct_fetch tiers - letting all of MAX_CONCURRENT_SHOPS
+# be browser shops at once (e.g. a search that happens to hit Amazon, Walmart, ASOS,
+# Zara, ... together) can spike memory well past what a small deployment has. This
+# is a per-process soft cap (same scope/limitation as MAX_CONCURRENT_SHOPS itself -
+# it doesn't coordinate across hypercorn's multiple worker processes).
+_browser_fetch_semaphore = Semaphore(config.MAX_CONCURRENT_BROWSER_SHOPS)
+
+
+def _is_browser_fetch_shop(shop_name):
+    try:
+        return bool(import_class(shop_name).use_browser_fetch)
+    except Exception:
+        return False
+
+
+def _launch_shop(shop_name, search_keyword, is_async, job_id):
+    if _is_browser_fetch_shop(shop_name):
+        with _browser_fetch_semaphore:
+            launch_spiders(shop_name, search_keyword, is_async, job_id)
+    else:
+        launch_spiders(shop_name, search_keyword, is_async, job_id)
+
+
+# Filler words common in shopping queries ("wallet for men", "shoes with laces")
+# that would otherwise count as a "matched" keyword on their own - e.g. a search
+# for "wallet for men" matching a $65 pair of shoes titled "... for Naturalizer"
+# purely on the word "for".
+STOPWORDS = {"a", "an", "and", "for", "in", "of", "the", "to", "with"}
 
 possible_match_abbrev = {
     "television": ["tv", "televisions"],
@@ -83,11 +116,20 @@ class ResultsFactory:
         searched_item = searched_item.lower()
         sk_abbrev = safe_grab(possible_match_abbrev, [search_keyword], default=[])
 
-        search_keyword_arr = search_keyword.split(" ")
+        search_keyword_arr = [
+            word for word in search_keyword.split(" ") if word not in STOPWORDS
+        ] or search_keyword.split(" ")
         search_keyword_arr.extend(sk_abbrev)
         match_count = 0
         for sk in search_keyword_arr:
-            if sk and len(sk) > 1 and sk in searched_item.lower():
+            # \b word boundaries - a plain substring check would count "for" as
+            # matching inside "force", or "men" inside "women", pulling in
+            # unrelated items.
+            if (
+                sk
+                and len(sk) > 1
+                and re.search(r"\b" + re.escape(sk) + r"\b", searched_item)
+            ):
                 match_count = match_count + 1
 
         if match_count > 0:
@@ -134,8 +176,34 @@ class ResultsFactory:
 
     def start_search(self, shop_names_list=None):
         shop_names_list = shop_names_list or self.shop_names_list
-        for shop_name in shop_names_list:
-            launch_spiders(shop_name, self.search_keyword, self.is_async, self.job_id)
+        # Each launch_spiders() call blocks on its own `scrapy crawl` subprocess, so
+        # running this as a plain loop means shop 2 doesn't even start until shop 1's
+        # crawl fully finishes - a single slow (or hung) shop stalls every shop behind
+        # it. A bounded thread pool lets shops scrape concurrently instead, and a
+        # per-shop try/except means one shop's failure doesn't stop the others from
+        # completing (previously it would propagate and abort the whole search).
+        with ThreadPoolExecutor(max_workers=config.MAX_CONCURRENT_SHOPS) as executor:
+            futures = {
+                executor.submit(
+                    _launch_shop,
+                    shop_name,
+                    self.search_keyword,
+                    self.is_async,
+                    self.job_id,
+                ): shop_name
+                for shop_name in shop_names_list
+            }
+            for future in as_completed(futures):
+                shop_name = futures[future]
+                try:
+                    future.result()
+                except Exception:
+                    # launch_spiders raising means the crawl subprocess never even
+                    # started, so the spider's own error signal handler never ran to
+                    # mark this shop "error" - without this, the job would sit at
+                    # "in_progress" forever waiting on a shop that never started.
+                    logger.exception("launch_spiders failed for %s", shop_name)
+                    save_job(shop_name, self.job_id, status="error")
 
     def get_data_from_db_by_date_asc(self, shop_name=None):
         results_db = []

@@ -70,7 +70,9 @@ class ShopSetup(ShopLinks):
                 }
             },
             {"BOOHOO": {"active": True, "name": "BOOHOO", "url": self._boohoourl}},
-            {"CUSHINE": {"active": True, "name": "CUSHINE", "url": self._cushineurl}},
+            # cushnie.com no longer responds at all (connections just hang, not even
+            # a fast reject) - the site itself appears to be dead, not blocking us.
+            {"CUSHINE": {"active": False, "name": "CUSHINE", "url": self._cushineurl}},
             {
                 "FOREVER21": {
                     "active": True,

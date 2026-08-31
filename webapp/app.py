@@ -14,7 +14,8 @@ from webapp.llm_providers import (
     available_providers,
     extraction_failure_status,
 )
-from webapp.nl_search import parse_nl_query
+from webapp.nl_search import MIN_MATCH_ACCURACY, parse_nl_query
+from webapp.openapi_spec import SPEC as OPENAPI_SPEC
 from webapp.util import (
     get_api_key,
     get_results,
@@ -76,6 +77,19 @@ async def robots():
     return await render_template("robots.txt")
 
 
+@app.route("/health", methods=["GET"])
+@rate_limit(5000, timedelta(minutes=2))
+async def health():
+    return jsonify({"status": "ok"}), 200
+
+
+@app.route("/openapi.json", methods=["GET"])
+@docache(hours=1, content_type="json")
+@rate_limit(5000, timedelta(minutes=2))
+async def openapi_spec():
+    return jsonify(OPENAPI_SPEC), 200
+
+
 @app.route("/api/get_result", methods=["GET"])
 @authorize(app)
 @rate_limit(1500, timedelta(minutes=2))
@@ -120,7 +134,7 @@ async def api_nl_search():
         nl_params = {
             "sk": query_text,
             "shops": ",".join(get_shops(active=True)),
-            "smatch": "0",
+            "smatch": str(MIN_MATCH_ACCURACY),
             "shl": "false",
             "slh": "true",
             "async": "1" if is_async else "0",
