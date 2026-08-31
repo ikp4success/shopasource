@@ -40,4 +40,4 @@ async def test_get_result_missing_job_id():
     resp = await client.get("/api/get_result", headers=headers)
     assert resp.status_code == 400
     data = await resp.get_json()
-    assert data["status"] == "missing_parameter"
+    assert data["error"] == "job_id is required."
