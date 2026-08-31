@@ -3,7 +3,7 @@ import json
 from datetime import datetime, timezone
 from functools import partial
 
-from db.models import APIUsage, Job
+from db.models import APIUsage, Job, db_session
 from support import config, get_logger
 from tasks.results_factory import ResultsFactory, format_shop_names_list
 
@@ -43,17 +43,23 @@ def validate_params(**kwargs):
 
 
 def start_shop_search(**kwargs):
-    res_factory = ResultsFactory(**kwargs, is_cache=False)
-    results = res_factory.run_search()
+    try:
+        res_factory = ResultsFactory(**kwargs, is_cache=False)
+        results = res_factory.run_search()
 
-    if not res_factory.is_async:
-        if results and not isinstance(results, dict):
-            update_status(status="done", job_id=kwargs.get("job_id"))
-        else:
-            results = fallback_error
-            update_status(status="error", job_id=kwargs.get("job_id"))
+        if not res_factory.is_async:
+            if results and not isinstance(results, dict):
+                update_status(status="done", job_id=kwargs.get("job_id"))
+            else:
+                results = fallback_error
+                update_status(status="error", job_id=kwargs.get("job_id"))
 
-        return results
+            return results
+    finally:
+        # start_async_requests runs this in a fresh executor thread each time;
+        # scoped_session is thread-local, so without this the session (and its
+        # DB connection) leaks - never returned to the pool - on every async search.
+        db_session.remove()
 
 
 def start_async_requests(**kwargs):
@@ -124,7 +130,11 @@ def get_api_key(request):
                     }
             api.update_item(usage_count=usage_count + 1)
         else:
-            api = APIUsage(user=user, usage_count=1, api_key=api_key,)
+            api = APIUsage(
+                user=user,
+                usage_count=1,
+                api_key=api_key,
+            )
             api.commit()
 
     return {"public_api_key": api_key}

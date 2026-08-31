@@ -45,7 +45,7 @@ $(VENV):
 $(VENV_SENTINEL): requirements.txt .pre-commit-config.yaml
 	$(MAKE) ensure_no_venv
 	rm -rf $(VENV)
-	python3.8 -m venv $(VENV)
+	python3 -m venv $(VENV)
 	$(VENV_PIP) install --upgrade pip wheel
 	$(VENV_PIP) install -r requirements.txt
 	$(VENV_PRECOMMIT) install

@@ -4,7 +4,13 @@ import scrapy
 from scrapy import signals
 
 from shops.scrapy_settings.shop_settings import USER_AGENT
-from shops.shop_connect.shop_request import get_request, parse_default_errcallback
+from shops.shop_connect.shop_request import (
+    browser_fetch,
+    close_browser,
+    direct_fetch,
+    get_request,
+    parse_default_errcallback,
+)
 from shops.shop_util.extra_function import (
     extract_items,
     generate_result_meta,
@@ -31,12 +37,23 @@ class ShopBase(scrapy.Spider):
     user_agent = USER_AGENT
     logger = get_logger(__name__)
     is_error = True
+    # Some sites (Amazon, Walmart, Macy's, Nike, ...) block Scrapy's own (Twisted)
+    # downloader specifically - same headers/IP/UA succeed via `requests`. Spiders
+    # that need this set use_direct_fetch = True.
+    use_direct_fetch = False
+    # A few sites' bot detection defeats direct_fetch too (e.g. Amazon's Akamai JS
+    # challenge) and need an actual browser executing the page's JS.
+    use_browser_fetch = False
 
     def __init__(self, search_keyword, job_id=None):
         self.name = self.find_shop_configuration()["name"]
         self.shop_url = self.find_shop_configuration()["url"]
         self._search_keyword = search_keyword
         self._job_id = job_id
+
+    async def start(self):
+        for request in self.start_requests():
+            yield request
 
     def start_requests(self):
         self.logger.info(f"User-Agent: {self.user_agent}")
@@ -45,7 +62,12 @@ class ShopBase(scrapy.Spider):
         shop_url = self.shop_url.format(keyword=self._search_keyword)
         self.headers["Referer"] = shop_url
         self.headers["user-agent"] = self.user_agent
-        yield self.get_request(
+        self.headers.setdefault(
+            "Accept",
+            "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        )
+        self.headers.setdefault("Accept-Language", "en-US,en;q=0.9")
+        yield from self.get_request(
             url=shop_url,
             domain_url=self.domain_url,
             callback=self.parse_pre_results,
@@ -63,6 +85,8 @@ class ShopBase(scrapy.Spider):
 
     def spider_closed(self, spider, reason):
         spider.logger.info("Spider closed: %s Reason: %s", spider.name, reason)
+        if self.use_browser_fetch:
+            close_browser()
         save_job(self.name, self._job_id)
 
     def spider_error(self, failure, response, spider):
@@ -82,14 +106,55 @@ class ShopBase(scrapy.Spider):
     def get_request(
         self, url, callback, errcallback=None, domain_url=None, meta=None, headers=None
     ):
-        return get_request(
-            url=url,
-            callback=callback,
-            errcallback=errcallback,
-            domain_url=domain_url,
-            meta=meta,
-            headers=headers,
+        if self.use_browser_fetch:
+            yield from self._fetch_and_callback(
+                browser_fetch,
+                "browser_fetch",
+                url,
+                callback,
+                errcallback,
+                domain_url,
+                headers,
+            )
+        elif self.use_direct_fetch:
+            yield from self._fetch_and_callback(
+                direct_fetch,
+                "direct_fetch",
+                url,
+                callback,
+                errcallback,
+                domain_url,
+                headers,
+            )
+        else:
+            request = get_request(
+                url=url,
+                callback=callback,
+                errcallback=errcallback,
+                domain_url=domain_url,
+                meta=meta,
+                headers=headers,
+            )
+            if request is not None:
+                yield request
+
+    def _fetch_and_callback(
+        self, fetch_fn, fetch_name, url, callback, errcallback, domain_url, headers
+    ):
+        response = fetch_fn(
+            url=url, domain_url=domain_url, headers=headers or self.headers
         )
+        if response is None or response.status != 200:
+            self.logger.error(
+                "%s failed for %s (status=%s)",
+                fetch_name,
+                url,
+                getattr(response, "status", None),
+            )
+            if errcallback:
+                save_job(self.name, self._job_id, status="error")
+            return
+        yield from callback(response)
 
     def find_shop_configuration(self):
         return find_shop_configuration(self.name)

@@ -5,19 +5,16 @@
 [![isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://github.com/timothycrosley/isort)
 [![bandit](https://github.com/PyCQA/bandit/workflows/Build%20and%20Test%20Bandit/badge.svg)](https://github.com/PyCQA/bandit)
 
-
-**Website**
-
-* https://shopasource.herokuapp.com/
-* http://www.shopasource.com/
-
 **API**
 
 https://github.com/ikp4success/shopasource/blob/master/api.md
 
 **About**
 
-Shop A Source provide easy access to search multiple shopping websites via one source. Website users can manage products and decide what product is best. Shop A Source could also be used to compare prices of a product.
+Shop A Source lets you search for a product in plain English and compares prices for it
+across dozens of online stores in one place. Describe what you're looking for - "cheap
+waterproof hiking boots from target" - and an LLM (Claude, GPT/Codex, Gemini, or DeepSeek -
+pick whichever the server has a key for) works out the shops, sorting, and filters for you.
 
 **Screenshots**
 
@@ -28,7 +25,7 @@ Shop A Source provide easy access to search multiple shopping websites via one s
 
 Hybrid of: https://github.com/ikp4success/bestlows-java
 
-#### Python Version: 3.8+
+#### Python Version: 3.10+
 
 ### Setup
 
@@ -52,6 +49,9 @@ $ make pre-commit
 * A template dev.json.template is provided to setup a dev.json config files.
 * Use debug.json for debugging and testing.
 * dev.json is git-ignored to protect sensitive keys.
+* For natural-language search, set at least one of ANTHROPIC_API_KEY, OPENAI_API_KEY,
+  GEMINI_API_KEY, DEEPSEEK_API_KEY. With more than one set, LLM_PROVIDER picks the
+  default, and the UI lets a user override it per search from whichever are configured.
 
 
 
@@ -95,4 +95,4 @@ $ make generate_key
 
 **Author**
 
-* [***Immanuel George***](https://stackoverflow.com/cv/imgeorgeresume)
+* [***Immanuel George***](https://www.linkedin.com/in/imgeorgeresume/)

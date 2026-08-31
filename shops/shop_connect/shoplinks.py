@@ -2,7 +2,7 @@ import uuid
 
 
 class ShopLinks(object):
-    _amazonurl = "https://www.amazon.com/s/ref=sr_st_relevanceblender?url=search-alias%3Daps&field-keywords={keyword}"
+    _amazonurl = "https://www.amazon.com/s?k={keyword}&i=aps"
     _bestbuyurl = "https://www.bestbuy.com/site/searchpage.jsp?st={keyword}&_dyncharset=UTF-8&id=pcat17071&type=page&sc=Global&cp=1&nrp=&sp=&qp=&list=n&af=true&iht=y&usc=All+Categories&ks=960&keys=keys"
     _ebayurl = "https://www.ebay.com/sch/i.html?_from=R40&_sacat=0&_nkw={keyword}&rt=nc&LH_PrefLoc=1&_ipg=25"
     _walmarturl = (
@@ -18,7 +18,7 @@ class ShopLinks(object):
     _hmurl = "https://www2.hm.com/en_us/search-results.html?q={keyword}&department=1&sort=ascPrice&image-size=small&image=stillLife&offset=0&page-size=1"
     _microcenterurl = "https://www.microcenter.com/search/search_results.aspx?N=0&NTX=&NR=&filterProperty=&NTT={keyword}&NTK=all&page=1&sortby=match&SortNow=Go"
     _grouponurl = "https://www.groupon.com/browse/query={keyword}?sort=relevance"
-    _fashionnovaurl = "https://ultimate-fnova-dot-acp-magento.appspot.com/full_text_search?page_num=1&q={keyword}&UUID={uuid}"
+    _fashionnovaurl = "https://www.fashionnova.com/search?q={keyword}"
     _6pmurl = "https://www.6pm.com/{keyword}"
     _poshmarkurl = (
         "https://poshmark.com/search?query={keyword}&sort_by=added_desc&department=All"
@@ -30,9 +30,7 @@ class ShopLinks(object):
         "https://www.kohls.com/search.jsp?submit-search=web-regular&search={keyword}"
     )
     _footlockerurl = "https://www.footlocker.com/search?query={keyword}"
-    _kmarturl = (
-        "https://www.kmart.com/service/search/v2/productSearch?keyword={keyword}"
-    )
+    _kmarturl = "https://www.kmart.com/search={keyword}"
     _biglotsurl = "https://www.biglots.com/search/?Ntt={keyword}"
     _burlingtonurl = "https://www.burlington.com/b/catalog/searchresults.aspx?filter=&search={keyword}"
     _mvmtwatchesurl = "https://www.mvmtwatches.com/search?type=product&q={keyword}"
@@ -42,22 +40,22 @@ class ShopLinks(object):
     _stylerunnerurl = "https://www.stylerunner.com/search?keywords={keyword}&cur=USD&"
     _spiritualgangsterurl = "https://spiritualgangster.com/search?q={keyword}"
     _leviurl = "https://www.levi.com/US/en_US/search/{keyword}"
-    _zaraurl = "https://api.empathybroker.com/search/v1/query/zara/search?o=json&m=24&q={keyword}&scope=default&t=*&lang=en_US&store=11719&start=0&rows=24&origin=default"
+    _zaraurl = "https://www.zara.com/us/en/search?searchTerm={keyword}"
     _nordstormurl = (
         "https://shop.nordstrom.com/sr?origin=keywordsearch&keyword={keyword}"
     )
     _nordstormrackurl = "https://www.nordstromrack.com/api/search2/catalog/search?includeFlash=false&includePersistent=true&query={keyword}&sort=relevancy&limit=99"
     _hautelookurl = "https://www.hautelook.com/api/search2/catalog/search?includeFlash=true&includePersistent=false&limit=99&page=1&query={keyword}&sort=relevancy"
     _saksfifthavenueurl = "https://www.saksfifthavenue.com/search/EndecaSearch.jsp?bmArch=bmForm&bmForm=endeca_search_form_one&bmArch=bmIsForm&bmIsForm=true&bmHidden=submit-search&submit-search=&bmArch=bmSingle&bmSingle=N_Dim&bmHidden=N_Dim&N_Dim=0&bmArch=bmHidden&bmHidden=Ntk&bmHidden=Ntk&Ntk=Entire+Site&bmArch=bmHidden&bmHidden=Ntx&bmHidden=Ntx&Ntx=mode%2Bmatchpartialmax&bmHidden=PA&PA=TRUE&SearchString=+{keyword}"
-    _expressurl = "https://search.unbxdapi.com/{api_key}/express_com-u1456154309768/search?&q={keyword}&rows=70&start=0&format=json&fields=unbxd_color_mapping,title,uniqueId,productUrl,displayPrice,selling_price,displaySalePrice,color,promoMessage,imageUrl,colorImageMap,imageMap,colorSwatch&facet.multiselect=true&indent=off&device-type=Desktop&unbxd-url=https%3A%2F%2Fwww.express.com%2Fexp%2Fsearch%3Fq%3Dwallet&unbxd-referrer=https%3A%2F%2Fwww.express.com%2F&user-type=new&api-key={api_key}"
+    _expressurl = "https://www.express.com/search?q={keyword}"
     _charlotterusseurl = (
         "https://www.charlotterusse.com/search/?q={keyword}&lang=default"
     )
     _aldourl = "https://www.aldoshoes.com/us/en_US/search?q={keyword}"
     _bassourl = "https://basso.co/search?q={keyword}"
     _shopqueenurl = "https://www.shopqueen.com/search?q={keyword}*&type=product"
-    _nikeurl = "https://store.nike.com/us/en_us/pw/n/1j7?sl={keyword}&vst={keyword}"
+    _nikeurl = "https://www.nike.com/w?q={keyword}"
     _adidasurl = "https://www.adidas.com/api/search/query?sitePath=us&query={keyword}"
     _dicksportinggoodsurl = "https://www.dickssportinggoods.com/search/SearchDisplay?categoryId=&storeId=15108&catalogId=12301&langId=-1&sType=SimpleSearch&resultCatEntryType=2&showResultsPage=true&fromPage=Search&searchSource=Q&pageView=&beginIndex=0&DSGsearchType=Keyword&pageSize=48&nowcs=&searchTerm={keyword}&advsearch=true"
     _biinkurl = "https://biink.com/search?type=product&q={keyword}&submit=Search"
-    _champsporturl = "https://www.champssports.com/api/products/search?products=&query={keyword}&pageSize=60&timestamp=6"
+    _champsporturl = "https://www.champssports.com/search?query={keyword}"

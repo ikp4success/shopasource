@@ -54,9 +54,10 @@ class ModelMixin:
 
 class ShoppedData(Model, ModelMixin):
     __tablename__ = "shopped_data"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     searched_keyword = db.Column(db.String, nullable=False)
     image_url = db.Column(db.String)
-    shop_link = db.Column(db.String, primary_key=True)
+    shop_link = db.Column(db.String, nullable=False, index=True)
     shop_name = db.Column(db.String, nullable=False)
     price = db.Column(db.String, nullable=False)
     numeric_price = db.Column(db.Numeric, nullable=False)

@@ -96,7 +96,9 @@ class ResultsFactory:
                 return True
         return False
 
-    def run_search(self,):
+    def run_search(
+        self,
+    ):
         results = {}
         try:
             if not self.shop_names_list:
@@ -264,7 +266,9 @@ class ResultsFactory:
         mk_results = []
         for item_r in results:
             item_r = safe_json(item_r)
-            if self.match_sk(safe_grab(item_r, ["title"]),):
+            if self.match_sk(
+                safe_grab(item_r, ["title"]),
+            ):
                 mk_results.append(item_r)
         return mk_results
 

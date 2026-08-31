@@ -1,8 +1,19 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+<script>
+(function() {
+  var stored = null;
+  try { stored = localStorage.getItem('theme'); } catch (e) {}
+  var theme = stored || ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+})();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="Title" content="Search any product or item via one source">
 <meta name="Description" content="Shop A Source provide easy access to search multiple shopping websites via one source. Website users can manage products and decide what product is best. Shop A Source could also be used to compare prices of a product.">
 <meta name="Keywords" content="shops, product, shopping, market, sell, search, compare, online shopping site, online shopping, compare prices, price comparison, best price, shopping list, shoppers guide">
@@ -37,16 +48,20 @@ crossorigin="anonymous">
 	<script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
 	<script src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script> -->
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/4column.css')}}">
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css')}}">
-<script src="{{ url_for('static', filename='js/main_app.js')}}"></script>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}?v=2">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/4column.css')}}?v=2">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css')}}?v=2">
+<script src="{{ url_for('static', filename='js/main_app.js')}}?v=2"></script>
 <title>Shop A Source</title>
 </head>
 <body>
 	<div class="navbar navbar-expand-lg fixed-top navbar-light bg-light">
 		<div class="container">
 			<a href="/" class="navbar-brand">Shop A Source</a>
+			<button id="themeToggle" type="button" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+				<svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>
+				<svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+			</button>
 			<button class="navbar-toggler" type="button" data-toggle="collapse"
 				data-target="#navbarResponsive" aria-controls="navbarResponsive"
 				aria-expanded="false" aria-label="Toggle navigation">
@@ -65,14 +80,14 @@ crossorigin="anonymous">
 		</div>
 	</div>
 	<div id="shopsearch" class="Search" onclick="this.className='ResultSearch'">
+		<h1 class="hero-title">Shop A Source</h1>
+		<p class="hero-tagline">Search once, compare prices across dozens of stores instantly.</p>
 		<div id="search_form" class="input-group">
-  	<input id="searchbar" type="text" class="form-control input-large" aria-label="Text input with segmented dropdown button" placeholder="e.g television" style="width: 85%;" name="search">
+  	<input id="searchbar" type="text" class="form-control input-large" aria-label="Search query" placeholder="e.g cheap waterproof hiking boots from target" style="width: 85%;" name="search">
   <div class="input-group-append">
+    <select id="modelSelect" class="model-select" aria-label="Model to search with"></select>
     <button type="button" id="searchButton" class="btn btn-search" onclick="shop_web_search()">Search</button>
 		<button type="button" id="cancelSearchButton" class="btn btn-danger" onclick="ini_reset_controls()" style="display: none;">Cancel</button>
-    <button type="button" onclick="load_shops_cb()" class="btn btn-dark dropdown-toggle dropdown-toggle-split" data-toggle="collapse" data-target="#cont-fil" aria-haspopup="true" aria-expanded="false">
-      <span class="sr-only">Toggle Dropdown</span>
-    </button>
   </div>
 </div>
 <div class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
@@ -81,80 +96,24 @@ crossorigin="anonymous">
 		<div id="searchProgress" class="loading progress" style="display: none;">
   <div id="searchProgressBar" class="progress-bar progress-bar-striped bg-warning" role="progressbar"></div>
 	</div>
-	<div id="cont-fil" class='fil-container collapse'>
-	<div class="card bg-info text-white mb-3" style="max-width: 11rem; max-height: 25rem">
-	<div class="card-header">Refine By</div>
-	<div class="card-body">
-		<p class="sp">Match Accuracy</p>
-		<input id="rangeacc" class="sp" type="range" min="0" max="100" value="5" oninput="txtacc.value=rangeacc.value">
-		<input id="txtacc" class="sp" type="number" min="0" max="100" value="5" oninput="rangeacc.value=txtacc.value" />
-		<div class="form-check sp">
-		  <input type="radio" class="form-check-input" id="highlow" name="pricerefine" disabled>
-		  <label class="form-check-label" for="highlow">High To Low</label>
-		</div>
-		<div class="form-check sp">
-		  <input type="radio" class="form-check-input" id="lowhigh" name="pricerefine" disabled>
-		  <label class="form-check-label" for="lowhigh">Low To High</label>
-		</div>
-		<div class="form-check sp">
-			<button id="filterButton" class="btn btn-warning" type="button" onclick="exe_filter()" style="display: none;">Filter</button>
-			<button type="button" id="cancelFilterButton" class="btn btn-danger" onclick="ini_filter_reset_controls()" style="display: none;">Cancel</button>
-		</div>
-	</div>
-	</div>
-	<div class="card text-white bg-secondary mb-3 shops-cont">
-  <div class="card-header">Shops</div>
-  <div class="card-body">
-			<div class="input-group mb-3">
-	  <input name="shop_search" type="text" class="form-control" placeholder="find shop e.g Amazon" style="width: 24px;" aria-describedby="basic-addon2">
-	  <div class="input-group-append">
-	    <button class="btn btn-outline-success" type="button" onclick="find_shop()">Find</button>
-	  </div>
-	</div>
-	<div id="loading_shop" style="display: none;">
-		<div class="spinner-grow text-primary card-group" role="status">
-		  <span class="sr-only">Loading...</span>
-		</div>
-		<div class="spinner-grow text-success card-group" role="status">
-		  <span class="sr-only">Loading...</span>
-		</div>
-		<div class="spinner-grow text-danger card-group" role="status">
-		  <span class="sr-only">Loading...</span>
-		</div>
-		<div class="spinner-grow text-warning card-group" role="status">
-		  <span class="sr-only">Loading...</span>
-		</div>
-		<div class="spinner-grow text-info card-group" role="status">
-		  <span class="sr-only">Loading...</span>
-		</div>
-		<div class="spinner-grow text-light card-group" role="status">
-		  <span class="sr-only">Loading...</span>
-		</div>
-		<div class="spinner-grow text-dark card-group" role="status">
-		  <span class="sr-only">Loading...</span>
-		</div>
-</div>
-	<div id="shop_cb_place" class="card-group">
-	</div>
-</div>
-  </div>
-</div>
 <div class='container results_low'>
+	<div id="priceFilter" class="price-filter" style="display: none;">
+		<label for="minPrice">Price</label>
+		<input type="number" id="minPrice" min="0" step="1" placeholder="Min" aria-label="Minimum price">
+		<span class="price-filter-sep">&ndash;</span>
+		<input type="number" id="maxPrice" min="0" step="1" placeholder="Max" aria-label="Maximum price">
+		<button type="button" id="clearPriceFilter" class="price-filter-clear" style="display: none;">Clear</button>
+	</div>
 	<div id="resultreact">
 	</div>
 </div>
 </div>
 
 
-<div id="shop_cb_default" style="display: none;">
-	<div class="custom-control custom-checkbox">
-		<input type="checkbox" class="custom-control-input" id="{shop_id}" name="{shop_name}">
-		<label class="custom-control-label" for="{shop_id}">{shop_name_friend}</label>
-</div>
-</div>
 <div id="resultreact_default" style="display: none;">
 	<div class="col-lg-3 col-md-4 col-sm-6 portfolio-item">
 		<div class="card h-100">
+				<span id="p_best" class="best-badge" style="display: none;">Best Price</span>
 				<a id="p_link" target="_blank" href=""><img id="p_img_link" class="card-img-top" src="" alt=""/></a>
 				<div class="card-body">
 					<h4 class="card-title">
@@ -202,9 +161,17 @@ crossorigin="anonymous">
 
 	<footer class="py-5 bg-light">
 	<div class="container">
-		<p class="m-0 text-center text-dark">Copyright &copy; Shop A Source 2021 Dev Release</p>
+		<p class="m-0 text-center text-dark">Copyright &copy; 2021&ndash;2026 Shop A Source</p>
 	</div>
 	</footer>
+<script>
+document.getElementById("themeToggle").addEventListener("click", function() {
+  var current = document.documentElement.getAttribute("data-theme");
+  var next = current === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  try { localStorage.setItem("theme", next); } catch (e) {}
+});
+</script>
 </body>
 
 </html>

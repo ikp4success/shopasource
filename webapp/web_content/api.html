@@ -1,8 +1,19 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<script>
+(function() {
+  var stored = null;
+  try { stored = localStorage.getItem('theme'); } catch (e) {}
+  var theme = stored || ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+})();
+</script>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="google-site-verification" content="1FzRHrFNFAtDLWm8f0xeZl8GGV_Z-9w_GZDG0Hy0IvY" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <script type="text/javascript" src="https://cdn.ywxi.net/js/1.js" async></script>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -10,13 +21,17 @@
 
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}?v=2">
 <title>API</title>
 </head>
 <body>
 <div class="navbar navbar-expand-lg fixed-top navbar-light bg-light">
       <div class="container">
         <a href="/" class="navbar-brand">Shop A Source</a>
+        <button id="themeToggle" type="button" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -37,6 +52,10 @@
     </div>
     <div class="About">
       <h3>API Usage</h3>
+      <p>The web UI searches with plain English through <code>/api/shop/nl_search</code> - that's
+      the recommended way to use this API too. <code>/api/shop/search</code> (structured
+      keyword/shops/sort params) still works underneath and remains available directly for
+      programmatic use.</p>
       <p>HEADERS</p>
       <ul>
         <li>x-api-key: {API_KEY}</li>
@@ -45,8 +64,31 @@
       <ul>
         <li>returns current public api key.</li>
       </ul>
+      <p>GET /api/shop/nl_search?q={free_text_query}&provider={model}&async=1</p>
+      <ul>
+        <li>Natural language search - the primary way to search. An LLM parses the free text
+        query into a keyword, shop names, sort order and match accuracy, then runs the same
+        search as /api/shop/search.</li>
+        <li>q - free text query e.g /api/shop/nl_search?q=cheap waterproof hiking boots from target and amazon</li>
+        <li>provider - optional; one of anthropic, openai, gemini, deepseek, or normal.
+        Overrides the server's default for this one request - must have a key configured on
+        the server (see /api/llm-providers.json) or the request fails with a 400 naming the
+        problem. normal is always available - it skips the LLM entirely and searches q as a
+        plain keyword across every active shop; use it if every configured provider is out
+        of quota/credits.</li>
+        <li>Async - 1 schedule result and assign to a job id (default). Response includes an
+        interpreted_query field showing how the query was parsed.</li>
+        <li>Async - 0 wait for result, not recommended. Great for debugging, debug mode only.</li>
+      </ul>
+      <p>GET /api/llm-providers.json</p>
+      <ul>
+        <li>Lists which LLM providers actually have a key configured on this server right now -
+        what populates the model picker in the UI.</li>
+      </ul>
       <p>GET /api/shop/search?sk={keyword}&smatch={match_accuracy}&shl=true&slh=false&shops={shop_name}&async=1</p>
       <ul>
+        <li>Structured search, no LLM involved - what /api/shop/nl_search calls internally once
+        it has parsed your query.</li>
         <li>Match Accuracy - refine results based on keyword</li>
         <li>SHL - High to low</li>
         <li>SLH - Low to High</li>
@@ -58,7 +100,7 @@
       </ul>
       <p>GET /api/get_result?job_id={job_id}</p>
       <ul>
-        <li>Job Id - job id from scheduled result above i.e /shop/search</li>
+        <li>Job Id - job id from a scheduled search above (either endpoint).</li>
       </ul>
       <p>GET /api/shops-active.json</p>
       <ul>
@@ -71,8 +113,16 @@
     </div>
 <footer class="py-5 bg-light">
       <div class="container">
-        <p class="m-0 text-center text-dark">Copyright &copy; Shop A Source 2021 Dev Release</p>
+        <p class="m-0 text-center text-dark">Copyright &copy; 2021&ndash;2026 Shop A Source</p>
       </div>
     </footer>
+<script>
+document.getElementById("themeToggle").addEventListener("click", function() {
+  var current = document.documentElement.getAttribute("data-theme");
+  var next = current === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  try { localStorage.setItem("theme", next); } catch (e) {}
+});
+</script>
 </body>
 </html>
