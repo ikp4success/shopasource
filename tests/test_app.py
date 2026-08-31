@@ -1,16 +1,6 @@
-import os
-
 import pytest
 
-# Ensure config picks up test API key before app imports
-os.environ.setdefault("API_KEY", "testkey")
-os.environ.setdefault("ENV_CONFIGURATION", "debug")
-os.environ.setdefault("DB_USER", "admin")
-os.environ.setdefault("DB_PASS", "admin")
-os.environ.setdefault("DB_DOMAIN", "localhost")
-os.environ.setdefault("DB_PORT", "5432")
-os.environ.setdefault("DB_NAME", "shopasource")
-
+# conftest.py sets the env vars support.config needs before any test module runs.
 from support import config as support_config
 from webapp.app import app
 
