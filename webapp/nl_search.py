@@ -1,4 +1,6 @@
-from shops.shop_util.shop_setup_functions import get_shops
+from urllib.parse import urlparse
+
+from shops.shop_util.shop_setup_functions import find_shop_configuration, get_shops
 from support import get_logger
 from webapp.llm_providers import extract_structured
 
@@ -24,7 +26,16 @@ _NL_QUERY_SCHEMA = {
         "shops": {
             "type": "array",
             "items": {"type": "string"},
-            "description": "Shop names explicitly mentioned by the user. Empty if none were named.",
+            "description": (
+                "Which shops to search. If the user explicitly named specific "
+                "store(s), return only those. Otherwise, don't just return every "
+                "shop - return the subset whose actual business plausibly sells "
+                "this category of product (see the domain listed next to each "
+                "shop name in the system prompt). When unsure whether a shop "
+                "carries it, or the product is generic enough that most general "
+                "retailers would (e.g. everyday clothing, accessories, home "
+                "goods), include it rather than excluding it."
+            ),
         },
         "sort_high_to_low": {
             "type": "boolean",
@@ -45,6 +56,11 @@ _NL_QUERY_SCHEMA = {
 }
 
 
+def _shop_domain(shop_name):
+    url_template = find_shop_configuration(shop_name).get("url", "")
+    return urlparse(url_template).netloc or "unknown domain"
+
+
 def parse_nl_query(query_text, is_async=True, provider=None):
     """Turn a free-text shopping request into the params validate_params() expects.
 
@@ -52,13 +68,15 @@ def parse_nl_query(query_text, is_async=True, provider=None):
     see webapp.llm_providers.
     """
     allowed_shops = get_shops(active=True)
+    shop_listing = ", ".join(f"{name} ({_shop_domain(name)})" for name in allowed_shops)
 
     system = (
         "You convert a shopper's natural-language request into search parameters "
-        "for a price-comparison tool. Valid shop names are: "
-        f"{', '.join(allowed_shops)}. Only put names from that exact list into "
-        "'shops' - drop any store the user names that isn't on the list. Leave "
-        "'shops' empty if the user didn't name specific stores."
+        "for a price-comparison tool. Valid shops, with each one's website domain "
+        f"to help you judge what it sells: {shop_listing}. Only put names from "
+        "that exact list into 'shops' - drop any store the user names that isn't "
+        "on the list. See the 'shops' field description for how to pick which "
+        "ones to search when the user didn't name specific stores."
     )
 
     parsed = extract_structured(

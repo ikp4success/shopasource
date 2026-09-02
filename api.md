@@ -4,7 +4,9 @@ The web UI (`/`) searches with plain English through `/api/shop/nl_search` - tha
 recommended way to use this API too. `/api/shop/search` (structured keyword/shops/sort
 params) still works underneath and remains available directly for programmatic use, but
 the UI no longer exposes manual shop-picking or match-accuracy controls - an LLM infers
-those from your query text instead.
+those from your query text instead. If you don't name a specific store, the LLM also
+picks which shops to search based on what each one actually sells (a laptop search
+won't hit fashion retailers) rather than searching every active shop.
 
 #### HEADERS ####
 * x-api-key: {API_KEY}

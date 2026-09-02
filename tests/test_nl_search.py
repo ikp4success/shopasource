@@ -43,3 +43,23 @@ def test_parse_nl_query_defaults_to_all_shops_when_none_named(mock_extract):
     mock_extract.return_value = _stub_parsed(shops=[])
     result = parse_nl_query("wallet")
     assert result["shops"] == ",".join(get_shops(active=True))
+
+
+@patch("webapp.nl_search.extract_structured")
+def test_parse_nl_query_keeps_category_narrowed_subset(mock_extract):
+    # A category-relevant subset the LLM picked (not every active shop, and not
+    # a single explicitly-named one either) should be used as-is, not expanded
+    # back out to every shop.
+    mock_extract.return_value = _stub_parsed(shops=["AMAZON", "NEWEGG", "MICROCENTER"])
+    result = parse_nl_query("gaming laptop")
+    assert result["shops"] == "AMAZON,NEWEGG,MICROCENTER"
+
+
+@patch("webapp.nl_search.extract_structured")
+def test_parse_nl_query_system_prompt_includes_shop_domains(mock_extract):
+    # The LLM needs each shop's domain to judge what it plausibly sells.
+    mock_extract.return_value = _stub_parsed()
+    parse_nl_query("wallet")
+    system_prompt = mock_extract.call_args.kwargs["system"]
+    assert "AMAZON (" in system_prompt
+    assert "NEWEGG (" in system_prompt

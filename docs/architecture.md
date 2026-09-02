@@ -156,6 +156,19 @@ Matching itself uses whole-word boundaries and ignores filler words like
 "for"/"with" (`STOPWORDS` in `tasks/results_factory.py`), rather than a plain
 substring check, which used to false-positive-match "for" inside "force".
 
+The LLM does a coarser pass before any of that even runs, at the shop-selection
+level: `parse_nl_query`'s system prompt lists every active shop alongside its
+website domain, and the `shops` field in `_NL_QUERY_SCHEMA` instructs the model
+to return only the subset whose actual business plausibly sells that category
+of product when the user didn't name a store explicitly (a laptop search
+shouldn't hit ZARA or NIKE; a wallet search shouldn't hit NEWEGG) - falling
+back to every active shop only if the LLM returns nothing at all. This isn't a
+replacement for `match_sk`'s per-item filtering, it's a cheaper filter one
+level up: fewer shops means fewer `scrapy crawl` subprocesses spawned per
+search, which matters given `MAX_CONCURRENT_SHOPS` already bounds how many can
+run at once. `provider="normal"` skips this entirely and always searches every
+active shop, since there's no LLM to make the judgment call.
+
 ## Operational endpoints
 
 `GET /health` is a liveness check (no api key required). `GET /openapi.json`
