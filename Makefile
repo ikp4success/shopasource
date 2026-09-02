@@ -71,7 +71,7 @@ run:
 	DB_NAME=$(DB_NAME) \
 	DB_DOMAIN=$(DB_DOMAIN) \
 	SAVE_TO_DB=$(SAVE_TO_DB) \
-	quart run --host=$(HOST) --port=$(PORT)
+	hypercorn --reload -b $(HOST):$(PORT) webapp.app:app
 
 
 .PHONY: run_db
