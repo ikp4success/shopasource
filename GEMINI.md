@@ -56,3 +56,8 @@ Per-shop config (URL templates, active/inactive flags) lives in `shops/shop_conn
 - Formatting/linting is pre-commit-enforced: black (line-length 88), isort (`profile = black`), flake8 (`extend-ignore = E203, E501, W503, F541`) with flake8-bugbear, bandit. Run `make pre-commit` before considering a change done.
 - No comments explaining *what* code does — only non-obvious *why* (a workaround, an invariant, a subtle constraint), matching the existing style in this file's own source (e.g. `use_direct_fetch`/`use_browser_fetch` docstrings, the `db_session.remove()` comment in `webapp/util.py`).
 - Keep the LLM integration provider-agnostic: any new AI-assisted feature should go through (or extend) the `webapp/llm_providers.py` dispatch pattern rather than calling one SDK directly, so it keeps working across whichever provider a given deployment has a key for.
+
+After completing and verifying requested changes, automatically commit only the
+task's files. Add this trailer to every Gemini-authored commit:
+
+`Co-Authored-By: Gemini <gemini@google.com>`
