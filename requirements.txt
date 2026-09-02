@@ -13,4 +13,5 @@ quart-rate-limiter
 anthropic
 openai
 google-genai
+mistralai==2.9.4
 playwright

@@ -149,6 +149,8 @@ SPEC = {
                                 "openai",
                                 "gemini",
                                 "deepseek",
+                                "groq",
+                                "mistral",
                                 "normal",
                             ],
                         },

@@ -18,8 +18,10 @@ flowchart TB
     subgraph LLMs["LLM providers (pick one per request)"]
         ANTH["Anthropic<br/>Claude"]
         OAI["OpenAI<br/>GPT / Codex"]
-        GEM["Gemini<br/>Google"]
+        GEM["Gemini<br/>Google - cascades through<br/>free-tier models on 404/429/503"]
         DS["DeepSeek"]
+        GROQ["Groq"]
+        MIS["Mistral"]
         NORMAL["Normal Search<br/>no LLM - plain keyword"]
     end
 
@@ -42,8 +44,8 @@ flowchart TB
     UI -- "poll" --> RESULT
 
     NL -- "provider id, or auto" --> PROVIDERS
-    PROVIDERS --> ANTH & OAI & GEM & DS & NORMAL
-    ANTH & OAI & GEM & DS -- "parsed keyword,<br/>shops, sort, accuracy" --> NL
+    PROVIDERS --> ANTH & OAI & GEM & DS & GROQ & MIS & NORMAL
+    ANTH & OAI & GEM & DS & GROQ & MIS -- "parsed keyword,<br/>shops, sort, accuracy" --> NL
     NORMAL -- "query text as-is,<br/>all active shops" --> NL
     NL --> SEARCH
 
@@ -73,7 +75,7 @@ sequenceDiagram
     U->>A: GET /api/shop/nl_search?q=...&provider=...
     alt provider = normal
         A->>A: use q verbatim as keyword, all active shops
-    else provider = anthropic/openai/gemini/deepseek
+    else provider = anthropic/openai/gemini/deepseek/groq/mistral
         A->>L: parse query into JSON schema
         L-->>A: {search_keyword, shops, sort, match_accuracy}
         Note over A,L: any 4xx/5xx from the SDK names the real<br/>cause instead of a generic "could not understand" message
@@ -121,15 +123,26 @@ to time out on every search - see the `CUSHINE` entry there for an example.
 
 `webapp/llm_providers.py` is a small dispatch layer, not a framework: one
 function (`extract_structured`) takes a system prompt, a user message, and a
-JSON schema, and returns parsed JSON, regardless of which of the four SDKs
-services the call. Adding a fifth provider means adding one `_extract_x`
-function and one entry in `PROVIDER_LABELS` - nothing else in the app knows or
-cares which provider handled a given request.
+JSON schema, and returns parsed JSON, regardless of which of the six SDKs
+services the call (Anthropic, OpenAI, Gemini, DeepSeek, Groq, Mistral - Groq
+reuses the `openai` SDK pointed at its OpenAI-compatible endpoint, the same
+way DeepSeek does). Adding another provider means adding one `_extract_x`
+function and one entry each in `PROVIDER_LABELS`/`_PROVIDER_KEYS` - nothing
+else in the app knows or cares which provider handled a given request.
 
 `/api/llm-providers.json` reports which providers actually have a key
 configured on the running server (plus the always-available `normal`
 pseudo-provider), which is what populates the model picker in the UI - so the
 set of choices a user sees always matches what will actually work.
+
+Gemini specifically retries across a hardcoded list of free-tier models
+(`_GEMINI_FALLBACK_MODELS`), newest/most-capable first, rather than calling
+just one. Model availability on Gemini's free tier churns often - a model
+gets retired (404), hits its quota (429), or is briefly overloaded (503) - so
+`_extract_gemini` catches those three statuses specifically and falls through
+to the next model down instead of failing the search; any other status (bad
+request, auth) propagates immediately since retrying with a different model
+wouldn't fix it.
 
 ## Search relevance
 

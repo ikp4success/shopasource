@@ -15,8 +15,9 @@ https://github.com/ikp4success/shopasource/blob/master/api.md
 
 Shop A Source lets you search for a product in plain English and compares prices for it
 across dozens of online stores in one place. Describe what you're looking for - "cheap
-waterproof hiking boots from target" - and an LLM (Claude, GPT/Codex, Gemini, or DeepSeek -
-pick whichever the server has a key for) works out the shops, sorting, and filters for you.
+waterproof hiking boots from target" - and an LLM (Claude, GPT/Codex, Gemini, DeepSeek, Groq,
+or Mistral - pick whichever the server has a key for) works out the shops, sorting, and
+filters for you.
 
 **Screenshots**
 
@@ -52,8 +53,10 @@ $ make pre-commit
 * Use debug.json for debugging and testing.
 * dev.json is git-ignored to protect sensitive keys.
 * For natural-language search, set at least one of ANTHROPIC_API_KEY, OPENAI_API_KEY,
-  GEMINI_API_KEY, DEEPSEEK_API_KEY. With more than one set, LLM_PROVIDER picks the
-  default, and the UI lets a user override it per search from whichever are configured.
+  GEMINI_API_KEY, DEEPSEEK_API_KEY, GROQ_API_KEY, MISTRAL_API_KEY. With more than one
+  set, LLM_PROVIDER picks the default, and the UI lets a user override it per search
+  from whichever are configured. Gemini automatically falls back through older
+  free-tier models if the current one is out of quota, retired, or overloaded.
 
 
 

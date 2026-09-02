@@ -24,19 +24,22 @@ those from your query text instead.
   query into a keyword, shop names, sort order and match accuracy, then runs the same
   search as /api/shop/search.
 * q - free text query e.g /api/shop/nl_search?q=cheap waterproof hiking boots from target and amazon
-* provider - optional; one of `anthropic`, `openai`, `gemini`, `deepseek`, or `normal`.
-  Overrides the server's default for this one request. Must be a provider with a key
-  configured on the server (see /api/llm-providers.json for which ones are available) or
-  the request fails with a 400 naming the problem. `normal` is always available - it
-  skips the LLM entirely and searches `q` as a plain keyword across every active shop,
-  the pre-AI search behavior; use it if every configured provider is out of quota/credits.
+* provider - optional; one of `anthropic`, `openai`, `gemini`, `deepseek`, `groq`,
+  `mistral`, or `normal`. Overrides the server's default for this one request. Must be
+  a provider with a key configured on the server (see /api/llm-providers.json for which
+  ones are available) or the request fails with a 400 naming the problem. `normal` is
+  always available - it skips the LLM entirely and searches `q` as a plain keyword
+  across every active shop, the pre-AI search behavior; use it if every configured
+  provider is out of quota/credits. `gemini` automatically falls back through older
+  free-tier Gemini models if the current one is out of quota, retired, or overloaded.
 * Async - 1 schedule result and assign to a job id (default). Response includes an
   `interpreted_query` field showing how the query was parsed, for debugging.
 * Async - 0 wait for result, not recommended. Great for debugging, debug mode only.
 * Requires at least one of ANTHROPIC_API_KEY, OPENAI_API_KEY (also used by Codex),
-  GEMINI_API_KEY, or DEEPSEEK_API_KEY to be configured on the server. If more than one
-  is set and `provider` isn't given, LLM_PROVIDER (same four values) picks the default -
-  see configs/dev.json.template and webapp/llm_providers.py.
+  GEMINI_API_KEY, DEEPSEEK_API_KEY, GROQ_API_KEY, or MISTRAL_API_KEY to be configured
+  on the server. If more than one is set and `provider` isn't given, LLM_PROVIDER (same
+  six values) picks the default - see configs/dev.json.template and
+  webapp/llm_providers.py.
 
 #### GET /api/llm-providers.json ####
 * Lists which LLM providers are actually usable on this server right now (have an API
