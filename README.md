@@ -5,6 +5,7 @@
 [![isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://github.com/timothycrosley/isort)
 [![bandit](https://github.com/PyCQA/bandit/workflows/Build%20and%20Test%20Bandit/badge.svg)](https://github.com/PyCQA/bandit)
 [![Built with Claude Code](https://img.shields.io/badge/Built%20with-Claude%20Code-D97757.svg)](https://claude.com/claude-code)
+[![Built with Codex](https://img.shields.io/badge/Built%20with-Codex-000000.svg?logo=openai&logoColor=white)](https://openai.com/codex/)
 [![AI-powered search](https://img.shields.io/badge/search-AI--powered-6366f1.svg)](https://github.com/ikp4success/shopasource/blob/master/api.md)
 
 **API**
@@ -90,8 +91,18 @@ $ make run_spider SPIDER=AMAZON SEARCH_KEYWORD=shirts
 ```
 
 ##### deploys
-Ships with a `Procfile` and `Dockerfile`, so it can be deployed to Heroku (see
-https://devcenter.heroku.com/articles/git) or any other host that runs one of those.
+The repository includes a Render Blueprint that deploys the Docker image and a
+PostgreSQL database together. Push the repository, choose **New > Blueprint** in
+Render, and select the repository. Render reads `render.yaml`, generates the API
+key, connects `DATABASE_URL`, and checks `/health` automatically.
+
+The LLM API keys are optional. Add any of `GEMINI_API_KEY`, `GROQ_API_KEY`,
+`MISTRAL_API_KEY`, `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, or
+`DEEPSEEK_API_KEY` from the service's **Environment** page. Free Render PostgreSQL
+databases expire after 30 days, so use a paid database for persistent production
+data.
+
+The `Procfile` remains available for Heroku or another host that supports it.
 
 ##### other
 ```bash

@@ -16,9 +16,9 @@ COPY requirements.txt .
 RUN pip install --upgrade pip && pip --no-cache-dir install -r requirements.txt \
     && playwright install --with-deps chromium
 
-EXPOSE 5003
+EXPOSE 10000
 WORKDIR /
 ADD . .
 # Run the application. `quart run` fails here (package discovery breaks on the
 # stray root __init__.py) - run the ASGI app directly, matching the Procfile.
-CMD ["hypercorn", "-b", "0.0.0.0:5003", "webapp.app:app"]
+CMD ["sh", "-c", "hypercorn -b 0.0.0.0:${PORT:-5003} webapp.app:app"]

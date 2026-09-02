@@ -1,0 +1,27 @@
+services:
+- type: web
+  name: shopasource
+  runtime: docker
+  plan: free
+  healthCheckPath: /health
+  envVars:
+  - key: ENV_CONFIGURATION
+    value: dev
+  - key: DATABASE_URL
+    fromDatabase:
+      name: shopasource-db
+      property: connectionString
+  - key: API_KEY
+    generateValue: true
+  - key: SKIP_SENTRY
+    value: '1'
+  - key: SAVE_TO_DB
+    value: '1'
+  - key: SUPER_USER
+    value: '0'
+  - key: SET_LOG_LEVEL
+    value: INFO
+databases:
+- name: shopasource-db
+  plan: free
+  databaseName: shopasource

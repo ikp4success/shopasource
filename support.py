@@ -98,7 +98,13 @@ class Config:
     def config_display(self):
         display = ""
         for k in vars(self).keys():
-            display += f"{k}: {getattr(self, k)}\n"
+            value = getattr(self, k)
+            if any(
+                secret in k
+                for secret in ("KEY", "TOKEN", "SECRET", "PASSWORD", "DSN", "URL")
+            ):
+                value = "[configured]" if value else "[not configured]"
+            display += f"{k}: {value}\n"
         print(display)
 
     def load_config(self):

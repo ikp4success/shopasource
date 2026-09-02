@@ -1,8 +1,10 @@
 .git
+.github
 .venv
 __pycache__
 *.pyc
-json_shop_results/*
-logs/*
-scraped_sites
 configs/dev.json
+data/raw
+json_shop_results
+logs
+scraped_sites
