@@ -14,7 +14,7 @@ FROM python:3.13-slim
 COPY requirements.txt .
 
 RUN pip install --upgrade pip && pip --no-cache-dir install -r requirements.txt \
-    && playwright install --with-deps chromium
+    && playwright install --with-deps chrome
 
 EXPOSE 10000
 WORKDIR /

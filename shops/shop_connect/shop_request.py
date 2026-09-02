@@ -71,20 +71,32 @@ def _get_browser_context():
         from playwright.sync_api import sync_playwright
 
         _playwright_ctx = sync_playwright().start()
-        _browser = _playwright_ctx.chromium.launch(
-            channel="chrome", args=["--disable-blink-features=AutomationControlled"]
-        )
-        _browser_context = _browser.new_context(
-            user_agent=_BROWSER_UA,
-            viewport={"width": 1280, "height": 900},
-            locale="en-US",
-            extra_http_headers={"sec-ch-ua": _SEC_CH_UA},
-        )
-        # Sites like Amazon fingerprint headless Chromium via navigator.webdriver -
-        # this is the one flag that reliably distinguishes it from a real browser.
-        _browser_context.add_init_script(
-            "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
-        )
+        # sync_playwright().start() spawns Playwright's own Node.js driver process
+        # immediately, before the browser launch below is even attempted - if that
+        # launch (or anything after it) fails, that driver process would otherwise
+        # be silently leaked (the module-level _browser_context stays None, so the
+        # *next* call just starts another one on top, without ever stopping this
+        # one) and every retry compounds it.
+        try:
+            _browser = _playwright_ctx.chromium.launch(
+                channel="chrome",
+                args=["--disable-blink-features=AutomationControlled"],
+            )
+            _browser_context = _browser.new_context(
+                user_agent=_BROWSER_UA,
+                viewport={"width": 1280, "height": 900},
+                locale="en-US",
+                extra_http_headers={"sec-ch-ua": _SEC_CH_UA},
+            )
+            # Sites like Amazon fingerprint headless Chromium via
+            # navigator.webdriver - the one flag that reliably distinguishes it
+            # from a real browser.
+            _browser_context.add_init_script(
+                "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
+            )
+        except Exception:
+            _close_browser_sync()
+            raise
     return _browser_context
 
 
