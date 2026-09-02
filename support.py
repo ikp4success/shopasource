@@ -18,7 +18,10 @@ def get_config(env=None):
         with open("configs/{}.json".format(env)) as file:
             return json.load(file)
     except FileNotFoundError:
-        logger.warning(f"{env} config not found.")
+        # Not an error - configs/*.json is optional and gitignored; a
+        # deployment configured purely through env vars (e.g. render.yaml)
+        # will never have one, and that's the expected setup.
+        logger.info(f"No configs/{env}.json found, using environment variables only.")
     return {}
 
 
