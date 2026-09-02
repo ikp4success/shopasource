@@ -21,6 +21,19 @@ services:
     value: '0'
   - key: SET_LOG_LEVEL
     value: INFO
+  # Free plan is 512MB total. Each concurrent shop is a full scrapy subprocess,
+  # and each browser_fetch shop on top of that is a real headless Chromium
+  # process - the defaults (4 / 1) already lean conservative, but this plan
+  # needs tighter still. Raise these if/when this service moves off the free
+  # plan.
+  - key: MAX_CONCURRENT_SHOPS
+    value: '2'
+  - key: MAX_CONCURRENT_BROWSER_SHOPS
+    value: '1'
+  - key: DB_POOL_SIZE
+    value: '3'
+  - key: DB_MAX_OVERFLOW
+    value: '2'
 databases:
 - name: shopasource-db
   plan: free

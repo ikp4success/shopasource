@@ -55,10 +55,21 @@ class Config:
     API_MAX_USAGE = int(os.environ.get("API_MAX_USAGE", 100))
     API_MAX_USAGE_DAYS = int(os.environ.get("API_MAX_USAGE_DAYS", 2))
     SHOP_CACHE_MAX_EXPIRY_TIME = int(os.environ.get("SHOP_CACHE_MAX_EXPIRY_TIME", 3))
-    MAX_CONCURRENT_SHOPS = int(os.environ.get("MAX_CONCURRENT_SHOPS", 8))
+    # Each concurrent shop is a full `scrapy crawl` subprocess (a fresh Python +
+    # Scrapy/Twisted interpreter), and each browser_fetch shop on top of that is a
+    # real headless Chromium process - both add up fast on a small instance, so
+    # these default conservatively rather than for throughput. Raise them via env
+    # var on a host with real memory to spare.
+    MAX_CONCURRENT_SHOPS = int(os.environ.get("MAX_CONCURRENT_SHOPS", 4))
     MAX_CONCURRENT_BROWSER_SHOPS = int(
-        os.environ.get("MAX_CONCURRENT_BROWSER_SHOPS", 3)
+        os.environ.get("MAX_CONCURRENT_BROWSER_SHOPS", 1)
     )
+    # SQLAlchemy connection pool - keep well under managed Postgres providers'
+    # (Render's free tier included) connection caps, and under what a single small
+    # instance actually needs; a couple hundred pooled connections was never
+    # realistic for this app's traffic.
+    DB_POOL_SIZE = int(os.environ.get("DB_POOL_SIZE", 5))
+    DB_MAX_OVERFLOW = int(os.environ.get("DB_MAX_OVERFLOW", 5))
     SHOP_CACHE_LOOKUP_SET = os.environ.get("SHOP_CACHE_LOOKUP_SET", True)
     SUPER_USER = os.environ.get("SUPER_USER")
     SAVE_TO_DB = os.environ.get("SAVE_TO_DB")
