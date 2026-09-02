@@ -7,6 +7,7 @@
 [![Built with Claude Code](https://img.shields.io/badge/Built%20with-Claude%20Code-D97757.svg)](https://claude.com/claude-code)
 [![Built with Codex](https://img.shields.io/badge/Built%20with-Codex-000000.svg?logo=openai&logoColor=white)](https://openai.com/codex/)
 [![Built with Mistral Vibe](https://img.shields.io/badge/Built%20with-Mistral%20Vibe-7746DC.svg)](https://mistral.ai/)
+[![Built with Gemini](https://img.shields.io/badge/Built%20with-Gemini-4285F4.svg?logo=google&logoColor=white)](https://gemini.google.com/)
 [![AI-powered search](https://img.shields.io/badge/search-AI--powered-6366f1.svg)](https://github.com/ikp4success/shopasource/blob/master/api.md)
 
 **API**
